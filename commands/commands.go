@@ -60,15 +60,14 @@ func commandHandler(commandMap map[string]DiscordCommand, bplClient *client.Clie
 
 func cleanUpDeprecatedCommands(session *discordgo.Session, commandMap map[string]DiscordCommand) {
 	App := os.Getenv("DISCORD_CLIENT_ID")
-	GUILD_ID := os.Getenv("GUILD_ID")
-	oldCommands, err := session.ApplicationCommands(App, GUILD_ID)
+	oldCommands, err := session.ApplicationCommands(App, "")
 	if err != nil {
 		log.Fatalf("could not fetch old commands: %s", err)
 		return
 	}
 	for _, command := range oldCommands {
 		if _, ok := commandMap[command.Name]; !ok {
-			err := session.ApplicationCommandDelete(App, GUILD_ID, command.ID)
+			err := session.ApplicationCommandDelete(App, "", command.ID)
 			if err != nil {
 				log.Fatalf("could not delete command %s: %s", command.Name, err)
 			}
@@ -79,7 +78,6 @@ func cleanUpDeprecatedCommands(session *discordgo.Session, commandMap map[string
 
 func RegisterCommands(session *discordgo.Session, bplClient *client.ClientWithResponses) error {
 	App := os.Getenv("DISCORD_CLIENT_ID")
-	GUILD_ID := os.Getenv("GUILD_ID")
 	commandMap := make(map[string]DiscordCommand)
 	for _, c := range commands {
 		commandMap[c.Command.Name] = c
@@ -87,7 +85,7 @@ func RegisterCommands(session *discordgo.Session, bplClient *client.ClientWithRe
 	session.AddHandler(commandHandler(commandMap, bplClient))
 	cleanUpDeprecatedCommands(session, commandMap)
 
-	_, err := session.ApplicationCommandBulkOverwrite(App, GUILD_ID, utils.Map(commands, func(c DiscordCommand) *discordgo.ApplicationCommand {
+	_, err := session.ApplicationCommandBulkOverwrite(App, "", utils.Map(commands, func(c DiscordCommand) *discordgo.ApplicationCommand {
 		return c.Command
 	}))
 	if err != nil {
