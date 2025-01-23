@@ -59,7 +59,7 @@ func commandHandler(commandMap map[string]DiscordCommand, bplClient *client.Clie
 }
 
 func cleanUpDeprecatedCommands(session *discordgo.Session, commandMap map[string]DiscordCommand) {
-	App := os.Getenv("APP_ID")
+	App := os.Getenv("DISCORD_CLIENT_ID")
 	GUILD_ID := os.Getenv("GUILD_ID")
 	oldCommands, err := session.ApplicationCommands(App, GUILD_ID)
 	if err != nil {
@@ -78,7 +78,7 @@ func cleanUpDeprecatedCommands(session *discordgo.Session, commandMap map[string
 }
 
 func RegisterCommands(session *discordgo.Session, bplClient *client.ClientWithResponses) error {
-	App := os.Getenv("APP_ID")
+	App := os.Getenv("DISCORD_CLIENT_ID")
 	GUILD_ID := os.Getenv("GUILD_ID")
 	commandMap := make(map[string]DiscordCommand)
 	for _, c := range commands {
