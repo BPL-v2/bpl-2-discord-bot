@@ -14,7 +14,7 @@ var commands = []DiscordCommand{
 	RoleAssignCommand,
 	RoleCreateCommand,
 
-	// GetTimesCommand,
+	GetTimesCommand,
 }
 
 type DiscordCommand struct {
