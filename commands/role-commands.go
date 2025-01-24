@@ -11,8 +11,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-var PermissionManageRoles = int64(discordgo.PermissionManageRoles)
-
 func getAllGuildMembers(s *discordgo.Session, guildID string) ([]*discordgo.Member, error) {
 	lastUserId := ""
 	members := make([]*discordgo.Member, 0)

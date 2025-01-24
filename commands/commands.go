@@ -9,12 +9,18 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var PermissionManageRoles = int64(discordgo.PermissionManageRoles)
+var PermissionManageChannels = int64(discordgo.PermissionManageChannels)
+
 // list of all commands available for the discord bot
 var commands = []DiscordCommand{
 	RoleAssignCommand,
 	RoleCreateCommand,
 
 	GetTimesCommand,
+
+	CopyCategoryCommand,
+	DeleteCategoryCommand,
 }
 
 type DiscordCommand struct {
@@ -59,15 +65,16 @@ func commandHandler(commandMap map[string]DiscordCommand, bplClient *client.Clie
 }
 
 func cleanUpDeprecatedCommands(session *discordgo.Session, commandMap map[string]DiscordCommand) {
+	GUILD_ID := os.Getenv("GUILD_ID")
 	App := os.Getenv("DISCORD_CLIENT_ID")
-	oldCommands, err := session.ApplicationCommands(App, "")
+	oldCommands, err := session.ApplicationCommands(App, GUILD_ID)
 	if err != nil {
 		log.Fatalf("could not fetch old commands: %s", err)
 		return
 	}
 	for _, command := range oldCommands {
-		if _, ok := commandMap[command.Name]; !ok {
-			err := session.ApplicationCommandDelete(App, "", command.ID)
+		if _, ok := commandMap[command.Name]; ok {
+			err := session.ApplicationCommandDelete(App, GUILD_ID, command.ID)
 			if err != nil {
 				log.Fatalf("could not delete command %s: %s", command.Name, err)
 			}
@@ -77,6 +84,7 @@ func cleanUpDeprecatedCommands(session *discordgo.Session, commandMap map[string
 }
 
 func RegisterCommands(session *discordgo.Session, bplClient *client.ClientWithResponses) error {
+	GUILD_ID := os.Getenv("GUILD_ID")
 	App := os.Getenv("DISCORD_CLIENT_ID")
 	commandMap := make(map[string]DiscordCommand)
 	for _, c := range commands {
@@ -85,7 +93,7 @@ func RegisterCommands(session *discordgo.Session, bplClient *client.ClientWithRe
 	session.AddHandler(commandHandler(commandMap, bplClient))
 	cleanUpDeprecatedCommands(session, commandMap)
 
-	_, err := session.ApplicationCommandBulkOverwrite(App, "", utils.Map(commands, func(c DiscordCommand) *discordgo.ApplicationCommand {
+	_, err := session.ApplicationCommandBulkOverwrite(App, GUILD_ID, utils.Map(commands, func(c DiscordCommand) *discordgo.ApplicationCommand {
 		return c.Command
 	}))
 	if err != nil {
