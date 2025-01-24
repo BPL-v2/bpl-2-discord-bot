@@ -99,7 +99,11 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 			}
 		}
 	}
+	fmt.Println(discordIdToTeamId)
 	members, err := getAllGuildMembers(s, guildId)
+	for _, member := range members {
+		fmt.Println(member.User.Username)
+	}
 
 	if err != nil {
 		return 0, err
@@ -118,6 +122,7 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 			}
 		}
 		if _, ok := teamRoles[teamId]; !ok {
+			fmt.Println("could not find role for team", team.Name)
 			return 0, fmt.Errorf("could not find role for team %s", team.Name)
 		}
 	}
@@ -134,12 +139,16 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 			if teamId != "0" {
 				newRoles = append(newRoles, teamRoles[teamId])
 			}
+			fmt.Println(member.User.Username, member.Roles, newRoles)
 			if !utils.HaveSameEntries(member.Roles, newRoles) {
 				counter++
 				wg.Add(1)
 				go func(member *discordgo.Member) {
 					defer wg.Done()
-					s.GuildMemberEdit(guildId, member.User.ID, &discordgo.GuildMemberParams{Roles: &newRoles})
+					_, err := s.GuildMemberEdit(guildId, member.User.ID, &discordgo.GuildMemberParams{Roles: &newRoles})
+					if err != nil {
+						fmt.Println("could not assign roles to", member.User.Username, err)
+					}
 				}(member)
 			}
 		}
