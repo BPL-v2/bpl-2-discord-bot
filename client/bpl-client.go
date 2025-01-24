@@ -11,9 +11,8 @@ import (
 
 func (c *ClientWithResponses) Authenticate() error {
 	BackendUrl := os.Getenv("BACKEND_URL_FOR_DISCORD_BOT")
-	DiscordBotToken := os.Getenv("DISCORD_BOT_TOKEN")
 	resp, err := c.LoginDiscordBotWithResponse(context.TODO(), LoginDiscordBotJSONRequestBody{
-		Token: &DiscordBotToken,
+		Token: os.Getenv("DISCORD_BOT_TOKEN"),
 	})
 
 	if err != nil {

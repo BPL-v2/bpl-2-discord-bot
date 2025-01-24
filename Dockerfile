@@ -19,6 +19,8 @@ WORKDIR /app
 
 COPY --from=builder /app/discord-bot .
 
-EXPOSE 8000
+EXPOSE 9876
+
+ENV GIN_MODE=release
 
 CMD ["./discord-bot"]

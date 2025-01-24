@@ -75,8 +75,78 @@ var RoleCreateCommand = DiscordCommand{
 				}
 			}
 		}
-
+		EditResponse(s, i, "role creation complete")
 	},
+}
+
+func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guildId string) (int, error) {
+	resp, err := client.GetCurrentEventWithResponse(context.TODO())
+
+	if err != nil {
+		return 0, err
+	}
+	event := resp.JSON200
+
+	signupResponse, err := client.GetEventSignupsWithResponse(context.TODO(), event.Id)
+	if err != nil {
+		return 0, err
+	}
+	discordIdToTeamId := make(map[string]string)
+	for teamId, signups := range *signupResponse.JSON200 {
+		for _, signup := range signups {
+			if signup.User.DiscordId != nil {
+				discordIdToTeamId[*signup.User.DiscordId] = teamId
+			}
+		}
+	}
+	members, err := getAllGuildMembers(s, guildId)
+
+	if err != nil {
+		return 0, err
+	}
+	allRoles, err := s.GuildRoles(guildId)
+	if err != nil {
+		return 0, err
+	}
+
+	teamRoles := make(map[string]string)
+	for _, team := range event.Teams {
+		teamId := strconv.Itoa(team.Id)
+		for _, role := range allRoles {
+			if role.Name == team.Name {
+				teamRoles[teamId] = role.ID
+			}
+		}
+		if _, ok := teamRoles[teamId]; !ok {
+			return 0, fmt.Errorf("could not find role for team %s", team.Name)
+		}
+	}
+	wg := sync.WaitGroup{}
+	counter := 0
+	for _, member := range members {
+		if teamId, ok := discordIdToTeamId[member.User.ID]; ok {
+			newRoles := make([]string, 0)
+			for _, roleId := range member.Roles {
+				if !utils.ValuesContain(teamRoles, roleId) {
+					newRoles = append(newRoles, roleId)
+				}
+			}
+			if teamId != "0" {
+				newRoles = append(newRoles, teamRoles[teamId])
+			}
+			if !utils.HaveSameEntries(member.Roles, newRoles) {
+				counter++
+				wg.Add(1)
+				go func(member *discordgo.Member) {
+					defer wg.Done()
+					s.GuildMemberEdit(guildId, member.User.ID, &discordgo.GuildMemberParams{Roles: &newRoles})
+				}(member)
+			}
+		}
+	}
+	wg.Wait()
+	return counter, nil
+
 }
 
 var RoleAssignCommand = DiscordCommand{
@@ -94,86 +164,12 @@ var RoleAssignCommand = DiscordCommand{
 			},
 		},
 		)
-
-		resp, err := client.GetCurrentEventWithResponse(context.TODO())
-
+		numAssigned, err := AssignRoles(s, client, i.GuildID)
 		if err != nil {
-			EditResponse(s, i, "could not get current event")
+			fmt.Println(err)
+			EditResponse(s, i, "could not assign roles")
 			return
 		}
-		event := resp.JSON200
-
-		signupResponse, err := client.GetEventSignupsWithResponse(context.TODO(), event.Id)
-		if err != nil {
-			EditResponse(s, i, "could not get signups")
-			return
-		}
-		discordIdToTeamId := make(map[string]string)
-		for teamId, signups := range *signupResponse.JSON200 {
-			for _, signup := range signups {
-				if signup.User.DiscordId != nil {
-					discordIdToTeamId[*signup.User.DiscordId] = teamId
-				}
-			}
-		}
-
-		members, err := getAllGuildMembers(s, i.GuildID)
-		if err != nil {
-			EditResponse(s, i, "could not get guild members")
-			return
-		}
-
-		allRoles, err := s.GuildRoles(i.GuildID)
-		if err != nil {
-			EditResponse(s, i, "could not get guild roles")
-			return
-		}
-
-		teamRoles := make(map[string]string)
-		for _, team := range event.Teams {
-			teamId := strconv.Itoa(team.Id)
-			for _, role := range allRoles {
-				if role.Name == team.Name {
-					teamRoles[teamId] = role.ID
-				}
-			}
-			if _, ok := teamRoles[teamId]; !ok {
-				EditResponse(s, i, "could not find role for team "+team.Name)
-				return
-			}
-		}
-		wg := sync.WaitGroup{}
-		mu := sync.Mutex{}
-		counter := 0
-		for _, member := range members {
-			if teamId, ok := discordIdToTeamId[member.User.ID]; ok {
-				newRoles := make([]string, 0)
-				for _, roleId := range member.Roles {
-					if !utils.ValuesContain(teamRoles, roleId) {
-						newRoles = append(newRoles, roleId)
-					}
-				}
-				if teamId != "0" {
-					newRoles = append(newRoles, teamRoles[teamId])
-				}
-				if !utils.HaveSameEntries(member.Roles, newRoles) {
-					wg.Add(1)
-					go func(member *discordgo.Member) {
-						defer wg.Done()
-						s.GuildMemberEdit(i.GuildID, member.User.ID, &discordgo.GuildMemberParams{Roles: &newRoles})
-						mu.Lock()
-						counter++
-						if counter%10 == 0 {
-							EditResponse(s, i, fmt.Sprintf("assigned roles to %d users", counter))
-						}
-						mu.Unlock()
-					}(member)
-				}
-			}
-		}
-		wg.Wait()
-
-		EditResponse(s, i, fmt.Sprintf("assigned roles to %d users - finished", counter))
-
+		EditResponse(s, i, fmt.Sprintf("assigned roles to %d users", numAssigned))
 	},
 }

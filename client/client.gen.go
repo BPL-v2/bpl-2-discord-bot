@@ -158,11 +158,11 @@ type ControllerApplicationStatus string
 
 // ControllerCategoryResponse defines model for controller.CategoryResponse.
 type ControllerCategoryResponse struct {
-	Id              *int                           `json:"id,omitempty"`
-	Name            *string                        `json:"name,omitempty"`
-	Objectives      *[]ControllerObjectiveResponse `json:"objectives,omitempty"`
-	ScoringPresetId *int                           `json:"scoring_preset_id,omitempty"`
-	SubCategories   *[]ControllerCategoryResponse  `json:"sub_categories,omitempty"`
+	Id              int                           `json:"id"`
+	Name            string                        `json:"name"`
+	Objectives      []ControllerObjectiveResponse `json:"objectives"`
+	ScoringPresetId *int                          `json:"scoring_preset_id,omitempty"`
+	SubCategories   []ControllerCategoryResponse  `json:"sub_categories"`
 }
 
 // ControllerConditionCreate defines model for controller.ConditionCreate.
@@ -176,15 +176,15 @@ type ControllerConditionCreate struct {
 
 // ControllerConditionResponse defines model for controller.ConditionResponse.
 type ControllerConditionResponse struct {
-	Field    *RepositoryItemField `json:"field,omitempty"`
-	Id       *int                 `json:"id,omitempty"`
-	Operator *RepositoryOperator  `json:"operator,omitempty"`
-	Value    *string              `json:"value,omitempty"`
+	Field    RepositoryItemField `json:"field"`
+	Id       int                 `json:"id"`
+	Operator RepositoryOperator  `json:"operator"`
+	Value    string              `json:"value"`
 }
 
 // ControllerDiscordBotLoginBody defines model for controller.DiscordBotLoginBody.
 type ControllerDiscordBotLoginBody struct {
-	Token *string `json:"token,omitempty"`
+	Token string `json:"token"`
 }
 
 // ControllerEventCreate defines model for controller.EventCreate.
@@ -213,14 +213,14 @@ type ControllerEventResponse struct {
 
 // ControllerEventStatusResponse defines model for controller.EventStatusResponse.
 type ControllerEventStatusResponse struct {
-	ApplicationStatus *ControllerApplicationStatus `json:"application_status,omitempty"`
-	TeamId            *int                         `json:"team_id,omitempty"`
+	ApplicationStatus ControllerApplicationStatus `json:"application_status"`
+	TeamId            *int                        `json:"team_id,omitempty"`
 }
 
 // ControllerMinimalUserResponse defines model for controller.MinimalUserResponse.
 type ControllerMinimalUserResponse struct {
-	DisplayName *string `json:"display_name,omitempty"`
-	Id          *int    `json:"id,omitempty"`
+	DisplayName string `json:"display_name"`
+	Id          int    `json:"id"`
 }
 
 // ControllerNonSensitiveUserResponse defines model for controller.NonSensitiveUserResponse.
@@ -228,8 +228,8 @@ type ControllerNonSensitiveUserResponse struct {
 	AccountName *string `json:"account_name,omitempty"`
 	DiscordId   *string `json:"discord_id,omitempty"`
 	DiscordName *string `json:"discord_name,omitempty"`
-	DisplayName *string `json:"display_name,omitempty"`
-	Id          *int    `json:"id,omitempty"`
+	DisplayName string  `json:"display_name"`
+	Id          int     `json:"id"`
 	TwitchId    *string `json:"twitch_id,omitempty"`
 	TwitchName  *string `json:"twitch_name,omitempty"`
 }
@@ -252,37 +252,37 @@ type ControllerObjectiveCreate struct {
 
 // ControllerObjectiveResponse defines model for controller.ObjectiveResponse.
 type ControllerObjectiveResponse struct {
-	Aggregation     *RepositoryAggregationType     `json:"aggregation,omitempty"`
-	CategoryId      *int                           `json:"category_id,omitempty"`
-	Conditions      *[]ControllerConditionResponse `json:"conditions,omitempty"`
-	Extra           *string                        `json:"extra,omitempty"`
-	Id              *int                           `json:"id,omitempty"`
-	Name            *string                        `json:"name,omitempty"`
-	NumberField     *RepositoryNumberField         `json:"number_field,omitempty"`
-	ObjectiveType   *RepositoryObjectiveType       `json:"objective_type,omitempty"`
-	RequiredNumber  *int                           `json:"required_number,omitempty"`
-	ScoringPresetId *int                           `json:"scoring_preset_id,omitempty"`
-	ValidFrom       *string                        `json:"valid_from,omitempty"`
-	ValidTo         *string                        `json:"valid_to,omitempty"`
+	Aggregation     RepositoryAggregationType     `json:"aggregation"`
+	CategoryId      int                           `json:"category_id"`
+	Conditions      []ControllerConditionResponse `json:"conditions"`
+	Extra           string                        `json:"extra"`
+	Id              int                           `json:"id"`
+	Name            string                        `json:"name"`
+	NumberField     RepositoryNumberField         `json:"number_field"`
+	ObjectiveType   RepositoryObjectiveType       `json:"objective_type"`
+	RequiredNumber  int                           `json:"required_number"`
+	ScoringPresetId *int                          `json:"scoring_preset_id,omitempty"`
+	ValidFrom       *string                       `json:"valid_from,omitempty"`
+	ValidTo         *string                       `json:"valid_to,omitempty"`
 }
 
 // ControllerScoreResponse defines model for controller.ScoreResponse.
 type ControllerScoreResponse struct {
-	Finished  *bool             `json:"finished,omitempty"`
-	Id        *int              `json:"id,omitempty"`
-	Number    *int              `json:"number,omitempty"`
-	Points    *int              `json:"points,omitempty"`
-	Rank      *int              `json:"rank,omitempty"`
-	TeamId    *int              `json:"team_id,omitempty"`
-	Timestamp *string           `json:"timestamp,omitempty"`
-	Type      *ScoringScoreType `json:"type,omitempty"`
-	UserId    *int              `json:"user_id,omitempty"`
+	Finished  bool             `json:"finished"`
+	Id        int              `json:"id"`
+	Number    int              `json:"number"`
+	Points    int              `json:"points"`
+	Rank      int              `json:"rank"`
+	TeamId    int              `json:"team_id"`
+	Timestamp string           `json:"timestamp"`
+	Type      ScoringScoreType `json:"type"`
+	UserId    int              `json:"user_id"`
 }
 
 // ControllerScoringPresetCreate defines model for controller.ScoringPresetCreate.
 type ControllerScoringPresetCreate struct {
 	Description   *string                     `json:"description,omitempty"`
-	EventId       *int                        `json:"event_id,omitempty"`
+	EventId       int                         `json:"event_id"`
 	Id            *int                        `json:"id,omitempty"`
 	Name          string                      `json:"name"`
 	Points        []float32                   `json:"points"`
@@ -292,35 +292,35 @@ type ControllerScoringPresetCreate struct {
 
 // ControllerScoringPresetResponse defines model for controller.ScoringPresetResponse.
 type ControllerScoringPresetResponse struct {
-	Description   *string                      `json:"description,omitempty"`
-	Id            *int                         `json:"id,omitempty"`
-	Name          *string                      `json:"name,omitempty"`
-	Points        *[]float32                   `json:"points,omitempty"`
-	ScoringMethod *RepositoryScoringMethod     `json:"scoring_method,omitempty"`
-	Type          *RepositoryScoringPresetType `json:"type,omitempty"`
+	Description   string                      `json:"description"`
+	Id            int                         `json:"id"`
+	Name          string                      `json:"name"`
+	Points        []float32                   `json:"points"`
+	ScoringMethod RepositoryScoringMethod     `json:"scoring_method"`
+	Type          RepositoryScoringPresetType `json:"type"`
 }
 
 // ControllerSignupResponse defines model for controller.SignupResponse.
 type ControllerSignupResponse struct {
-	ExpectedPlaytime *RepositoryExpectedPlayTime         `json:"expected_playtime,omitempty"`
-	Id               *int                                `json:"id,omitempty"`
-	TeamId           *int                                `json:"team_id,omitempty"`
-	Timestamp        *string                             `json:"timestamp,omitempty"`
-	User             *ControllerNonSensitiveUserResponse `json:"user,omitempty"`
+	ExpectedPlaytime RepositoryExpectedPlayTime         `json:"expected_playtime"`
+	Id               int                                `json:"id"`
+	TeamId           *int                               `json:"team_id,omitempty"`
+	Timestamp        string                             `json:"timestamp"`
+	User             ControllerNonSensitiveUserResponse `json:"user"`
 }
 
 // ControllerSubmissionResponse defines model for controller.SubmissionResponse.
 type ControllerSubmissionResponse struct {
-	ApprovalStatus *RepositoryApprovalStatus           `json:"approval_status,omitempty"`
-	Comment        *string                             `json:"comment,omitempty"`
-	Id             *int                                `json:"id,omitempty"`
-	Number         *int                                `json:"number,omitempty"`
+	ApprovalStatus RepositoryApprovalStatus            `json:"approval_status"`
+	Comment        string                              `json:"comment"`
+	Id             int                                 `json:"id"`
+	Number         int                                 `json:"number"`
 	Objective      *ControllerObjectiveResponse        `json:"objective,omitempty"`
-	Proof          *string                             `json:"proof,omitempty"`
+	Proof          string                              `json:"proof"`
 	ReviewComment  *string                             `json:"review_comment,omitempty"`
 	ReviewerId     *int                                `json:"reviewer_id,omitempty"`
 	TeamId         *int                                `json:"team_id,omitempty"`
-	Timestamp      *string                             `json:"timestamp,omitempty"`
+	Timestamp      string                              `json:"timestamp"`
 	User           *ControllerNonSensitiveUserResponse `json:"user,omitempty"`
 }
 
@@ -334,14 +334,14 @@ type ControllerTeamResponse struct {
 
 // ControllerUserAdminResponse defines model for controller.UserAdminResponse.
 type ControllerUserAdminResponse struct {
-	AccountName *string                 `json:"account_name,omitempty"`
-	DiscordId   *string                 `json:"discord_id,omitempty"`
-	DiscordName *string                 `json:"discord_name,omitempty"`
-	DisplayName *string                 `json:"display_name,omitempty"`
-	Id          *int                    `json:"id,omitempty"`
-	Permissions *[]RepositoryPermission `json:"permissions,omitempty"`
-	TwitchId    *string                 `json:"twitch_id,omitempty"`
-	TwitchName  *string                 `json:"twitch_name,omitempty"`
+	AccountName *string                `json:"account_name,omitempty"`
+	DiscordId   *string                `json:"discord_id,omitempty"`
+	DiscordName *string                `json:"discord_name,omitempty"`
+	DisplayName string                 `json:"display_name"`
+	Id          int                    `json:"id"`
+	Permissions []RepositoryPermission `json:"permissions"`
+	TwitchId    *string                `json:"twitch_id,omitempty"`
+	TwitchName  *string                `json:"twitch_name,omitempty"`
 }
 
 // ControllerUserResponse defines model for controller.UserResponse.
@@ -349,8 +349,8 @@ type ControllerUserResponse struct {
 	AccountName          *string                 `json:"account_name,omitempty"`
 	DiscordId            *string                 `json:"discord_id,omitempty"`
 	DiscordName          *string                 `json:"discord_name,omitempty"`
-	DisplayName          *string                 `json:"display_name,omitempty"`
-	Id                   *int                    `json:"id,omitempty"`
+	DisplayName          string                  `json:"display_name"`
+	Id                   int                     `json:"id"`
 	Permissions          *[]RepositoryPermission `json:"permissions,omitempty"`
 	TokenExpiryTimestamp *string                 `json:"token_expiry_timestamp,omitempty"`
 	TwitchId             *string                 `json:"twitch_id,omitempty"`

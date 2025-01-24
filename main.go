@@ -3,59 +3,15 @@ package main
 import (
 	"bpl2-discord/client"
 	"bpl2-discord/commands"
-	"fmt"
+	"bpl2-discord/server"
 	"log"
 	"os"
 	"os/signal"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
-
-type optionMap = map[string]*discordgo.ApplicationCommandInteractionDataOption
-
-func parseOptions(options []*discordgo.ApplicationCommandInteractionDataOption) (om optionMap) {
-	fmt.Println("parseOptions")
-
-	om = make(optionMap)
-	for _, opt := range options {
-		fmt.Println(opt)
-		om[opt.Name] = opt
-	}
-	return
-}
-
-func interactionAuthor(i *discordgo.Interaction) *discordgo.User {
-	if i.Member != nil {
-		// i.Member.Roles = append(i.Member.Roles, i.Member.User.ID)
-		return i.Member.User
-	}
-	return i.User
-}
-
-func handleEcho(s *discordgo.Session, i *discordgo.InteractionCreate, opts optionMap) {
-	builder := new(strings.Builder)
-	if v, ok := opts["author"]; ok && v.BoolValue() {
-		author := interactionAuthor(i.Interaction)
-		builder.WriteString("**" + author.Mention() + "** says: ")
-
-	}
-	builder.WriteString(opts["message"].StringValue())
-	fmt.Println("handleEcho")
-	fmt.Println(builder.String())
-
-	err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: builder.String(),
-		},
-	})
-
-	if err != nil {
-		log.Panicf("could not respond to interaction: %s", err)
-	}
-}
 
 func main() {
 	err := godotenv.Load()
@@ -79,6 +35,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not open session: %s", err)
 	}
+	r := gin.Default()
+	r.Use(gin.Recovery())
+	server.SetRoutes(r, session, bplClient)
+	r.Run(":9876")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
