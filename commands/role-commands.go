@@ -11,7 +11,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func getAllGuildMembers(s *discordgo.Session, guildID string) ([]*discordgo.Member, error) {
+func GetAllGuildMembers(s *discordgo.Session, guildID string) ([]*discordgo.Member, error) {
 	lastUserId := ""
 	members := make([]*discordgo.Member, 0)
 	for {
@@ -99,8 +99,7 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 			}
 		}
 	}
-	fmt.Println(discordIdToTeamId)
-	members, err := getAllGuildMembers(s, guildId)
+	members, err := GetAllGuildMembers(s, guildId)
 	for _, member := range members {
 		fmt.Println(member.User.Username)
 	}
