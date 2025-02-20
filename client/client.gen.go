@@ -20,121 +20,405 @@ const (
 	ApiKeyAuthScopes = "ApiKeyAuth.Scopes"
 )
 
-// Defines values for ControllerApplicationStatus.
+// Defines values for AggregationType.
 const (
-	ApplicationStatusAccepted   ControllerApplicationStatus = "accepted"
-	ApplicationStatusApplied    ControllerApplicationStatus = "applied"
-	ApplicationStatusNone       ControllerApplicationStatus = "none"
-	ApplicationStatusWaitlisted ControllerApplicationStatus = "waitlisted"
+	EARLIEST          AggregationType = "EARLIEST"
+	EARLIESTFRESHITEM AggregationType = "EARLIEST_FRESH_ITEM"
+	MAXIMUM           AggregationType = "MAXIMUM"
+	MINIMUM           AggregationType = "MINIMUM"
+	SUMLATEST         AggregationType = "SUM_LATEST"
 )
 
-// Defines values for RepositoryAggregationType.
+// Defines values for ApplicationStatus.
 const (
-	EARLIEST          RepositoryAggregationType = "EARLIEST"
-	EARLIESTFRESHITEM RepositoryAggregationType = "EARLIEST_FRESH_ITEM"
-	MAXIMUM           RepositoryAggregationType = "MAXIMUM"
-	MINIMUM           RepositoryAggregationType = "MINIMUM"
-	SUMLATEST         RepositoryAggregationType = "SUM_LATEST"
+	ApplicationStatusAccepted   ApplicationStatus = "accepted"
+	ApplicationStatusApplied    ApplicationStatus = "applied"
+	ApplicationStatusNone       ApplicationStatus = "none"
+	ApplicationStatusWaitlisted ApplicationStatus = "waitlisted"
 )
 
-// Defines values for RepositoryApprovalStatus.
+// Defines values for ApprovalStatus.
 const (
-	APPROVED RepositoryApprovalStatus = "APPROVED"
-	PENDING  RepositoryApprovalStatus = "PENDING"
-	REJECTED RepositoryApprovalStatus = "REJECTED"
+	APPROVED ApprovalStatus = "APPROVED"
+	PENDING  ApprovalStatus = "PENDING"
+	REJECTED ApprovalStatus = "REJECTED"
 )
 
-// Defines values for RepositoryExpectedPlayTime.
+// Defines values for Difftype.
 const (
-	Extreme  RepositoryExpectedPlayTime = "EXTREME"
-	High     RepositoryExpectedPlayTime = "HIGH"
-	Low      RepositoryExpectedPlayTime = "LOW"
-	Medium   RepositoryExpectedPlayTime = "MEDIUM"
-	NoLife   RepositoryExpectedPlayTime = "NO_LIFE"
-	VeryHigh RepositoryExpectedPlayTime = "VERY_HIGH"
-	VeryLow  RepositoryExpectedPlayTime = "VERY_LOW"
+	Added     Difftype = "Added"
+	Changed   Difftype = "Changed"
+	Removed   Difftype = "Removed"
+	Unchanged Difftype = "Unchanged"
 )
 
-// Defines values for RepositoryItemField.
+// Defines values for ExpectedPlayTime.
 const (
-	BASETYPE      RepositoryItemField = "BASE_TYPE"
-	CRAFTEDMODS   RepositoryItemField = "CRAFTED_MODS"
-	ENCHANTMODS   RepositoryItemField = "ENCHANT_MODS"
-	EXPLICITMODS  RepositoryItemField = "EXPLICIT_MODS"
-	FRACTUREDMODS RepositoryItemField = "FRACTURED_MODS"
-	FRAMETYPE     RepositoryItemField = "FRAME_TYPE"
-	ILVL          RepositoryItemField = "ILVL"
-	IMPLICITMODS  RepositoryItemField = "IMPLICIT_MODS"
-	NAME          RepositoryItemField = "NAME"
-	RARITY        RepositoryItemField = "RARITY"
-	SIXLINK       RepositoryItemField = "SIX_LINK"
-	TALISMANTIER  RepositoryItemField = "TALISMAN_TIER"
-	TYPELINE      RepositoryItemField = "TYPE_LINE"
+	Extreme  ExpectedPlayTime = "EXTREME"
+	High     ExpectedPlayTime = "HIGH"
+	Low      ExpectedPlayTime = "LOW"
+	Medium   ExpectedPlayTime = "MEDIUM"
+	NoLife   ExpectedPlayTime = "NO_LIFE"
+	VeryHigh ExpectedPlayTime = "VERY_HIGH"
+	VeryLow  ExpectedPlayTime = "VERY_LOW"
 )
 
-// Defines values for RepositoryNumberField.
+// Defines values for GameVersion.
 const (
-	PLAYERLEVEL     RepositoryNumberField = "PLAYER_LEVEL"
-	PLAYERXP        RepositoryNumberField = "PLAYER_XP"
-	STACKSIZE       RepositoryNumberField = "STACK_SIZE"
-	SUBMISSIONVALUE RepositoryNumberField = "SUBMISSION_VALUE"
+	PoE1 GameVersion = "poe1"
+	PoE2 GameVersion = "poe2"
 )
 
-// Defines values for RepositoryObjectiveType.
+// Defines values for ItemField.
 const (
-	ITEM       RepositoryObjectiveType = "ITEM"
-	PLAYER     RepositoryObjectiveType = "PLAYER"
-	SUBMISSION RepositoryObjectiveType = "SUBMISSION"
+	BASETYPE      ItemField = "BASE_TYPE"
+	CRAFTEDMODS   ItemField = "CRAFTED_MODS"
+	ENCHANTMODS   ItemField = "ENCHANT_MODS"
+	EXPLICITMODS  ItemField = "EXPLICIT_MODS"
+	FRACTUREDMODS ItemField = "FRACTURED_MODS"
+	FRAMETYPE     ItemField = "FRAME_TYPE"
+	ILVL          ItemField = "ILVL"
+	IMPLICITMODS  ItemField = "IMPLICIT_MODS"
+	NAME          ItemField = "NAME"
+	RARITY        ItemField = "RARITY"
+	SIXLINK       ItemField = "SIX_LINK"
+	TALISMANTIER  ItemField = "TALISMAN_TIER"
+	TYPELINE      ItemField = "TYPE_LINE"
 )
 
-// Defines values for RepositoryOperator.
+// Defines values for JobType.
 const (
-	CONTAINS           RepositoryOperator = "CONTAINS"
-	CONTAINSALL        RepositoryOperator = "CONTAINS_ALL"
-	CONTAINSALLMATCHES RepositoryOperator = "CONTAINS_ALL_MATCHES"
-	CONTAINSMATCH      RepositoryOperator = "CONTAINS_MATCH"
-	EQ                 RepositoryOperator = "EQ"
-	GT                 RepositoryOperator = "GT"
-	GTE                RepositoryOperator = "GTE"
-	IN                 RepositoryOperator = "IN"
-	LT                 RepositoryOperator = "LT"
-	LTE                RepositoryOperator = "LTE"
-	MATCHES            RepositoryOperator = "MATCHES"
-	NEQ                RepositoryOperator = "NEQ"
-	NOTIN              RepositoryOperator = "NOT_IN"
+	EvaluateStashChanges JobType = "EvaluateStashChanges"
+	FetchCharacterData   JobType = "FetchCharacterData"
+	FetchStashChanges    JobType = "FetchStashChanges"
 )
 
-// Defines values for RepositoryPermission.
+// Defines values for NumberField.
 const (
-	PermissionAdmin       RepositoryPermission = "admin"
-	PermissionCommandTeam RepositoryPermission = "command_team"
+	PLAYERLEVEL     NumberField = "PLAYER_LEVEL"
+	PLAYERXP        NumberField = "PLAYER_XP"
+	STACKSIZE       NumberField = "STACK_SIZE"
+	SUBMISSIONVALUE NumberField = "SUBMISSION_VALUE"
 )
 
-// Defines values for RepositoryScoringMethod.
+// Defines values for ObjectiveType.
 const (
-	BONUSPERCOMPLETION RepositoryScoringMethod = "BONUS_PER_COMPLETION"
-	POINTSFROMVALUE    RepositoryScoringMethod = "POINTS_FROM_VALUE"
-	PRESENCE           RepositoryScoringMethod = "PRESENCE"
-	RANKEDCOMPLETION   RepositoryScoringMethod = "RANKED_COMPLETION_TIME"
-	RANKEDREVERSE      RepositoryScoringMethod = "RANKED_REVERSE"
-	RANKEDTIME         RepositoryScoringMethod = "RANKED_TIME"
-	RANKEDVALUE        RepositoryScoringMethod = "RANKED_VALUE"
+	ITEM       ObjectiveType = "ITEM"
+	PLAYER     ObjectiveType = "PLAYER"
+	SUBMISSION ObjectiveType = "SUBMISSION"
 )
 
-// Defines values for RepositoryScoringPresetType.
+// Defines values for Operator.
 const (
-	RepositoryScoringPresetTypeCATEGORY  RepositoryScoringPresetType = "CATEGORY"
-	RepositoryScoringPresetTypeOBJECTIVE RepositoryScoringPresetType = "OBJECTIVE"
+	CONTAINS           Operator = "CONTAINS"
+	CONTAINSALL        Operator = "CONTAINS_ALL"
+	CONTAINSALLMATCHES Operator = "CONTAINS_ALL_MATCHES"
+	CONTAINSMATCH      Operator = "CONTAINS_MATCH"
+	EQ                 Operator = "EQ"
+	GT                 Operator = "GT"
+	GTE                Operator = "GTE"
+	IN                 Operator = "IN"
+	LT                 Operator = "LT"
+	LTE                Operator = "LTE"
+	MATCHES            Operator = "MATCHES"
+	NEQ                Operator = "NEQ"
+	NOTIN              Operator = "NOT_IN"
 )
 
-// Defines values for ScoringScoreType.
+// Defines values for Permission.
 const (
-	ScoringScoreTypeCATEGORY  ScoringScoreType = "CATEGORY"
-	ScoringScoreTypeOBJECTIVE ScoringScoreType = "OBJECTIVE"
+	PermissionAdmin       Permission = "admin"
+	PermissionCommandTeam Permission = "command_team"
 )
 
-// ClientStream defines model for client.Stream.
-type ClientStream struct {
+// Defines values for ScoringMethod.
+const (
+	BONUSPERCOMPLETION ScoringMethod = "BONUS_PER_COMPLETION"
+	POINTSFROMVALUE    ScoringMethod = "POINTS_FROM_VALUE"
+	PRESENCE           ScoringMethod = "PRESENCE"
+	RANKEDCOMPLETION   ScoringMethod = "RANKED_COMPLETION_TIME"
+	RANKEDREVERSE      ScoringMethod = "RANKED_REVERSE"
+	RANKEDTIME         ScoringMethod = "RANKED_TIME"
+	RANKEDVALUE        ScoringMethod = "RANKED_VALUE"
+)
+
+// Defines values for ScoringPresetType.
+const (
+	CATEGORY  ScoringPresetType = "CATEGORY"
+	OBJECTIVE ScoringPresetType = "OBJECTIVE"
+)
+
+// AggregationType defines model for AggregationType.
+type AggregationType string
+
+// ApplicationStatus defines model for ApplicationStatus.
+type ApplicationStatus string
+
+// ApprovalStatus defines model for ApprovalStatus.
+type ApprovalStatus string
+
+// Category defines model for Category.
+type Category struct {
+	Id              int            `json:"id"`
+	Name            string         `json:"name"`
+	Objectives      []Objective    `json:"objectives"`
+	ScoringPreset   *ScoringPreset `json:"scoring_preset,omitempty"`
+	ScoringPresetId *int           `json:"scoring_preset_id,omitempty"`
+	SubCategories   []Category     `json:"sub_categories"`
+}
+
+// CategoryCreate defines model for CategoryCreate.
+type CategoryCreate struct {
+	Id              *int   `json:"id,omitempty"`
+	Name            string `json:"name"`
+	ParentId        int    `json:"parent_id"`
+	ScoringPresetId *int   `json:"scoring_preset_id,omitempty"`
+}
+
+// Condition defines model for Condition.
+type Condition struct {
+	Field    ItemField `json:"field"`
+	Id       int       `json:"id"`
+	Operator Operator  `json:"operator"`
+	Value    string    `json:"value"`
+}
+
+// ConditionCreate defines model for ConditionCreate.
+type ConditionCreate struct {
+	Field       ItemField `json:"field"`
+	Id          *int      `json:"id,omitempty"`
+	ObjectiveId int       `json:"objective_id"`
+	Operator    Operator  `json:"operator"`
+	Value       string    `json:"value"`
+}
+
+// Difftype defines model for Difftype.
+type Difftype string
+
+// DiscordBotLoginBody defines model for DiscordBotLoginBody.
+type DiscordBotLoginBody struct {
+	Token string `json:"token"`
+}
+
+// Event defines model for Event.
+type Event struct {
+	ApplicationStartTime string      `json:"application_start_time"`
+	EventEndTime         string      `json:"event_end_time"`
+	EventStartTime       string      `json:"event_start_time"`
+	GameVersion          GameVersion `json:"game_version"`
+	Id                   int         `json:"id"`
+	IsCurrent            bool        `json:"is_current"`
+	MaxSize              int         `json:"max_size"`
+	Name                 string      `json:"name"`
+	ScoringCategoryId    int         `json:"scoring_category_id"`
+	Teams                []Team      `json:"teams"`
+}
+
+// EventCreate defines model for EventCreate.
+type EventCreate struct {
+	ApplicationStartTime string      `json:"application_start_time"`
+	EventEndTime         string      `json:"event_end_time"`
+	EventStartTime       string      `json:"event_start_time"`
+	GameVersion          GameVersion `json:"game_version"`
+	Id                   *int        `json:"id,omitempty"`
+	IsCurrent            *bool       `json:"is_current,omitempty"`
+	MaxSize              int         `json:"max_size"`
+	Name                 string      `json:"name"`
+}
+
+// EventStatus defines model for EventStatus.
+type EventStatus struct {
+	ApplicationStatus ApplicationStatus `json:"application_status"`
+	TeamId            *int              `json:"team_id,omitempty"`
+}
+
+// ExpectedPlayTime defines model for ExpectedPlayTime.
+type ExpectedPlayTime string
+
+// GameVersion defines model for GameVersion.
+type GameVersion string
+
+// ItemField defines model for ItemField.
+type ItemField string
+
+// JobType defines model for JobType.
+type JobType string
+
+// MinimalUser defines model for MinimalUser.
+type MinimalUser struct {
+	DisplayName string `json:"display_name"`
+	Id          int    `json:"id"`
+}
+
+// NonSensitiveUser defines model for NonSensitiveUser.
+type NonSensitiveUser struct {
+	AccountName *string `json:"account_name,omitempty"`
+	DiscordId   *string `json:"discord_id,omitempty"`
+	DiscordName *string `json:"discord_name,omitempty"`
+	DisplayName string  `json:"display_name"`
+	Id          int     `json:"id"`
+	TwitchId    *string `json:"twitch_id,omitempty"`
+	TwitchName  *string `json:"twitch_name,omitempty"`
+}
+
+// NumberField defines model for NumberField.
+type NumberField string
+
+// Objective defines model for Objective.
+type Objective struct {
+	Aggregation     AggregationType `json:"aggregation"`
+	CategoryId      int             `json:"category_id"`
+	Conditions      []Condition     `json:"conditions"`
+	Extra           string          `json:"extra"`
+	Id              int             `json:"id"`
+	Name            string          `json:"name"`
+	NumberField     NumberField     `json:"number_field"`
+	ObjectiveType   ObjectiveType   `json:"objective_type"`
+	RequiredNumber  int             `json:"required_number"`
+	ScoringPreset   *ScoringPreset  `json:"scoring_preset,omitempty"`
+	ScoringPresetId *int            `json:"scoring_preset_id,omitempty"`
+	ValidFrom       *string         `json:"valid_from,omitempty"`
+	ValidTo         *string         `json:"valid_to,omitempty"`
+}
+
+// ObjectiveConditionCreate defines model for ObjectiveConditionCreate.
+type ObjectiveConditionCreate struct {
+	Field    ItemField `json:"field"`
+	Id       *int      `json:"id,omitempty"`
+	Operator Operator  `json:"operator"`
+	Value    string    `json:"value"`
+}
+
+// ObjectiveCreate defines model for ObjectiveCreate.
+type ObjectiveCreate struct {
+	Aggregation     AggregationType            `json:"aggregation"`
+	CategoryId      int                        `json:"category_id"`
+	Conditions      []ObjectiveConditionCreate `json:"conditions"`
+	Extra           *string                    `json:"extra,omitempty"`
+	Id              *int                       `json:"id,omitempty"`
+	Name            string                     `json:"name"`
+	NumberField     NumberField                `json:"number_field"`
+	ObjectiveType   ObjectiveType              `json:"objective_type"`
+	RequiredNumber  int                        `json:"required_number"`
+	ScoringPresetId *int                       `json:"scoring_preset_id,omitempty"`
+	ValidFrom       *string                    `json:"valid_from,omitempty"`
+	ValidTo         *string                    `json:"valid_to,omitempty"`
+}
+
+// ObjectiveType defines model for ObjectiveType.
+type ObjectiveType string
+
+// Operator defines model for Operator.
+type Operator string
+
+// Permission defines model for Permission.
+type Permission string
+
+// RecurringJob defines model for RecurringJob.
+type RecurringJob struct {
+	EndDate                  *string  `json:"end_date,omitempty"`
+	EventId                  *int     `json:"event_id,omitempty"`
+	JobType                  *JobType `json:"job_type,omitempty"`
+	SleepAfterEachRunSeconds *int     `json:"sleep_after_each_run_seconds,omitempty"`
+}
+
+// Score defines model for Score.
+type Score struct {
+	Finished  bool   `json:"finished"`
+	Number    int    `json:"number"`
+	Points    int    `json:"points"`
+	Rank      int    `json:"rank"`
+	Timestamp string `json:"timestamp"`
+	UserId    int    `json:"user_id"`
+}
+
+// ScoreDiff defines model for ScoreDiff.
+type ScoreDiff struct {
+	DiffType  Difftype `json:"diff_type"`
+	FieldDiff []string `json:"field_diff"`
+	Score     Score    `json:"score"`
+}
+
+// ScoreMap defines model for ScoreMap.
+type ScoreMap map[string]ScoreDiff
+
+// ScoringMethod defines model for ScoringMethod.
+type ScoringMethod string
+
+// ScoringPreset defines model for ScoringPreset.
+type ScoringPreset struct {
+	Description   string            `json:"description"`
+	Id            int               `json:"id"`
+	Name          string            `json:"name"`
+	Points        []float32         `json:"points"`
+	ScoringMethod ScoringMethod     `json:"scoring_method"`
+	Type          ScoringPresetType `json:"type"`
+}
+
+// ScoringPresetCreate defines model for ScoringPresetCreate.
+type ScoringPresetCreate struct {
+	Description   *string           `json:"description,omitempty"`
+	EventId       int               `json:"event_id"`
+	Id            *int              `json:"id,omitempty"`
+	Name          string            `json:"name"`
+	Points        []float32         `json:"points"`
+	ScoringMethod ScoringMethod     `json:"scoring_method"`
+	Type          ScoringPresetType `json:"type"`
+}
+
+// ScoringPresetType defines model for ScoringPresetType.
+type ScoringPresetType string
+
+// Signup defines model for Signup.
+type Signup struct {
+	ExpectedPlaytime ExpectedPlayTime `json:"expected_playtime"`
+	Id               int              `json:"id"`
+	TeamId           *int             `json:"team_id,omitempty"`
+	Timestamp        string           `json:"timestamp"`
+	User             NonSensitiveUser `json:"user"`
+}
+
+// Submission defines model for Submission.
+type Submission struct {
+	ApprovalStatus ApprovalStatus    `json:"approval_status"`
+	Comment        string            `json:"comment"`
+	Id             int               `json:"id"`
+	Number         int               `json:"number"`
+	Objective      *Objective        `json:"objective,omitempty"`
+	Proof          string            `json:"proof"`
+	ReviewComment  *string           `json:"review_comment,omitempty"`
+	ReviewerId     *int              `json:"reviewer_id,omitempty"`
+	TeamId         *int              `json:"team_id,omitempty"`
+	Timestamp      string            `json:"timestamp"`
+	User           *NonSensitiveUser `json:"user,omitempty"`
+}
+
+// SubmissionCreate defines model for SubmissionCreate.
+type SubmissionCreate struct {
+	Comment     *string `json:"comment,omitempty"`
+	Id          *int    `json:"id,omitempty"`
+	Number      *int    `json:"number,omitempty"`
+	ObjectiveId int     `json:"objective_id"`
+	Proof       *string `json:"proof,omitempty"`
+	Timestamp   string  `json:"timestamp"`
+}
+
+// SubmissionReview defines model for SubmissionReview.
+type SubmissionReview struct {
+	ApprovalStatus ApprovalStatus `json:"approval_status"`
+	ReviewComment  *string        `json:"review_comment,omitempty"`
+}
+
+// Team defines model for Team.
+type Team struct {
+	AllowedClasses []string `json:"allowed_classes"`
+	EventId        int      `json:"event_id"`
+	Id             int      `json:"id"`
+	Name           string   `json:"name"`
+}
+
+// TwitchStream defines model for TwitchStream.
+type TwitchStream struct {
 	BackendUserId *int      `json:"backend_user_id,omitempty"`
 	GameId        *string   `json:"game_id,omitempty"`
 	GameName      *string   `json:"game_name,omitempty"`
@@ -153,247 +437,23 @@ type ClientStream struct {
 	ViewerCount   *int      `json:"viewer_count,omitempty"`
 }
 
-// ControllerApplicationStatus defines model for controller.ApplicationStatus.
-type ControllerApplicationStatus string
-
-// ControllerCategoryResponse defines model for controller.CategoryResponse.
-type ControllerCategoryResponse struct {
-	Id              int                           `json:"id"`
-	Name            string                        `json:"name"`
-	Objectives      []ControllerObjectiveResponse `json:"objectives"`
-	ScoringPresetId *int                          `json:"scoring_preset_id,omitempty"`
-	SubCategories   []ControllerCategoryResponse  `json:"sub_categories"`
+// User defines model for User.
+type User struct {
+	AccountName          *string      `json:"account_name,omitempty"`
+	DiscordId            *string      `json:"discord_id,omitempty"`
+	DiscordName          *string      `json:"discord_name,omitempty"`
+	DisplayName          string       `json:"display_name"`
+	Id                   int          `json:"id"`
+	Permissions          []Permission `json:"permissions"`
+	TokenExpiryTimestamp *string      `json:"token_expiry_timestamp,omitempty"`
+	TwitchId             *string      `json:"twitch_id,omitempty"`
+	TwitchName           *string      `json:"twitch_name,omitempty"`
 }
 
-// ControllerConditionCreate defines model for controller.ConditionCreate.
-type ControllerConditionCreate struct {
-	Field       RepositoryItemField `json:"field"`
-	Id          *int                `json:"id,omitempty"`
-	ObjectiveId int                 `json:"objective_id"`
-	Operator    RepositoryOperator  `json:"operator"`
-	Value       string              `json:"value"`
-}
-
-// ControllerConditionResponse defines model for controller.ConditionResponse.
-type ControllerConditionResponse struct {
-	Field    RepositoryItemField `json:"field"`
-	Id       int                 `json:"id"`
-	Operator RepositoryOperator  `json:"operator"`
-	Value    string              `json:"value"`
-}
-
-// ControllerDiscordBotLoginBody defines model for controller.DiscordBotLoginBody.
-type ControllerDiscordBotLoginBody struct {
-	Token string `json:"token"`
-}
-
-// ControllerEventCreate defines model for controller.EventCreate.
-type ControllerEventCreate struct {
-	ApplicationStartTime string `json:"application_start_time"`
-	EventEndTime         string `json:"event_end_time"`
-	EventStartTime       string `json:"event_start_time"`
-	Id                   *int   `json:"id,omitempty"`
-	IsCurrent            *bool  `json:"is_current,omitempty"`
-	MaxSize              int    `json:"max_size"`
-	Name                 string `json:"name"`
-}
-
-// ControllerEventResponse defines model for controller.EventResponse.
-type ControllerEventResponse struct {
-	ApplicationStartTime string                   `json:"application_start_time"`
-	EventEndTime         string                   `json:"event_end_time"`
-	EventStartTime       string                   `json:"event_start_time"`
-	Id                   int                      `json:"id"`
-	IsCurrent            bool                     `json:"is_current"`
-	MaxSize              int                      `json:"max_size"`
-	Name                 string                   `json:"name"`
-	ScoringCategoryId    int                      `json:"scoring_category_id"`
-	Teams                []ControllerTeamResponse `json:"teams"`
-}
-
-// ControllerEventStatusResponse defines model for controller.EventStatusResponse.
-type ControllerEventStatusResponse struct {
-	ApplicationStatus ControllerApplicationStatus `json:"application_status"`
-	TeamId            *int                        `json:"team_id,omitempty"`
-}
-
-// ControllerMinimalUserResponse defines model for controller.MinimalUserResponse.
-type ControllerMinimalUserResponse struct {
-	DisplayName string `json:"display_name"`
-	Id          int    `json:"id"`
-}
-
-// ControllerNonSensitiveUserResponse defines model for controller.NonSensitiveUserResponse.
-type ControllerNonSensitiveUserResponse struct {
-	AccountName *string `json:"account_name,omitempty"`
-	DiscordId   *string `json:"discord_id,omitempty"`
-	DiscordName *string `json:"discord_name,omitempty"`
-	DisplayName string  `json:"display_name"`
-	Id          int     `json:"id"`
-	TwitchId    *string `json:"twitch_id,omitempty"`
-	TwitchName  *string `json:"twitch_name,omitempty"`
-}
-
-// ControllerObjectiveCreate defines model for controller.ObjectiveCreate.
-type ControllerObjectiveCreate struct {
-	Aggregation     RepositoryAggregationType   `json:"aggregation"`
-	CategoryId      int                         `json:"category_id"`
-	Conditions      []ControllerConditionCreate `json:"conditions"`
-	Extra           *string                     `json:"extra,omitempty"`
-	Id              *int                        `json:"id,omitempty"`
-	Name            string                      `json:"name"`
-	NumberField     RepositoryNumberField       `json:"number_field"`
-	ObjectiveType   RepositoryObjectiveType     `json:"objective_type"`
-	RequiredNumber  int                         `json:"required_number"`
-	ScoringPresetId *int                        `json:"scoring_preset_id,omitempty"`
-	ValidFrom       *string                     `json:"valid_from,omitempty"`
-	ValidTo         *string                     `json:"valid_to,omitempty"`
-}
-
-// ControllerObjectiveResponse defines model for controller.ObjectiveResponse.
-type ControllerObjectiveResponse struct {
-	Aggregation     RepositoryAggregationType     `json:"aggregation"`
-	CategoryId      int                           `json:"category_id"`
-	Conditions      []ControllerConditionResponse `json:"conditions"`
-	Extra           string                        `json:"extra"`
-	Id              int                           `json:"id"`
-	Name            string                        `json:"name"`
-	NumberField     RepositoryNumberField         `json:"number_field"`
-	ObjectiveType   RepositoryObjectiveType       `json:"objective_type"`
-	RequiredNumber  int                           `json:"required_number"`
-	ScoringPresetId *int                          `json:"scoring_preset_id,omitempty"`
-	ValidFrom       *string                       `json:"valid_from,omitempty"`
-	ValidTo         *string                       `json:"valid_to,omitempty"`
-}
-
-// ControllerScoreResponse defines model for controller.ScoreResponse.
-type ControllerScoreResponse struct {
-	Finished  bool             `json:"finished"`
-	Id        int              `json:"id"`
-	Number    int              `json:"number"`
-	Points    int              `json:"points"`
-	Rank      int              `json:"rank"`
-	TeamId    int              `json:"team_id"`
-	Timestamp string           `json:"timestamp"`
-	Type      ScoringScoreType `json:"type"`
-	UserId    int              `json:"user_id"`
-}
-
-// ControllerScoringPresetCreate defines model for controller.ScoringPresetCreate.
-type ControllerScoringPresetCreate struct {
-	Description   *string                     `json:"description,omitempty"`
-	EventId       int                         `json:"event_id"`
-	Id            *int                        `json:"id,omitempty"`
-	Name          string                      `json:"name"`
-	Points        []float32                   `json:"points"`
-	ScoringMethod RepositoryScoringMethod     `json:"scoring_method"`
-	Type          RepositoryScoringPresetType `json:"type"`
-}
-
-// ControllerScoringPresetResponse defines model for controller.ScoringPresetResponse.
-type ControllerScoringPresetResponse struct {
-	Description   string                      `json:"description"`
-	Id            int                         `json:"id"`
-	Name          string                      `json:"name"`
-	Points        []float32                   `json:"points"`
-	ScoringMethod RepositoryScoringMethod     `json:"scoring_method"`
-	Type          RepositoryScoringPresetType `json:"type"`
-}
-
-// ControllerSignupResponse defines model for controller.SignupResponse.
-type ControllerSignupResponse struct {
-	ExpectedPlaytime RepositoryExpectedPlayTime         `json:"expected_playtime"`
-	Id               int                                `json:"id"`
-	TeamId           *int                               `json:"team_id,omitempty"`
-	Timestamp        string                             `json:"timestamp"`
-	User             ControllerNonSensitiveUserResponse `json:"user"`
-}
-
-// ControllerSubmissionResponse defines model for controller.SubmissionResponse.
-type ControllerSubmissionResponse struct {
-	ApprovalStatus RepositoryApprovalStatus            `json:"approval_status"`
-	Comment        string                              `json:"comment"`
-	Id             int                                 `json:"id"`
-	Number         int                                 `json:"number"`
-	Objective      *ControllerObjectiveResponse        `json:"objective,omitempty"`
-	Proof          string                              `json:"proof"`
-	ReviewComment  *string                             `json:"review_comment,omitempty"`
-	ReviewerId     *int                                `json:"reviewer_id,omitempty"`
-	TeamId         *int                                `json:"team_id,omitempty"`
-	Timestamp      string                              `json:"timestamp"`
-	User           *ControllerNonSensitiveUserResponse `json:"user,omitempty"`
-}
-
-// ControllerTeamResponse defines model for controller.TeamResponse.
-type ControllerTeamResponse struct {
-	AllowedClasses []string `json:"allowed_classes"`
-	EventId        int      `json:"event_id"`
-	Id             int      `json:"id"`
-	Name           string   `json:"name"`
-}
-
-// ControllerUserAdminResponse defines model for controller.UserAdminResponse.
-type ControllerUserAdminResponse struct {
-	AccountName *string                `json:"account_name,omitempty"`
-	DiscordId   *string                `json:"discord_id,omitempty"`
-	DiscordName *string                `json:"discord_name,omitempty"`
-	DisplayName string                 `json:"display_name"`
-	Id          int                    `json:"id"`
-	Permissions []RepositoryPermission `json:"permissions"`
-	TwitchId    *string                `json:"twitch_id,omitempty"`
-	TwitchName  *string                `json:"twitch_name,omitempty"`
-}
-
-// ControllerUserResponse defines model for controller.UserResponse.
-type ControllerUserResponse struct {
-	AccountName          *string                 `json:"account_name,omitempty"`
-	DiscordId            *string                 `json:"discord_id,omitempty"`
-	DiscordName          *string                 `json:"discord_name,omitempty"`
-	DisplayName          string                  `json:"display_name"`
-	Id                   int                     `json:"id"`
-	Permissions          *[]RepositoryPermission `json:"permissions,omitempty"`
-	TokenExpiryTimestamp *string                 `json:"token_expiry_timestamp,omitempty"`
-	TwitchId             *string                 `json:"twitch_id,omitempty"`
-	TwitchName           *string                 `json:"twitch_name,omitempty"`
-}
-
-// ControllerUserUpdate defines model for controller.UserUpdate.
-type ControllerUserUpdate struct {
+// UserUpdate defines model for UserUpdate.
+type UserUpdate struct {
 	DisplayName string `json:"display_name"`
 }
-
-// RepositoryAggregationType defines model for repository.AggregationType.
-type RepositoryAggregationType string
-
-// RepositoryApprovalStatus defines model for repository.ApprovalStatus.
-type RepositoryApprovalStatus string
-
-// RepositoryExpectedPlayTime defines model for repository.ExpectedPlayTime.
-type RepositoryExpectedPlayTime string
-
-// RepositoryItemField defines model for repository.ItemField.
-type RepositoryItemField string
-
-// RepositoryNumberField defines model for repository.NumberField.
-type RepositoryNumberField string
-
-// RepositoryObjectiveType defines model for repository.ObjectiveType.
-type RepositoryObjectiveType string
-
-// RepositoryOperator defines model for repository.Operator.
-type RepositoryOperator string
-
-// RepositoryPermission defines model for repository.Permission.
-type RepositoryPermission string
-
-// RepositoryScoringMethod defines model for repository.ScoringMethod.
-type RepositoryScoringMethod string
-
-// RepositoryScoringPresetType defines model for repository.ScoringPresetType.
-type RepositoryScoringPresetType string
-
-// ScoringScoreType defines model for scoring.ScoreType.
-type ScoringScoreType string
 
 // RemoveAuthParams defines parameters for RemoveAuth.
 type RemoveAuthParams struct {
@@ -402,25 +462,34 @@ type RemoveAuthParams struct {
 }
 
 // ChangePermissionsJSONBody defines parameters for ChangePermissions.
-type ChangePermissionsJSONBody = []RepositoryPermission
+type ChangePermissionsJSONBody = []Permission
 
 // CreateEventJSONRequestBody defines body for CreateEvent for application/json ContentType.
-type CreateEventJSONRequestBody = ControllerEventCreate
+type CreateEventJSONRequestBody = EventCreate
+
+// SubmitBountyJSONRequestBody defines body for SubmitBounty for application/json ContentType.
+type SubmitBountyJSONRequestBody = SubmissionCreate
+
+// ReviewSubmissionJSONRequestBody defines body for ReviewSubmission for application/json ContentType.
+type ReviewSubmissionJSONRequestBody = SubmissionReview
 
 // LoginDiscordBotJSONRequestBody defines body for LoginDiscordBot for application/json ContentType.
-type LoginDiscordBotJSONRequestBody = ControllerDiscordBotLoginBody
+type LoginDiscordBotJSONRequestBody = DiscordBotLoginBody
+
+// CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
+type CreateCategoryJSONRequestBody = CategoryCreate
 
 // CreateConditionJSONRequestBody defines body for CreateCondition for application/json ContentType.
-type CreateConditionJSONRequestBody = ControllerConditionCreate
+type CreateConditionJSONRequestBody = ConditionCreate
 
 // CreateObjectiveJSONRequestBody defines body for CreateObjective for application/json ContentType.
-type CreateObjectiveJSONRequestBody = ControllerObjectiveCreate
+type CreateObjectiveJSONRequestBody = ObjectiveCreate
 
 // CreateScoringPresetJSONRequestBody defines body for CreateScoringPreset for application/json ContentType.
-type CreateScoringPresetJSONRequestBody = ControllerScoringPresetCreate
+type CreateScoringPresetJSONRequestBody = ScoringPresetCreate
 
 // UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
-type UpdateUserJSONRequestBody = ControllerUserUpdate
+type UpdateUserJSONRequestBody = UserUpdate
 
 // ChangePermissionsJSONRequestBody defines body for ChangePermissions for application/json ContentType.
 type ChangePermissionsJSONRequestBody = ChangePermissionsJSONBody
@@ -515,6 +584,15 @@ type ClientInterface interface {
 	// GetEvent request
 	GetEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetRulesForEvent request
+	GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetLatestScoresForEvent request
+	GetLatestScoresForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ScoreWebSocket request
+	ScoreWebSocket(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetScoringPresetsForEvent request
 	GetScoringPresetsForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -536,14 +614,18 @@ type ClientInterface interface {
 	// GetSubmissions request
 	GetSubmissions(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// SubmitBounty request
-	SubmitBounty(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// SubmitBountyWithBody request with any body
+	SubmitBountyWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	SubmitBounty(ctx context.Context, eventId int, body SubmitBountyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteSubmission request
 	DeleteSubmission(ctx context.Context, eventId int, submissionId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ReviewSubmission request
-	ReviewSubmission(ctx context.Context, eventId int, submissionId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ReviewSubmissionWithBody request with any body
+	ReviewSubmissionWithBody(ctx context.Context, eventId int, submissionId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ReviewSubmission(ctx context.Context, eventId int, submissionId int, body ReviewSubmissionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTeams request
 	GetTeams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -563,6 +645,9 @@ type ClientInterface interface {
 	// GetUsersForEvent request
 	GetUsersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetJobs request
+	GetJobs(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetOauth2Discord request
 	GetOauth2Discord(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -580,11 +665,10 @@ type ClientInterface interface {
 	// GetOauth2TwitchRedirect request
 	GetOauth2TwitchRedirect(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetLatestScoresForEvent request
-	GetLatestScoresForEvent(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateCategoryWithBody request with any body
+	CreateCategoryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetRulesForEvent request
-	GetRulesForEvent(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateCategory(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteCategory request
 	DeleteCategory(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -615,6 +699,9 @@ type ClientInterface interface {
 	CreateScoringPresetWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	CreateScoringPreset(ctx context.Context, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteScoringPreset request
+	DeleteScoringPreset(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetScoringPreset request
 	GetScoringPreset(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -717,6 +804,42 @@ func (c *Client) GetEvent(ctx context.Context, eventId int, reqEditors ...Reques
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetRulesForEventRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLatestScoresForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLatestScoresForEventRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ScoreWebSocket(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewScoreWebSocketRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetScoringPresetsForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetScoringPresetsForEventRequest(c.Server, eventId)
 	if err != nil {
@@ -801,8 +924,20 @@ func (c *Client) GetSubmissions(ctx context.Context, eventId int, reqEditors ...
 	return c.Client.Do(req)
 }
 
-func (c *Client) SubmitBounty(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSubmitBountyRequest(c.Server, eventId)
+func (c *Client) SubmitBountyWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSubmitBountyRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SubmitBounty(ctx context.Context, eventId int, body SubmitBountyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSubmitBountyRequest(c.Server, eventId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -825,8 +960,20 @@ func (c *Client) DeleteSubmission(ctx context.Context, eventId int, submissionId
 	return c.Client.Do(req)
 }
 
-func (c *Client) ReviewSubmission(ctx context.Context, eventId int, submissionId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewReviewSubmissionRequest(c.Server, eventId, submissionId)
+func (c *Client) ReviewSubmissionWithBody(ctx context.Context, eventId int, submissionId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReviewSubmissionRequestWithBody(c.Server, eventId, submissionId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ReviewSubmission(ctx context.Context, eventId int, submissionId int, body ReviewSubmissionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReviewSubmissionRequest(c.Server, eventId, submissionId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -909,6 +1056,18 @@ func (c *Client) GetUsersForEvent(ctx context.Context, eventId int, reqEditors .
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetJobs(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetJobsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetOauth2Discord(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetOauth2DiscordRequest(c.Server)
 	if err != nil {
@@ -981,8 +1140,8 @@ func (c *Client) GetOauth2TwitchRedirect(ctx context.Context, reqEditors ...Requ
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetLatestScoresForEvent(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetLatestScoresForEventRequest(c.Server)
+func (c *Client) CreateCategoryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCategoryRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -993,8 +1152,8 @@ func (c *Client) GetLatestScoresForEvent(ctx context.Context, reqEditors ...Requ
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetRulesForEvent(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetRulesForEventRequest(c.Server)
+func (c *Client) CreateCategory(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCategoryRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1127,6 +1286,18 @@ func (c *Client) CreateScoringPresetWithBody(ctx context.Context, contentType st
 
 func (c *Client) CreateScoringPreset(ctx context.Context, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateScoringPresetRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteScoringPreset(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteScoringPresetRequest(c.Server, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1419,6 +1590,108 @@ func NewGetEventRequest(server string, eventId int) (*http.Request, error) {
 	return req, nil
 }
 
+// NewGetRulesForEventRequest generates requests for GetRulesForEvent
+func NewGetRulesForEventRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/rules", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetLatestScoresForEventRequest generates requests for GetLatestScoresForEvent
+func NewGetLatestScoresForEventRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/scores/latest", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewScoreWebSocketRequest generates requests for ScoreWebSocket
+func NewScoreWebSocketRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/scores/ws", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetScoringPresetsForEventRequest generates requests for GetScoringPresetsForEvent
 func NewGetScoringPresetsForEventRequest(server string, eventId int) (*http.Request, error) {
 	var err error
@@ -1657,8 +1930,19 @@ func NewGetSubmissionsRequest(server string, eventId int) (*http.Request, error)
 	return req, nil
 }
 
-// NewSubmitBountyRequest generates requests for SubmitBounty
-func NewSubmitBountyRequest(server string, eventId int) (*http.Request, error) {
+// NewSubmitBountyRequest calls the generic SubmitBounty builder with application/json body
+func NewSubmitBountyRequest(server string, eventId int, body SubmitBountyJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSubmitBountyRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewSubmitBountyRequestWithBody generates requests for SubmitBounty with any type of body
+func NewSubmitBountyRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1683,10 +1967,12 @@ func NewSubmitBountyRequest(server string, eventId int) (*http.Request, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), nil)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -1732,8 +2018,19 @@ func NewDeleteSubmissionRequest(server string, eventId int, submissionId int) (*
 	return req, nil
 }
 
-// NewReviewSubmissionRequest generates requests for ReviewSubmission
-func NewReviewSubmissionRequest(server string, eventId int, submissionId int) (*http.Request, error) {
+// NewReviewSubmissionRequest calls the generic ReviewSubmission builder with application/json body
+func NewReviewSubmissionRequest(server string, eventId int, submissionId int, body ReviewSubmissionJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewReviewSubmissionRequestWithBody(server, eventId, submissionId, "application/json", bodyReader)
+}
+
+// NewReviewSubmissionRequestWithBody generates requests for ReviewSubmission with any type of body
+func NewReviewSubmissionRequestWithBody(server string, eventId int, submissionId int, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1765,10 +2062,12 @@ func NewReviewSubmissionRequest(server string, eventId int, submissionId int) (*
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), nil)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -1991,6 +2290,33 @@ func NewGetUsersForEventRequest(server string, eventId int) (*http.Request, erro
 	return req, nil
 }
 
+// NewGetJobsRequest generates requests for GetJobs
+func NewGetJobsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/jobs")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetOauth2DiscordRequest generates requests for GetOauth2Discord
 func NewGetOauth2DiscordRequest(server string) (*http.Request, error) {
 	var err error
@@ -2139,35 +2465,19 @@ func NewGetOauth2TwitchRedirectRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewGetLatestScoresForEventRequest generates requests for GetLatestScoresForEvent
-func NewGetLatestScoresForEventRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
+// NewCreateCategoryRequest calls the generic CreateCategory builder with application/json body
+func NewCreateCategoryRequest(server string, body CreateCategoryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
-
-	operationPath := fmt.Sprintf("/scores/latest")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateCategoryRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewGetRulesForEventRequest generates requests for GetRulesForEvent
-func NewGetRulesForEventRequest(server string) (*http.Request, error) {
+// NewCreateCategoryRequestWithBody generates requests for CreateCategory with any type of body
+func NewCreateCategoryRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2185,10 +2495,12 @@ func NewGetRulesForEventRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2479,6 +2791,40 @@ func NewCreateScoringPresetRequestWithBody(server string, contentType string, bo
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteScoringPresetRequest generates requests for DeleteScoringPreset
+func NewDeleteScoringPresetRequest(server string, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/scoring/presets/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -2817,6 +3163,15 @@ type ClientWithResponsesInterface interface {
 	// GetEventWithResponse request
 	GetEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventResponse, error)
 
+	// GetRulesForEventWithResponse request
+	GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error)
+
+	// GetLatestScoresForEventWithResponse request
+	GetLatestScoresForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetLatestScoresForEventResponse, error)
+
+	// ScoreWebSocketWithResponse request
+	ScoreWebSocketWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*ScoreWebSocketResponse, error)
+
 	// GetScoringPresetsForEventWithResponse request
 	GetScoringPresetsForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetScoringPresetsForEventResponse, error)
 
@@ -2838,14 +3193,18 @@ type ClientWithResponsesInterface interface {
 	// GetSubmissionsWithResponse request
 	GetSubmissionsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetSubmissionsResponse, error)
 
-	// SubmitBountyWithResponse request
-	SubmitBountyWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*SubmitBountyResponse, error)
+	// SubmitBountyWithBodyWithResponse request with any body
+	SubmitBountyWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SubmitBountyResponse, error)
+
+	SubmitBountyWithResponse(ctx context.Context, eventId int, body SubmitBountyJSONRequestBody, reqEditors ...RequestEditorFn) (*SubmitBountyResponse, error)
 
 	// DeleteSubmissionWithResponse request
 	DeleteSubmissionWithResponse(ctx context.Context, eventId int, submissionId int, reqEditors ...RequestEditorFn) (*DeleteSubmissionResponse, error)
 
-	// ReviewSubmissionWithResponse request
-	ReviewSubmissionWithResponse(ctx context.Context, eventId int, submissionId int, reqEditors ...RequestEditorFn) (*ReviewSubmissionResponse, error)
+	// ReviewSubmissionWithBodyWithResponse request with any body
+	ReviewSubmissionWithBodyWithResponse(ctx context.Context, eventId int, submissionId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReviewSubmissionResponse, error)
+
+	ReviewSubmissionWithResponse(ctx context.Context, eventId int, submissionId int, body ReviewSubmissionJSONRequestBody, reqEditors ...RequestEditorFn) (*ReviewSubmissionResponse, error)
 
 	// GetTeamsWithResponse request
 	GetTeamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamsResponse, error)
@@ -2865,6 +3224,9 @@ type ClientWithResponsesInterface interface {
 	// GetUsersForEventWithResponse request
 	GetUsersForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetUsersForEventResponse, error)
 
+	// GetJobsWithResponse request
+	GetJobsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetJobsResponse, error)
+
 	// GetOauth2DiscordWithResponse request
 	GetOauth2DiscordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2DiscordResponse, error)
 
@@ -2882,11 +3244,10 @@ type ClientWithResponsesInterface interface {
 	// GetOauth2TwitchRedirectWithResponse request
 	GetOauth2TwitchRedirectWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2TwitchRedirectResponse, error)
 
-	// GetLatestScoresForEventWithResponse request
-	GetLatestScoresForEventWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetLatestScoresForEventResponse, error)
+	// CreateCategoryWithBodyWithResponse request with any body
+	CreateCategoryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
 
-	// GetRulesForEventWithResponse request
-	GetRulesForEventWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error)
+	CreateCategoryWithResponse(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
 
 	// DeleteCategoryWithResponse request
 	DeleteCategoryWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryResponse, error)
@@ -2917,6 +3278,9 @@ type ClientWithResponsesInterface interface {
 	CreateScoringPresetWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error)
 
 	CreateScoringPresetWithResponse(ctx context.Context, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error)
+
+	// DeleteScoringPresetWithResponse request
+	DeleteScoringPresetWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteScoringPresetResponse, error)
 
 	// GetScoringPresetWithResponse request
 	GetScoringPresetWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetScoringPresetResponse, error)
@@ -2950,7 +3314,7 @@ type ClientWithResponsesInterface interface {
 type GetEventsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ControllerEventResponse
+	JSON200      *[]Event
 }
 
 // Status returns HTTPResponse.Status
@@ -2972,7 +3336,7 @@ func (r GetEventsResponse) StatusCode() int {
 type CreateEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *ControllerEventResponse
+	JSON201      *Event
 }
 
 // Status returns HTTPResponse.Status
@@ -2994,7 +3358,7 @@ func (r CreateEventResponse) StatusCode() int {
 type GetCurrentEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerEventResponse
+	JSON200      *Event
 }
 
 // Status returns HTTPResponse.Status
@@ -3037,7 +3401,7 @@ func (r DeleteEventResponse) StatusCode() int {
 type GetEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *ControllerEventResponse
+	JSON201      *Event
 }
 
 // Status returns HTTPResponse.Status
@@ -3056,10 +3420,75 @@ func (r GetEventResponse) StatusCode() int {
 	return 0
 }
 
+type GetRulesForEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Category
+}
+
+// Status returns HTTPResponse.Status
+func (r GetRulesForEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetRulesForEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetLatestScoresForEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ScoreMap
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLatestScoresForEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLatestScoresForEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ScoreWebSocketResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ScoreWebSocketResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ScoreWebSocketResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetScoringPresetsForEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ControllerScoringPresetResponse
+	JSON200      *[]ScoringPreset
 }
 
 // Status returns HTTPResponse.Status
@@ -3081,7 +3510,7 @@ func (r GetScoringPresetsForEventResponse) StatusCode() int {
 type GetEventSignupsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *map[string][]ControllerSignupResponse
+	JSON200      *map[string][]Signup
 }
 
 // Status returns HTTPResponse.Status
@@ -3124,7 +3553,7 @@ func (r DeleteSignupResponse) StatusCode() int {
 type GetPersonalSignupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerSignupResponse
+	JSON200      *Signup
 }
 
 // Status returns HTTPResponse.Status
@@ -3146,7 +3575,7 @@ func (r GetPersonalSignupResponse) StatusCode() int {
 type CreateSignupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *ControllerSignupResponse
+	JSON201      *Signup
 }
 
 // Status returns HTTPResponse.Status
@@ -3168,7 +3597,7 @@ func (r CreateSignupResponse) StatusCode() int {
 type GetEventStatusForUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerEventStatusResponse
+	JSON200      *EventStatus
 }
 
 // Status returns HTTPResponse.Status
@@ -3190,7 +3619,7 @@ func (r GetEventStatusForUserResponse) StatusCode() int {
 type GetSubmissionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ControllerSubmissionResponse
+	JSON200      *[]Submission
 }
 
 // Status returns HTTPResponse.Status
@@ -3212,7 +3641,7 @@ func (r GetSubmissionsResponse) StatusCode() int {
 type SubmitBountyResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *ControllerSubmissionResponse
+	JSON201      *Submission
 }
 
 // Status returns HTTPResponse.Status
@@ -3255,7 +3684,7 @@ func (r DeleteSubmissionResponse) StatusCode() int {
 type ReviewSubmissionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerSubmissionResponse
+	JSON200      *Submission
 }
 
 // Status returns HTTPResponse.Status
@@ -3277,7 +3706,7 @@ func (r ReviewSubmissionResponse) StatusCode() int {
 type GetTeamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ControllerTeamResponse
+	JSON200      *[]Team
 }
 
 // Status returns HTTPResponse.Status
@@ -3299,7 +3728,7 @@ func (r GetTeamsResponse) StatusCode() int {
 type CreateTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *ControllerTeamResponse
+	JSON201      *Team
 }
 
 // Status returns HTTPResponse.Status
@@ -3363,7 +3792,7 @@ func (r DeleteTeamResponse) StatusCode() int {
 type GetTeamResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerTeamResponse
+	JSON200      *Team
 }
 
 // Status returns HTTPResponse.Status
@@ -3385,7 +3814,7 @@ func (r GetTeamResponse) StatusCode() int {
 type GetUsersForEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *map[string][]ControllerMinimalUserResponse
+	JSON200      *map[string][]MinimalUser
 }
 
 // Status returns HTTPResponse.Status
@@ -3398,6 +3827,28 @@ func (r GetUsersForEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetUsersForEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetJobsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]RecurringJob
+}
+
+// Status returns HTTPResponse.Status
+func (r GetJobsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetJobsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3510,14 +3961,14 @@ func (r GetOauth2TwitchRedirectResponse) StatusCode() int {
 	return 0
 }
 
-type GetLatestScoresForEventResponse struct {
+type CreateCategoryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ControllerScoreResponse
+	JSON201      *Category
 }
 
 // Status returns HTTPResponse.Status
-func (r GetLatestScoresForEventResponse) Status() string {
+func (r CreateCategoryResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3525,29 +3976,7 @@ func (r GetLatestScoresForEventResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetLatestScoresForEventResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetRulesForEventResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]ControllerCategoryResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r GetRulesForEventResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetRulesForEventResponse) StatusCode() int {
+func (r CreateCategoryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3578,7 +4007,7 @@ func (r DeleteCategoryResponse) StatusCode() int {
 type GetScoringCategoryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerCategoryResponse
+	JSON200      *Category
 }
 
 // Status returns HTTPResponse.Status
@@ -3600,7 +4029,7 @@ func (r GetScoringCategoryResponse) StatusCode() int {
 type CreateConditionResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *ControllerConditionResponse
+	JSON201      *Condition
 }
 
 // Status returns HTTPResponse.Status
@@ -3643,7 +4072,7 @@ func (r DeleteConditionResponse) StatusCode() int {
 type CreateObjectiveResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *ControllerObjectiveResponse
+	JSON201      *Objective
 }
 
 // Status returns HTTPResponse.Status
@@ -3686,7 +4115,7 @@ func (r DeleteObjectiveResponse) StatusCode() int {
 type GetObjectiveResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerObjectiveResponse
+	JSON200      *Objective
 }
 
 // Status returns HTTPResponse.Status
@@ -3708,7 +4137,7 @@ func (r GetObjectiveResponse) StatusCode() int {
 type CreateScoringPresetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerScoringPresetResponse
+	JSON200      *ScoringPreset
 }
 
 // Status returns HTTPResponse.Status
@@ -3727,10 +4156,31 @@ func (r CreateScoringPresetResponse) StatusCode() int {
 	return 0
 }
 
+type DeleteScoringPresetResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteScoringPresetResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteScoringPresetResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetScoringPresetResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerScoringPresetResponse
+	JSON200      *ScoringPreset
 }
 
 // Status returns HTTPResponse.Status
@@ -3752,7 +4202,7 @@ func (r GetScoringPresetResponse) StatusCode() int {
 type GetStreamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ClientStream
+	JSON200      *[]TwitchStream
 }
 
 // Status returns HTTPResponse.Status
@@ -3774,7 +4224,7 @@ func (r GetStreamsResponse) StatusCode() int {
 type GetAllUsersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ControllerUserAdminResponse
+	JSON200      *[]User
 }
 
 // Status returns HTTPResponse.Status
@@ -3817,7 +4267,7 @@ func (r LogoutResponse) StatusCode() int {
 type RemoveAuthResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerUserResponse
+	JSON200      *User
 }
 
 // Status returns HTTPResponse.Status
@@ -3839,7 +4289,7 @@ func (r RemoveAuthResponse) StatusCode() int {
 type GetUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerUserResponse
+	JSON200      *User
 }
 
 // Status returns HTTPResponse.Status
@@ -3861,7 +4311,7 @@ func (r GetUserResponse) StatusCode() int {
 type UpdateUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ControllerUserResponse
+	JSON200      *User
 }
 
 // Status returns HTTPResponse.Status
@@ -3883,6 +4333,7 @@ func (r UpdateUserResponse) StatusCode() int {
 type ChangePermissionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *User
 }
 
 // Status returns HTTPResponse.Status
@@ -3954,6 +4405,33 @@ func (c *ClientWithResponses) GetEventWithResponse(ctx context.Context, eventId 
 	return ParseGetEventResponse(rsp)
 }
 
+// GetRulesForEventWithResponse request returning *GetRulesForEventResponse
+func (c *ClientWithResponses) GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error) {
+	rsp, err := c.GetRulesForEvent(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetRulesForEventResponse(rsp)
+}
+
+// GetLatestScoresForEventWithResponse request returning *GetLatestScoresForEventResponse
+func (c *ClientWithResponses) GetLatestScoresForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetLatestScoresForEventResponse, error) {
+	rsp, err := c.GetLatestScoresForEvent(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLatestScoresForEventResponse(rsp)
+}
+
+// ScoreWebSocketWithResponse request returning *ScoreWebSocketResponse
+func (c *ClientWithResponses) ScoreWebSocketWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*ScoreWebSocketResponse, error) {
+	rsp, err := c.ScoreWebSocket(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseScoreWebSocketResponse(rsp)
+}
+
 // GetScoringPresetsForEventWithResponse request returning *GetScoringPresetsForEventResponse
 func (c *ClientWithResponses) GetScoringPresetsForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetScoringPresetsForEventResponse, error) {
 	rsp, err := c.GetScoringPresetsForEvent(ctx, eventId, reqEditors...)
@@ -4017,9 +4495,17 @@ func (c *ClientWithResponses) GetSubmissionsWithResponse(ctx context.Context, ev
 	return ParseGetSubmissionsResponse(rsp)
 }
 
-// SubmitBountyWithResponse request returning *SubmitBountyResponse
-func (c *ClientWithResponses) SubmitBountyWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*SubmitBountyResponse, error) {
-	rsp, err := c.SubmitBounty(ctx, eventId, reqEditors...)
+// SubmitBountyWithBodyWithResponse request with arbitrary body returning *SubmitBountyResponse
+func (c *ClientWithResponses) SubmitBountyWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SubmitBountyResponse, error) {
+	rsp, err := c.SubmitBountyWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSubmitBountyResponse(rsp)
+}
+
+func (c *ClientWithResponses) SubmitBountyWithResponse(ctx context.Context, eventId int, body SubmitBountyJSONRequestBody, reqEditors ...RequestEditorFn) (*SubmitBountyResponse, error) {
+	rsp, err := c.SubmitBounty(ctx, eventId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4035,9 +4521,17 @@ func (c *ClientWithResponses) DeleteSubmissionWithResponse(ctx context.Context, 
 	return ParseDeleteSubmissionResponse(rsp)
 }
 
-// ReviewSubmissionWithResponse request returning *ReviewSubmissionResponse
-func (c *ClientWithResponses) ReviewSubmissionWithResponse(ctx context.Context, eventId int, submissionId int, reqEditors ...RequestEditorFn) (*ReviewSubmissionResponse, error) {
-	rsp, err := c.ReviewSubmission(ctx, eventId, submissionId, reqEditors...)
+// ReviewSubmissionWithBodyWithResponse request with arbitrary body returning *ReviewSubmissionResponse
+func (c *ClientWithResponses) ReviewSubmissionWithBodyWithResponse(ctx context.Context, eventId int, submissionId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReviewSubmissionResponse, error) {
+	rsp, err := c.ReviewSubmissionWithBody(ctx, eventId, submissionId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReviewSubmissionResponse(rsp)
+}
+
+func (c *ClientWithResponses) ReviewSubmissionWithResponse(ctx context.Context, eventId int, submissionId int, body ReviewSubmissionJSONRequestBody, reqEditors ...RequestEditorFn) (*ReviewSubmissionResponse, error) {
+	rsp, err := c.ReviewSubmission(ctx, eventId, submissionId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4098,6 +4592,15 @@ func (c *ClientWithResponses) GetUsersForEventWithResponse(ctx context.Context, 
 	return ParseGetUsersForEventResponse(rsp)
 }
 
+// GetJobsWithResponse request returning *GetJobsResponse
+func (c *ClientWithResponses) GetJobsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetJobsResponse, error) {
+	rsp, err := c.GetJobs(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetJobsResponse(rsp)
+}
+
 // GetOauth2DiscordWithResponse request returning *GetOauth2DiscordResponse
 func (c *ClientWithResponses) GetOauth2DiscordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2DiscordResponse, error) {
 	rsp, err := c.GetOauth2Discord(ctx, reqEditors...)
@@ -4151,22 +4654,21 @@ func (c *ClientWithResponses) GetOauth2TwitchRedirectWithResponse(ctx context.Co
 	return ParseGetOauth2TwitchRedirectResponse(rsp)
 }
 
-// GetLatestScoresForEventWithResponse request returning *GetLatestScoresForEventResponse
-func (c *ClientWithResponses) GetLatestScoresForEventWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetLatestScoresForEventResponse, error) {
-	rsp, err := c.GetLatestScoresForEvent(ctx, reqEditors...)
+// CreateCategoryWithBodyWithResponse request with arbitrary body returning *CreateCategoryResponse
+func (c *ClientWithResponses) CreateCategoryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
+	rsp, err := c.CreateCategoryWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetLatestScoresForEventResponse(rsp)
+	return ParseCreateCategoryResponse(rsp)
 }
 
-// GetRulesForEventWithResponse request returning *GetRulesForEventResponse
-func (c *ClientWithResponses) GetRulesForEventWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error) {
-	rsp, err := c.GetRulesForEvent(ctx, reqEditors...)
+func (c *ClientWithResponses) CreateCategoryWithResponse(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
+	rsp, err := c.CreateCategory(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetRulesForEventResponse(rsp)
+	return ParseCreateCategoryResponse(rsp)
 }
 
 // DeleteCategoryWithResponse request returning *DeleteCategoryResponse
@@ -4263,6 +4765,15 @@ func (c *ClientWithResponses) CreateScoringPresetWithResponse(ctx context.Contex
 		return nil, err
 	}
 	return ParseCreateScoringPresetResponse(rsp)
+}
+
+// DeleteScoringPresetWithResponse request returning *DeleteScoringPresetResponse
+func (c *ClientWithResponses) DeleteScoringPresetWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteScoringPresetResponse, error) {
+	rsp, err := c.DeleteScoringPreset(ctx, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteScoringPresetResponse(rsp)
 }
 
 // GetScoringPresetWithResponse request returning *GetScoringPresetResponse
@@ -4368,7 +4879,7 @@ func ParseGetEventsResponse(rsp *http.Response) (*GetEventsResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ControllerEventResponse
+		var dest []Event
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4394,7 +4905,7 @@ func ParseCreateEventResponse(rsp *http.Response) (*CreateEventResponse, error) 
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ControllerEventResponse
+		var dest Event
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4420,7 +4931,7 @@ func ParseGetCurrentEventResponse(rsp *http.Response) (*GetCurrentEventResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerEventResponse
+		var dest Event
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4462,12 +4973,80 @@ func ParseGetEventResponse(rsp *http.Response) (*GetEventResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ControllerEventResponse
+		var dest Event
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON201 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseGetRulesForEventResponse parses an HTTP response from a GetRulesForEventWithResponse call
+func ParseGetRulesForEventResponse(rsp *http.Response) (*GetRulesForEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetRulesForEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Category
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLatestScoresForEventResponse parses an HTTP response from a GetLatestScoresForEventWithResponse call
+func ParseGetLatestScoresForEventResponse(rsp *http.Response) (*GetLatestScoresForEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLatestScoresForEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ScoreMap
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseScoreWebSocketResponse parses an HTTP response from a ScoreWebSocketWithResponse call
+func ParseScoreWebSocketResponse(rsp *http.Response) (*ScoreWebSocketResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ScoreWebSocketResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -4488,7 +5067,7 @@ func ParseGetScoringPresetsForEventResponse(rsp *http.Response) (*GetScoringPres
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ControllerScoringPresetResponse
+		var dest []ScoringPreset
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4514,7 +5093,7 @@ func ParseGetEventSignupsResponse(rsp *http.Response) (*GetEventSignupsResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest map[string][]ControllerSignupResponse
+		var dest map[string][]Signup
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4556,7 +5135,7 @@ func ParseGetPersonalSignupResponse(rsp *http.Response) (*GetPersonalSignupRespo
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerSignupResponse
+		var dest Signup
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4582,7 +5161,7 @@ func ParseCreateSignupResponse(rsp *http.Response) (*CreateSignupResponse, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ControllerSignupResponse
+		var dest Signup
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4608,7 +5187,7 @@ func ParseGetEventStatusForUserResponse(rsp *http.Response) (*GetEventStatusForU
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerEventStatusResponse
+		var dest EventStatus
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4634,7 +5213,7 @@ func ParseGetSubmissionsResponse(rsp *http.Response) (*GetSubmissionsResponse, e
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ControllerSubmissionResponse
+		var dest []Submission
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4660,7 +5239,7 @@ func ParseSubmitBountyResponse(rsp *http.Response) (*SubmitBountyResponse, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ControllerSubmissionResponse
+		var dest Submission
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4702,7 +5281,7 @@ func ParseReviewSubmissionResponse(rsp *http.Response) (*ReviewSubmissionRespons
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerSubmissionResponse
+		var dest Submission
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4728,7 +5307,7 @@ func ParseGetTeamsResponse(rsp *http.Response) (*GetTeamsResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ControllerTeamResponse
+		var dest []Team
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4754,7 +5333,7 @@ func ParseCreateTeamResponse(rsp *http.Response) (*CreateTeamResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ControllerTeamResponse
+		var dest Team
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4812,7 +5391,7 @@ func ParseGetTeamResponse(rsp *http.Response) (*GetTeamResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerTeamResponse
+		var dest Team
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4838,7 +5417,33 @@ func ParseGetUsersForEventResponse(rsp *http.Response) (*GetUsersForEventRespons
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest map[string][]ControllerMinimalUserResponse
+		var dest map[string][]MinimalUser
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetJobsResponse parses an HTTP response from a GetJobsWithResponse call
+func ParseGetJobsResponse(rsp *http.Response) (*GetJobsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetJobsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []RecurringJob
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4939,52 +5544,26 @@ func ParseGetOauth2TwitchRedirectResponse(rsp *http.Response) (*GetOauth2TwitchR
 	return response, nil
 }
 
-// ParseGetLatestScoresForEventResponse parses an HTTP response from a GetLatestScoresForEventWithResponse call
-func ParseGetLatestScoresForEventResponse(rsp *http.Response) (*GetLatestScoresForEventResponse, error) {
+// ParseCreateCategoryResponse parses an HTTP response from a CreateCategoryWithResponse call
+func ParseCreateCategoryResponse(rsp *http.Response) (*CreateCategoryResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetLatestScoresForEventResponse{
+	response := &CreateCategoryResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ControllerScoreResponse
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Category
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetRulesForEventResponse parses an HTTP response from a GetRulesForEventWithResponse call
-func ParseGetRulesForEventResponse(rsp *http.Response) (*GetRulesForEventResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetRulesForEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ControllerCategoryResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
+		response.JSON201 = &dest
 
 	}
 
@@ -5022,7 +5601,7 @@ func ParseGetScoringCategoryResponse(rsp *http.Response) (*GetScoringCategoryRes
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerCategoryResponse
+		var dest Category
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5048,7 +5627,7 @@ func ParseCreateConditionResponse(rsp *http.Response) (*CreateConditionResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ControllerConditionResponse
+		var dest Condition
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5090,7 +5669,7 @@ func ParseCreateObjectiveResponse(rsp *http.Response) (*CreateObjectiveResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ControllerObjectiveResponse
+		var dest Objective
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5132,7 +5711,7 @@ func ParseGetObjectiveResponse(rsp *http.Response) (*GetObjectiveResponse, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerObjectiveResponse
+		var dest Objective
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5158,12 +5737,28 @@ func ParseCreateScoringPresetResponse(rsp *http.Response) (*CreateScoringPresetR
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerScoringPresetResponse
+		var dest ScoringPreset
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseDeleteScoringPresetResponse parses an HTTP response from a DeleteScoringPresetWithResponse call
+func ParseDeleteScoringPresetResponse(rsp *http.Response) (*DeleteScoringPresetResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteScoringPresetResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -5184,7 +5779,7 @@ func ParseGetScoringPresetResponse(rsp *http.Response) (*GetScoringPresetRespons
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerScoringPresetResponse
+		var dest ScoringPreset
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5210,7 +5805,7 @@ func ParseGetStreamsResponse(rsp *http.Response) (*GetStreamsResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ClientStream
+		var dest []TwitchStream
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5236,7 +5831,7 @@ func ParseGetAllUsersResponse(rsp *http.Response) (*GetAllUsersResponse, error) 
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ControllerUserAdminResponse
+		var dest []User
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5278,7 +5873,7 @@ func ParseRemoveAuthResponse(rsp *http.Response) (*RemoveAuthResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerUserResponse
+		var dest User
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5304,7 +5899,7 @@ func ParseGetUserResponse(rsp *http.Response) (*GetUserResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerUserResponse
+		var dest User
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5330,7 +5925,7 @@ func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ControllerUserResponse
+		var dest User
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5352,6 +5947,16 @@ func ParseChangePermissionsResponse(rsp *http.Response) (*ChangePermissionsRespo
 	response := &ChangePermissionsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest User
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil
