@@ -63,6 +63,14 @@ const (
 	VeryLow  ExpectedPlayTime = "VERY_LOW"
 )
 
+// Defines values for FieldType.
+const (
+	Bool        FieldType = "bool"
+	Int         FieldType = "int"
+	String      FieldType = "string"
+	StringArray FieldType = "string[]"
+)
+
 // Defines values for GameVersion.
 const (
 	PoE1 GameVersion = "poe1"
@@ -71,19 +79,29 @@ const (
 
 // Defines values for ItemField.
 const (
-	BASETYPE      ItemField = "BASE_TYPE"
-	CRAFTEDMODS   ItemField = "CRAFTED_MODS"
-	ENCHANTMODS   ItemField = "ENCHANT_MODS"
-	EXPLICITMODS  ItemField = "EXPLICIT_MODS"
-	FRACTUREDMODS ItemField = "FRACTURED_MODS"
-	FRAMETYPE     ItemField = "FRAME_TYPE"
-	ILVL          ItemField = "ILVL"
-	IMPLICITMODS  ItemField = "IMPLICIT_MODS"
-	NAME          ItemField = "NAME"
-	RARITY        ItemField = "RARITY"
-	SIXLINK       ItemField = "SIX_LINK"
-	TALISMANTIER  ItemField = "TALISMAN_TIER"
-	TYPELINE      ItemField = "TYPE_LINE"
+	BASETYPE       ItemField = "BASE_TYPE"
+	CRAFTEDMODS    ItemField = "CRAFTED_MODS"
+	ENCHANTS       ItemField = "ENCHANT_MODS"
+	EXPLICITS      ItemField = "EXPLICIT_MODS"
+	FRACTUREDMODS  ItemField = "FRACTURED_MODS"
+	FRAMETYPE      ItemField = "FRAME_TYPE"
+	ILVL           ItemField = "ILVL"
+	IMPLICITS      ItemField = "IMPLICIT_MODS"
+	INCUBATORKILLS ItemField = "INCUBATOR_KILLS"
+	ISCORRUPTED    ItemField = "IS_CORRUPTED"
+	ISVAAL         ItemField = "IS_VAAL"
+	LEVEL          ItemField = "LEVEL"
+	MAXLINKS       ItemField = "MAX_LINKS"
+	NAME           ItemField = "NAME"
+	QUALITY        ItemField = "QUALITY"
+	RARITY         ItemField = "RARITY"
+	RITUALBOSSES   ItemField = "RITUAL_VESSEL_BOSSES"
+	RITUALMAP      ItemField = "RITUAL_VESSEL_MAP"
+	SANCTUMMODS    ItemField = "SANCTUM_AFFLICTIONS"
+	SOCKETS        ItemField = "SOCKETS"
+	TALISMANTIER   ItemField = "TALISMAN_TIER"
+	TEMPLEROOMS    ItemField = "TEMPLE_ROOMS"
+	TYPELINE       ItemField = "TYPE_LINE"
 )
 
 // Defines values for JobType.
@@ -95,8 +113,11 @@ const (
 
 // Defines values for NumberField.
 const (
+	ASCENDANCY      NumberField = "ASCENDANCY"
+	DELVEDEPTH      NumberField = "DELVE_DEPTH"
+	PANTHEON        NumberField = "PANTHEON"
 	PLAYERLEVEL     NumberField = "PLAYER_LEVEL"
-	PLAYERXP        NumberField = "PLAYER_XP"
+	PLAYERSCORE     NumberField = "PLAYER_SCORE"
 	STACKSIZE       NumberField = "STACK_SIZE"
 	SUBMISSIONVALUE NumberField = "SUBMISSION_VALUE"
 )
@@ -110,19 +131,18 @@ const (
 
 // Defines values for Operator.
 const (
-	CONTAINS           Operator = "CONTAINS"
-	CONTAINSALL        Operator = "CONTAINS_ALL"
-	CONTAINSALLMATCHES Operator = "CONTAINS_ALL_MATCHES"
-	CONTAINSMATCH      Operator = "CONTAINS_MATCH"
-	EQ                 Operator = "EQ"
-	GT                 Operator = "GT"
-	GTE                Operator = "GTE"
-	IN                 Operator = "IN"
-	LT                 Operator = "LT"
-	LTE                Operator = "LTE"
-	MATCHES            Operator = "MATCHES"
-	NEQ                Operator = "NEQ"
-	NOTIN              Operator = "NOT_IN"
+	CONTAINS      Operator = "CONTAINS"
+	CONTAINSMATCH Operator = "CONTAINS_MATCH"
+	EQ            Operator = "EQ"
+	GT            Operator = "GT"
+	IN            Operator = "IN"
+	LENGTHEQ      Operator = "LENGTH_EQ"
+	LENGTHGT      Operator = "LENGTH_GT"
+	LENGTHLT      Operator = "LENGTH_LT"
+	LT            Operator = "LT"
+	MATCHES       Operator = "MATCHES"
+	NEQ           Operator = "NEQ"
+	NOTIN         Operator = "NOT_IN"
 )
 
 // Defines values for Permission.
@@ -192,6 +212,13 @@ type ConditionCreate struct {
 	Value       string    `json:"value"`
 }
 
+// ConditionMappings defines model for ConditionMappings.
+type ConditionMappings struct {
+	FieldToType                 map[string]FieldType     `json:"field_to_type"`
+	ObjectiveTypeToNumberFields map[string][]NumberField `json:"objective_type_to_number_fields"`
+	ValidOperators              map[string][]Operator    `json:"valid_operators"`
+}
+
 // Difftype defines model for Difftype.
 type Difftype string
 
@@ -235,11 +262,23 @@ type EventStatus struct {
 // ExpectedPlayTime defines model for ExpectedPlayTime.
 type ExpectedPlayTime string
 
+// FieldType defines model for FieldType.
+type FieldType string
+
 // GameVersion defines model for GameVersion.
 type GameVersion string
 
 // ItemField defines model for ItemField.
 type ItemField string
+
+// JobCreate defines model for JobCreate.
+type JobCreate struct {
+	DurationInSeconds        *int     `json:"duration_in_seconds,omitempty"`
+	EndDate                  *string  `json:"end_date,omitempty"`
+	EventId                  *int     `json:"event_id,omitempty"`
+	JobType                  *JobType `json:"job_type,omitempty"`
+	SleepAfterEachRunSeconds *int     `json:"sleep_after_each_run_seconds,omitempty"`
+}
 
 // JobType defines model for JobType.
 type JobType string
@@ -316,10 +355,10 @@ type Permission string
 
 // RecurringJob defines model for RecurringJob.
 type RecurringJob struct {
-	EndDate                  *string  `json:"end_date,omitempty"`
-	EventId                  *int     `json:"event_id,omitempty"`
-	JobType                  *JobType `json:"job_type,omitempty"`
-	SleepAfterEachRunSeconds *int     `json:"sleep_after_each_run_seconds,omitempty"`
+	EndDate                  string  `json:"end_date"`
+	EventId                  int     `json:"event_id"`
+	JobType                  JobType `json:"job_type"`
+	SleepAfterEachRunSeconds int     `json:"sleep_after_each_run_seconds"`
 }
 
 // Score defines model for Score.
@@ -378,6 +417,11 @@ type Signup struct {
 	User             NonSensitiveUser `json:"user"`
 }
 
+// SignupCreate defines model for SignupCreate.
+type SignupCreate struct {
+	ExpectedPlaytime ExpectedPlayTime `json:"expected_playtime"`
+}
+
 // Submission defines model for Submission.
 type Submission struct {
 	ApprovalStatus ApprovalStatus    `json:"approval_status"`
@@ -415,6 +459,20 @@ type Team struct {
 	EventId        int      `json:"event_id"`
 	Id             int      `json:"id"`
 	Name           string   `json:"name"`
+}
+
+// TeamCreate defines model for TeamCreate.
+type TeamCreate struct {
+	AllowedClasses []string `json:"allowed_classes"`
+	Id             *int     `json:"id,omitempty"`
+	Name           string   `json:"name"`
+}
+
+// TeamUserCreate defines model for TeamUserCreate.
+type TeamUserCreate struct {
+	IsTeamLead *bool `json:"is_team_lead,omitempty"`
+	TeamId     *int  `json:"team_id,omitempty"`
+	UserId     int   `json:"user_id"`
 }
 
 // TwitchStream defines model for TwitchStream.
@@ -455,6 +513,9 @@ type UserUpdate struct {
 	DisplayName string `json:"display_name"`
 }
 
+// AddUsersToTeamsJSONBody defines parameters for AddUsersToTeams.
+type AddUsersToTeamsJSONBody = []TeamUserCreate
+
 // RemoveAuthParams defines parameters for RemoveAuth.
 type RemoveAuthParams struct {
 	// Provider Provider
@@ -467,11 +528,26 @@ type ChangePermissionsJSONBody = []Permission
 // CreateEventJSONRequestBody defines body for CreateEvent for application/json ContentType.
 type CreateEventJSONRequestBody = EventCreate
 
+// DuplicateEventJSONRequestBody defines body for DuplicateEvent for application/json ContentType.
+type DuplicateEventJSONRequestBody = EventCreate
+
+// CreateSignupJSONRequestBody defines body for CreateSignup for application/json ContentType.
+type CreateSignupJSONRequestBody = SignupCreate
+
 // SubmitBountyJSONRequestBody defines body for SubmitBounty for application/json ContentType.
 type SubmitBountyJSONRequestBody = SubmissionCreate
 
 // ReviewSubmissionJSONRequestBody defines body for ReviewSubmission for application/json ContentType.
 type ReviewSubmissionJSONRequestBody = SubmissionReview
+
+// CreateTeamJSONRequestBody defines body for CreateTeam for application/json ContentType.
+type CreateTeamJSONRequestBody = TeamCreate
+
+// AddUsersToTeamsJSONRequestBody defines body for AddUsersToTeams for application/json ContentType.
+type AddUsersToTeamsJSONRequestBody = AddUsersToTeamsJSONBody
+
+// StartJobJSONRequestBody defines body for StartJob for application/json ContentType.
+type StartJobJSONRequestBody = JobCreate
 
 // LoginDiscordBotJSONRequestBody defines body for LoginDiscordBot for application/json ContentType.
 type LoginDiscordBotJSONRequestBody = DiscordBotLoginBody
@@ -584,6 +660,11 @@ type ClientInterface interface {
 	// GetEvent request
 	GetEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DuplicateEventWithBody request with any body
+	DuplicateEventWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	DuplicateEvent(ctx context.Context, eventId int, body DuplicateEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetRulesForEvent request
 	GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -605,8 +686,10 @@ type ClientInterface interface {
 	// GetPersonalSignup request
 	GetPersonalSignup(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateSignup request
-	CreateSignup(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateSignupWithBody request with any body
+	CreateSignupWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateSignup(ctx context.Context, eventId int, body CreateSignupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetEventStatusForUser request
 	GetEventStatusForUser(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -630,11 +713,15 @@ type ClientInterface interface {
 	// GetTeams request
 	GetTeams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateTeam request
-	CreateTeam(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateTeamWithBody request with any body
+	CreateTeamWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// AddUsersToTeams request
-	AddUsersToTeams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateTeam(ctx context.Context, eventId int, body CreateTeamJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// AddUsersToTeamsWithBody request with any body
+	AddUsersToTeamsWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	AddUsersToTeams(ctx context.Context, eventId int, body AddUsersToTeamsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteTeam request
 	DeleteTeam(ctx context.Context, eventId int, teamId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -647,6 +734,11 @@ type ClientInterface interface {
 
 	// GetJobs request
 	GetJobs(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// StartJobWithBody request with any body
+	StartJobWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	StartJob(ctx context.Context, body StartJobJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetOauth2Discord request
 	GetOauth2Discord(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -680,6 +772,9 @@ type ClientInterface interface {
 	CreateConditionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	CreateCondition(ctx context.Context, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetValidMappings request
+	GetValidMappings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteCondition request
 	DeleteCondition(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -804,6 +899,30 @@ func (c *Client) GetEvent(ctx context.Context, eventId int, reqEditors ...Reques
 	return c.Client.Do(req)
 }
 
+func (c *Client) DuplicateEventWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDuplicateEventRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DuplicateEvent(ctx context.Context, eventId int, body DuplicateEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDuplicateEventRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetRulesForEventRequest(c.Server, eventId)
 	if err != nil {
@@ -888,8 +1007,20 @@ func (c *Client) GetPersonalSignup(ctx context.Context, eventId int, reqEditors 
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateSignup(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateSignupRequest(c.Server, eventId)
+func (c *Client) CreateSignupWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSignupRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSignup(ctx context.Context, eventId int, body CreateSignupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSignupRequest(c.Server, eventId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -996,8 +1127,8 @@ func (c *Client) GetTeams(ctx context.Context, eventId int, reqEditors ...Reques
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateTeam(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateTeamRequest(c.Server, eventId)
+func (c *Client) CreateTeamWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTeamRequestWithBody(c.Server, eventId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1008,8 +1139,32 @@ func (c *Client) CreateTeam(ctx context.Context, eventId int, reqEditors ...Requ
 	return c.Client.Do(req)
 }
 
-func (c *Client) AddUsersToTeams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewAddUsersToTeamsRequest(c.Server, eventId)
+func (c *Client) CreateTeam(ctx context.Context, eventId int, body CreateTeamJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTeamRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) AddUsersToTeamsWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAddUsersToTeamsRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) AddUsersToTeams(ctx context.Context, eventId int, body AddUsersToTeamsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAddUsersToTeamsRequest(c.Server, eventId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1058,6 +1213,30 @@ func (c *Client) GetUsersForEvent(ctx context.Context, eventId int, reqEditors .
 
 func (c *Client) GetJobs(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetJobsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) StartJobWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewStartJobRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) StartJob(ctx context.Context, body StartJobJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewStartJobRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1202,6 +1381,18 @@ func (c *Client) CreateConditionWithBody(ctx context.Context, contentType string
 
 func (c *Client) CreateCondition(ctx context.Context, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateConditionRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetValidMappings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetValidMappingsRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -1485,7 +1676,7 @@ func NewCreateEventRequestWithBody(server string, contentType string, body io.Re
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), body)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -1586,6 +1777,53 @@ func NewGetEventRequest(server string, eventId int) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewDuplicateEventRequest calls the generic DuplicateEvent builder with application/json body
+func NewDuplicateEventRequest(server string, eventId int, body DuplicateEventJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewDuplicateEventRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewDuplicateEventRequestWithBody generates requests for DuplicateEvent with any type of body
+func NewDuplicateEventRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/duplicate", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -1828,8 +2066,19 @@ func NewGetPersonalSignupRequest(server string, eventId int) (*http.Request, err
 	return req, nil
 }
 
-// NewCreateSignupRequest generates requests for CreateSignup
-func NewCreateSignupRequest(server string, eventId int) (*http.Request, error) {
+// NewCreateSignupRequest calls the generic CreateSignup builder with application/json body
+func NewCreateSignupRequest(server string, eventId int, body CreateSignupJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateSignupRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewCreateSignupRequestWithBody generates requests for CreateSignup with any type of body
+func NewCreateSignupRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1854,10 +2103,12 @@ func NewCreateSignupRequest(server string, eventId int) (*http.Request, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), nil)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2106,8 +2357,19 @@ func NewGetTeamsRequest(server string, eventId int) (*http.Request, error) {
 	return req, nil
 }
 
-// NewCreateTeamRequest generates requests for CreateTeam
-func NewCreateTeamRequest(server string, eventId int) (*http.Request, error) {
+// NewCreateTeamRequest calls the generic CreateTeam builder with application/json body
+func NewCreateTeamRequest(server string, eventId int, body CreateTeamJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateTeamRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewCreateTeamRequestWithBody generates requests for CreateTeam with any type of body
+func NewCreateTeamRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2132,16 +2394,29 @@ func NewCreateTeamRequest(server string, eventId int) (*http.Request, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), nil)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
 
+	req.Header.Add("Content-Type", contentType)
+
 	return req, nil
 }
 
-// NewAddUsersToTeamsRequest generates requests for AddUsersToTeams
-func NewAddUsersToTeamsRequest(server string, eventId int) (*http.Request, error) {
+// NewAddUsersToTeamsRequest calls the generic AddUsersToTeams builder with application/json body
+func NewAddUsersToTeamsRequest(server string, eventId int, body AddUsersToTeamsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewAddUsersToTeamsRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewAddUsersToTeamsRequestWithBody generates requests for AddUsersToTeams with any type of body
+func NewAddUsersToTeamsRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2166,10 +2441,12 @@ func NewAddUsersToTeamsRequest(server string, eventId int) (*http.Request, error
 		return nil, err
 	}
 
-	req, err := http.NewRequest("PUT", queryURL.String(), nil)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2313,6 +2590,46 @@ func NewGetJobsRequest(server string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewStartJobRequest calls the generic StartJob builder with application/json body
+func NewStartJobRequest(server string, body StartJobJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewStartJobRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewStartJobRequestWithBody generates requests for StartJob with any type of body
+func NewStartJobRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/jobs")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2609,6 +2926,33 @@ func NewCreateConditionRequestWithBody(server string, contentType string, body i
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetValidMappingsRequest generates requests for GetValidMappings
+func NewGetValidMappingsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/scoring/conditions/valid-mappings")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -3163,6 +3507,11 @@ type ClientWithResponsesInterface interface {
 	// GetEventWithResponse request
 	GetEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventResponse, error)
 
+	// DuplicateEventWithBodyWithResponse request with any body
+	DuplicateEventWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DuplicateEventResponse, error)
+
+	DuplicateEventWithResponse(ctx context.Context, eventId int, body DuplicateEventJSONRequestBody, reqEditors ...RequestEditorFn) (*DuplicateEventResponse, error)
+
 	// GetRulesForEventWithResponse request
 	GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error)
 
@@ -3184,8 +3533,10 @@ type ClientWithResponsesInterface interface {
 	// GetPersonalSignupWithResponse request
 	GetPersonalSignupWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetPersonalSignupResponse, error)
 
-	// CreateSignupWithResponse request
-	CreateSignupWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*CreateSignupResponse, error)
+	// CreateSignupWithBodyWithResponse request with any body
+	CreateSignupWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSignupResponse, error)
+
+	CreateSignupWithResponse(ctx context.Context, eventId int, body CreateSignupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSignupResponse, error)
 
 	// GetEventStatusForUserWithResponse request
 	GetEventStatusForUserWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventStatusForUserResponse, error)
@@ -3209,11 +3560,15 @@ type ClientWithResponsesInterface interface {
 	// GetTeamsWithResponse request
 	GetTeamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamsResponse, error)
 
-	// CreateTeamWithResponse request
-	CreateTeamWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error)
+	// CreateTeamWithBodyWithResponse request with any body
+	CreateTeamWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error)
 
-	// AddUsersToTeamsWithResponse request
-	AddUsersToTeamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*AddUsersToTeamsResponse, error)
+	CreateTeamWithResponse(ctx context.Context, eventId int, body CreateTeamJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error)
+
+	// AddUsersToTeamsWithBodyWithResponse request with any body
+	AddUsersToTeamsWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddUsersToTeamsResponse, error)
+
+	AddUsersToTeamsWithResponse(ctx context.Context, eventId int, body AddUsersToTeamsJSONRequestBody, reqEditors ...RequestEditorFn) (*AddUsersToTeamsResponse, error)
 
 	// DeleteTeamWithResponse request
 	DeleteTeamWithResponse(ctx context.Context, eventId int, teamId int, reqEditors ...RequestEditorFn) (*DeleteTeamResponse, error)
@@ -3226,6 +3581,11 @@ type ClientWithResponsesInterface interface {
 
 	// GetJobsWithResponse request
 	GetJobsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetJobsResponse, error)
+
+	// StartJobWithBodyWithResponse request with any body
+	StartJobWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*StartJobResponse, error)
+
+	StartJobWithResponse(ctx context.Context, body StartJobJSONRequestBody, reqEditors ...RequestEditorFn) (*StartJobResponse, error)
 
 	// GetOauth2DiscordWithResponse request
 	GetOauth2DiscordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2DiscordResponse, error)
@@ -3259,6 +3619,9 @@ type ClientWithResponsesInterface interface {
 	CreateConditionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
 
 	CreateConditionWithResponse(ctx context.Context, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
+
+	// GetValidMappingsWithResponse request
+	GetValidMappingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error)
 
 	// DeleteConditionWithResponse request
 	DeleteConditionWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteConditionResponse, error)
@@ -3414,6 +3777,28 @@ func (r GetEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DuplicateEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Event
+}
+
+// Status returns HTTPResponse.Status
+func (r DuplicateEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DuplicateEventResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3855,6 +4240,28 @@ func (r GetJobsResponse) StatusCode() int {
 	return 0
 }
 
+type StartJobResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *RecurringJob
+}
+
+// Status returns HTTPResponse.Status
+func (r StartJobResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r StartJobResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetOauth2DiscordResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4042,6 +4449,28 @@ func (r CreateConditionResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateConditionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetValidMappingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ConditionMappings
+}
+
+// Status returns HTTPResponse.Status
+func (r GetValidMappingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetValidMappingsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4405,6 +4834,23 @@ func (c *ClientWithResponses) GetEventWithResponse(ctx context.Context, eventId 
 	return ParseGetEventResponse(rsp)
 }
 
+// DuplicateEventWithBodyWithResponse request with arbitrary body returning *DuplicateEventResponse
+func (c *ClientWithResponses) DuplicateEventWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DuplicateEventResponse, error) {
+	rsp, err := c.DuplicateEventWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDuplicateEventResponse(rsp)
+}
+
+func (c *ClientWithResponses) DuplicateEventWithResponse(ctx context.Context, eventId int, body DuplicateEventJSONRequestBody, reqEditors ...RequestEditorFn) (*DuplicateEventResponse, error) {
+	rsp, err := c.DuplicateEvent(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDuplicateEventResponse(rsp)
+}
+
 // GetRulesForEventWithResponse request returning *GetRulesForEventResponse
 func (c *ClientWithResponses) GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error) {
 	rsp, err := c.GetRulesForEvent(ctx, eventId, reqEditors...)
@@ -4468,9 +4914,17 @@ func (c *ClientWithResponses) GetPersonalSignupWithResponse(ctx context.Context,
 	return ParseGetPersonalSignupResponse(rsp)
 }
 
-// CreateSignupWithResponse request returning *CreateSignupResponse
-func (c *ClientWithResponses) CreateSignupWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*CreateSignupResponse, error) {
-	rsp, err := c.CreateSignup(ctx, eventId, reqEditors...)
+// CreateSignupWithBodyWithResponse request with arbitrary body returning *CreateSignupResponse
+func (c *ClientWithResponses) CreateSignupWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSignupResponse, error) {
+	rsp, err := c.CreateSignupWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSignupResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateSignupWithResponse(ctx context.Context, eventId int, body CreateSignupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSignupResponse, error) {
+	rsp, err := c.CreateSignup(ctx, eventId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4547,18 +5001,34 @@ func (c *ClientWithResponses) GetTeamsWithResponse(ctx context.Context, eventId 
 	return ParseGetTeamsResponse(rsp)
 }
 
-// CreateTeamWithResponse request returning *CreateTeamResponse
-func (c *ClientWithResponses) CreateTeamWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error) {
-	rsp, err := c.CreateTeam(ctx, eventId, reqEditors...)
+// CreateTeamWithBodyWithResponse request with arbitrary body returning *CreateTeamResponse
+func (c *ClientWithResponses) CreateTeamWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error) {
+	rsp, err := c.CreateTeamWithBody(ctx, eventId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
 	return ParseCreateTeamResponse(rsp)
 }
 
-// AddUsersToTeamsWithResponse request returning *AddUsersToTeamsResponse
-func (c *ClientWithResponses) AddUsersToTeamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*AddUsersToTeamsResponse, error) {
-	rsp, err := c.AddUsersToTeams(ctx, eventId, reqEditors...)
+func (c *ClientWithResponses) CreateTeamWithResponse(ctx context.Context, eventId int, body CreateTeamJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTeamResponse, error) {
+	rsp, err := c.CreateTeam(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTeamResponse(rsp)
+}
+
+// AddUsersToTeamsWithBodyWithResponse request with arbitrary body returning *AddUsersToTeamsResponse
+func (c *ClientWithResponses) AddUsersToTeamsWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddUsersToTeamsResponse, error) {
+	rsp, err := c.AddUsersToTeamsWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAddUsersToTeamsResponse(rsp)
+}
+
+func (c *ClientWithResponses) AddUsersToTeamsWithResponse(ctx context.Context, eventId int, body AddUsersToTeamsJSONRequestBody, reqEditors ...RequestEditorFn) (*AddUsersToTeamsResponse, error) {
+	rsp, err := c.AddUsersToTeams(ctx, eventId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -4599,6 +5069,23 @@ func (c *ClientWithResponses) GetJobsWithResponse(ctx context.Context, reqEditor
 		return nil, err
 	}
 	return ParseGetJobsResponse(rsp)
+}
+
+// StartJobWithBodyWithResponse request with arbitrary body returning *StartJobResponse
+func (c *ClientWithResponses) StartJobWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*StartJobResponse, error) {
+	rsp, err := c.StartJobWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseStartJobResponse(rsp)
+}
+
+func (c *ClientWithResponses) StartJobWithResponse(ctx context.Context, body StartJobJSONRequestBody, reqEditors ...RequestEditorFn) (*StartJobResponse, error) {
+	rsp, err := c.StartJob(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseStartJobResponse(rsp)
 }
 
 // GetOauth2DiscordWithResponse request returning *GetOauth2DiscordResponse
@@ -4704,6 +5191,15 @@ func (c *ClientWithResponses) CreateConditionWithResponse(ctx context.Context, b
 		return nil, err
 	}
 	return ParseCreateConditionResponse(rsp)
+}
+
+// GetValidMappingsWithResponse request returning *GetValidMappingsResponse
+func (c *ClientWithResponses) GetValidMappingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error) {
+	rsp, err := c.GetValidMappings(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetValidMappingsResponse(rsp)
 }
 
 // DeleteConditionWithResponse request returning *DeleteConditionResponse
@@ -4967,6 +5463,32 @@ func ParseGetEventResponse(rsp *http.Response) (*GetEventResponse, error) {
 	}
 
 	response := &GetEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Event
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDuplicateEventResponse parses an HTTP response from a DuplicateEventWithResponse call
+func ParseDuplicateEventResponse(rsp *http.Response) (*DuplicateEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DuplicateEventResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5454,6 +5976,32 @@ func ParseGetJobsResponse(rsp *http.Response) (*GetJobsResponse, error) {
 	return response, nil
 }
 
+// ParseStartJobResponse parses an HTTP response from a StartJobWithResponse call
+func ParseStartJobResponse(rsp *http.Response) (*StartJobResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &StartJobResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest RecurringJob
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetOauth2DiscordResponse parses an HTTP response from a GetOauth2DiscordWithResponse call
 func ParseGetOauth2DiscordResponse(rsp *http.Response) (*GetOauth2DiscordResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -5632,6 +6180,32 @@ func ParseCreateConditionResponse(rsp *http.Response) (*CreateConditionResponse,
 			return nil, err
 		}
 		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetValidMappingsResponse parses an HTTP response from a GetValidMappingsWithResponse call
+func ParseGetValidMappingsResponse(rsp *http.Response) (*GetValidMappingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetValidMappingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ConditionMappings
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
 
 	}
 
