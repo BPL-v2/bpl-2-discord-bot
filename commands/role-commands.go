@@ -5,6 +5,7 @@ import (
 	"bpl2-discord/utils"
 	"context"
 	"fmt"
+	"log"
 	"strconv"
 	"sync"
 
@@ -35,6 +36,7 @@ var RoleCreateCommand = DiscordCommand{
 		DefaultMemberPermissions: &PermissionManageRoles,
 	},
 	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, client *client.ClientWithResponses) {
+		log.Println("RoleCreateCommand called")
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
@@ -43,18 +45,11 @@ var RoleCreateCommand = DiscordCommand{
 			},
 		},
 		)
-		resp, err := client.GetCurrentEventWithResponse(context.TODO())
-
+		event, err := client.GetCurrentEvent()
 		if err != nil {
 			EditResponse(s, i, "could not get current event")
 			return
 		}
-
-		if resp.JSON200 == nil {
-			EditResponse(s, i, "no current event")
-			return
-		}
-		event := resp.JSON200
 		allRoles, err := s.GuildRoles(i.GuildID)
 		if err != nil {
 			EditResponse(s, i, "could not get guild roles")
@@ -80,12 +75,10 @@ var RoleCreateCommand = DiscordCommand{
 }
 
 func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guildId string) (int, error) {
-	resp, err := client.GetCurrentEventWithResponse(context.TODO())
-
+	event, err := client.GetCurrentEvent()
 	if err != nil {
 		return 0, err
 	}
-	event := resp.JSON200
 
 	signupResponse, err := client.GetEventSignupsWithResponse(context.TODO(), event.Id)
 	if err != nil {
@@ -164,6 +157,7 @@ var RoleAssignCommand = DiscordCommand{
 		DefaultMemberPermissions: &PermissionManageRoles,
 	},
 	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, client *client.ClientWithResponses) {
+		log.Println("RoleAssignCommand called")
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{

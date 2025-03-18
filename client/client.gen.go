@@ -147,8 +147,10 @@ const (
 
 // Defines values for Permission.
 const (
-	PermissionAdmin       Permission = "admin"
-	PermissionCommandTeam Permission = "command_team"
+	PermissionAdmin             Permission = "admin"
+	PermissionCommandTeam       Permission = "command_team"
+	PermissionJudge             Permission = "judge"
+	PermissionObjectiveDesigner Permission = "objective_designer"
 )
 
 // Defines values for ScoringMethod.
@@ -235,9 +237,10 @@ type Event struct {
 	GameVersion          GameVersion `json:"game_version"`
 	Id                   int         `json:"id"`
 	IsCurrent            bool        `json:"is_current"`
+	IsLocked             bool        `json:"is_locked"`
+	IsPublic             bool        `json:"is_public"`
 	MaxSize              int         `json:"max_size"`
 	Name                 string      `json:"name"`
-	ScoringCategoryId    int         `json:"scoring_category_id"`
 	Teams                []Team      `json:"teams"`
 }
 
@@ -249,6 +252,8 @@ type EventCreate struct {
 	GameVersion          GameVersion `json:"game_version"`
 	Id                   *int        `json:"id,omitempty"`
 	IsCurrent            *bool       `json:"is_current,omitempty"`
+	IsLocked             *bool       `json:"is_locked,omitempty"`
+	IsPublic             *bool       `json:"is_public,omitempty"`
 	MaxSize              int         `json:"max_size"`
 	Name                 string      `json:"name"`
 }
@@ -282,6 +287,18 @@ type JobCreate struct {
 
 // JobType defines model for JobType.
 type JobType string
+
+// LadderEntry defines model for LadderEntry.
+type LadderEntry struct {
+	AccountName    string `json:"account_name"`
+	CharacterClass string `json:"character_class"`
+	CharacterName  string `json:"character_name"`
+	Delve          int    `json:"delve"`
+	Experience     int    `json:"experience"`
+	Level          int    `json:"level"`
+	Rank           int    `json:"rank"`
+	UserId         int    `json:"user_id"`
+}
 
 // MinimalUser defines model for MinimalUser.
 type MinimalUser struct {
@@ -397,7 +414,6 @@ type ScoringPreset struct {
 // ScoringPresetCreate defines model for ScoringPresetCreate.
 type ScoringPresetCreate struct {
 	Description   *string           `json:"description,omitempty"`
-	EventId       int               `json:"event_id"`
 	Id            *int              `json:"id,omitempty"`
 	Name          string            `json:"name"`
 	Points        []float32         `json:"points"`
@@ -456,6 +472,7 @@ type SubmissionReview struct {
 // Team defines model for Team.
 type Team struct {
 	AllowedClasses []string `json:"allowed_classes"`
+	Color          *string  `json:"color,omitempty"`
 	EventId        int      `json:"event_id"`
 	Id             int      `json:"id"`
 	Name           string   `json:"name"`
@@ -464,6 +481,7 @@ type Team struct {
 // TeamCreate defines model for TeamCreate.
 type TeamCreate struct {
 	AllowedClasses []string `json:"allowed_classes"`
+	Color          *string  `json:"color,omitempty"`
 	Id             *int     `json:"id,omitempty"`
 	Name           string   `json:"name"`
 }
@@ -528,8 +546,20 @@ type ChangePermissionsJSONBody = []Permission
 // CreateEventJSONRequestBody defines body for CreateEvent for application/json ContentType.
 type CreateEventJSONRequestBody = EventCreate
 
+// CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
+type CreateCategoryJSONRequestBody = CategoryCreate
+
+// CreateConditionJSONRequestBody defines body for CreateCondition for application/json ContentType.
+type CreateConditionJSONRequestBody = ConditionCreate
+
 // DuplicateEventJSONRequestBody defines body for DuplicateEvent for application/json ContentType.
 type DuplicateEventJSONRequestBody = EventCreate
+
+// CreateObjectiveJSONRequestBody defines body for CreateObjective for application/json ContentType.
+type CreateObjectiveJSONRequestBody = ObjectiveCreate
+
+// CreateScoringPresetJSONRequestBody defines body for CreateScoringPreset for application/json ContentType.
+type CreateScoringPresetJSONRequestBody = ScoringPresetCreate
 
 // CreateSignupJSONRequestBody defines body for CreateSignup for application/json ContentType.
 type CreateSignupJSONRequestBody = SignupCreate
@@ -551,18 +581,6 @@ type StartJobJSONRequestBody = JobCreate
 
 // LoginDiscordBotJSONRequestBody defines body for LoginDiscordBot for application/json ContentType.
 type LoginDiscordBotJSONRequestBody = DiscordBotLoginBody
-
-// CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
-type CreateCategoryJSONRequestBody = CategoryCreate
-
-// CreateConditionJSONRequestBody defines body for CreateCondition for application/json ContentType.
-type CreateConditionJSONRequestBody = ConditionCreate
-
-// CreateObjectiveJSONRequestBody defines body for CreateObjective for application/json ContentType.
-type CreateObjectiveJSONRequestBody = ObjectiveCreate
-
-// CreateScoringPresetJSONRequestBody defines body for CreateScoringPreset for application/json ContentType.
-type CreateScoringPresetJSONRequestBody = ScoringPresetCreate
 
 // UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
 type UpdateUserJSONRequestBody = UserUpdate
@@ -651,22 +669,52 @@ type ClientInterface interface {
 
 	CreateEvent(ctx context.Context, body CreateEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetCurrentEvent request
-	GetCurrentEvent(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// DeleteEvent request
 	DeleteEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetEvent request
-	GetEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetRulesForEvent request
+	GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateCategoryWithBody request with any body
+	CreateCategoryWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateCategory(ctx context.Context, eventId int, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteCategory request
+	DeleteCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetScoringCategory request
+	GetScoringCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateConditionWithBody request with any body
+	CreateConditionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateCondition(ctx context.Context, eventId int, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetValidMappings request
+	GetValidMappings(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteCondition request
+	DeleteCondition(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DuplicateEventWithBody request with any body
 	DuplicateEventWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	DuplicateEvent(ctx context.Context, eventId int, body DuplicateEventJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetRulesForEvent request
-	GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetLadder request
+	GetLadder(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateObjectiveWithBody request with any body
+	CreateObjectiveWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateObjective(ctx context.Context, eventId int, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteObjective request
+	DeleteObjective(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetObjective request
+	GetObjective(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetLatestScoresForEvent request
 	GetLatestScoresForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -676,6 +724,14 @@ type ClientInterface interface {
 
 	// GetScoringPresetsForEvent request
 	GetScoringPresetsForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateScoringPresetWithBody request with any body
+	CreateScoringPresetWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateScoringPreset(ctx context.Context, eventId int, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteScoringPreset request
+	DeleteScoringPreset(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetEventSignups request
 	GetEventSignups(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -757,50 +813,6 @@ type ClientInterface interface {
 	// GetOauth2TwitchRedirect request
 	GetOauth2TwitchRedirect(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateCategoryWithBody request with any body
-	CreateCategoryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateCategory(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteCategory request
-	DeleteCategory(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetScoringCategory request
-	GetScoringCategory(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateConditionWithBody request with any body
-	CreateConditionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateCondition(ctx context.Context, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetValidMappings request
-	GetValidMappings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteCondition request
-	DeleteCondition(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateObjectiveWithBody request with any body
-	CreateObjectiveWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateObjective(ctx context.Context, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteObjective request
-	DeleteObjective(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetObjective request
-	GetObjective(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateScoringPresetWithBody request with any body
-	CreateScoringPresetWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateScoringPreset(ctx context.Context, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteScoringPreset request
-	DeleteScoringPreset(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetScoringPreset request
-	GetScoringPreset(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// GetStreams request
 	GetStreams(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -863,18 +875,6 @@ func (c *Client) CreateEvent(ctx context.Context, body CreateEventJSONRequestBod
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetCurrentEvent(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetCurrentEventRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) DeleteEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteEventRequest(c.Server, eventId)
 	if err != nil {
@@ -887,8 +887,104 @@ func (c *Client) DeleteEvent(ctx context.Context, eventId int, reqEditors ...Req
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetEventRequest(c.Server, eventId)
+func (c *Client) GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetRulesForEventRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateCategoryWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCategoryRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateCategory(ctx context.Context, eventId int, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCategoryRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteCategoryRequest(c.Server, eventId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetScoringCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetScoringCategoryRequest(c.Server, eventId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateConditionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateConditionRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateCondition(ctx context.Context, eventId int, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateConditionRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetValidMappings(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetValidMappingsRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteCondition(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteConditionRequest(c.Server, eventId, id)
 	if err != nil {
 		return nil, err
 	}
@@ -923,8 +1019,56 @@ func (c *Client) DuplicateEvent(ctx context.Context, eventId int, body Duplicate
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetRulesForEventRequest(c.Server, eventId)
+func (c *Client) GetLadder(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLadderRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateObjectiveWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateObjectiveRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateObjective(ctx context.Context, eventId int, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateObjectiveRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteObjective(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteObjectiveRequest(c.Server, eventId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetObjective(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetObjectiveRequest(c.Server, eventId, id)
 	if err != nil {
 		return nil, err
 	}
@@ -961,6 +1105,42 @@ func (c *Client) ScoreWebSocket(ctx context.Context, eventId int, reqEditors ...
 
 func (c *Client) GetScoringPresetsForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetScoringPresetsForEventRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateScoringPresetWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateScoringPresetRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateScoringPreset(ctx context.Context, eventId int, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateScoringPresetRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteScoringPreset(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteScoringPresetRequest(c.Server, eventId, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1319,198 +1499,6 @@ func (c *Client) GetOauth2TwitchRedirect(ctx context.Context, reqEditors ...Requ
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateCategoryWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateCategoryRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateCategory(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateCategoryRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteCategory(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteCategoryRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetScoringCategory(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetScoringCategoryRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateConditionWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateConditionRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateCondition(ctx context.Context, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateConditionRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetValidMappings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetValidMappingsRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteCondition(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteConditionRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateObjectiveWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateObjectiveRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateObjective(ctx context.Context, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateObjectiveRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteObjective(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteObjectiveRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetObjective(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetObjectiveRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateScoringPresetWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateScoringPresetRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateScoringPreset(ctx context.Context, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateScoringPresetRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteScoringPreset(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteScoringPresetRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetScoringPreset(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetScoringPresetRequest(c.Server, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) GetStreams(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetStreamsRequest(c.Server)
 	if err != nil {
@@ -1686,33 +1674,6 @@ func NewCreateEventRequestWithBody(server string, contentType string, body io.Re
 	return req, nil
 }
 
-// NewGetCurrentEventRequest generates requests for GetCurrentEvent
-func NewGetCurrentEventRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/current")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewDeleteEventRequest generates requests for DeleteEvent
 func NewDeleteEventRequest(server string, eventId int) (*http.Request, error) {
 	var err error
@@ -1747,8 +1708,8 @@ func NewDeleteEventRequest(server string, eventId int) (*http.Request, error) {
 	return req, nil
 }
 
-// NewGetEventRequest generates requests for GetEvent
-func NewGetEventRequest(server string, eventId int) (*http.Request, error) {
+// NewGetRulesForEventRequest generates requests for GetRulesForEvent
+func NewGetRulesForEventRequest(server string, eventId int) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1763,7 +1724,7 @@ func NewGetEventRequest(server string, eventId int) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/events/%s", pathParam0)
+	operationPath := fmt.Sprintf("/events/%s/categories", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1774,6 +1735,257 @@ func NewGetEventRequest(server string, eventId int) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateCategoryRequest calls the generic CreateCategory builder with application/json body
+func NewCreateCategoryRequest(server string, eventId int, body CreateCategoryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateCategoryRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewCreateCategoryRequestWithBody generates requests for CreateCategory with any type of body
+func NewCreateCategoryRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/categories", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteCategoryRequest generates requests for DeleteCategory
+func NewDeleteCategoryRequest(server string, eventId int, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/categories/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetScoringCategoryRequest generates requests for GetScoringCategory
+func NewGetScoringCategoryRequest(server string, eventId int, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/categories/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateConditionRequest calls the generic CreateCondition builder with application/json body
+func NewCreateConditionRequest(server string, eventId int, body CreateConditionJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateConditionRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewCreateConditionRequestWithBody generates requests for CreateCondition with any type of body
+func NewCreateConditionRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/conditions", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetValidMappingsRequest generates requests for GetValidMappings
+func NewGetValidMappingsRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/conditions/valid-mappings", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewDeleteConditionRequest generates requests for DeleteCondition
+func NewDeleteConditionRequest(server string, eventId int, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/conditions/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -1828,8 +2040,8 @@ func NewDuplicateEventRequestWithBody(server string, eventId int, contentType st
 	return req, nil
 }
 
-// NewGetRulesForEventRequest generates requests for GetRulesForEvent
-func NewGetRulesForEventRequest(server string, eventId int) (*http.Request, error) {
+// NewGetLadderRequest generates requests for GetLadder
+func NewGetLadderRequest(server string, eventId int) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1844,7 +2056,136 @@ func NewGetRulesForEventRequest(server string, eventId int) (*http.Request, erro
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/events/%s/rules", pathParam0)
+	operationPath := fmt.Sprintf("/events/%s/ladder", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateObjectiveRequest calls the generic CreateObjective builder with application/json body
+func NewCreateObjectiveRequest(server string, eventId int, body CreateObjectiveJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateObjectiveRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewCreateObjectiveRequestWithBody generates requests for CreateObjective with any type of body
+func NewCreateObjectiveRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/objectives", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteObjectiveRequest generates requests for DeleteObjective
+func NewDeleteObjectiveRequest(server string, eventId int, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/objectives/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetObjectiveRequest generates requests for GetObjective
+func NewGetObjectiveRequest(server string, eventId int, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/objectives/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1957,6 +2298,94 @@ func NewGetScoringPresetsForEventRequest(server string, eventId int) (*http.Requ
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateScoringPresetRequest calls the generic CreateScoringPreset builder with application/json body
+func NewCreateScoringPresetRequest(server string, eventId int, body CreateScoringPresetJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateScoringPresetRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewCreateScoringPresetRequestWithBody generates requests for CreateScoringPreset with any type of body
+func NewCreateScoringPresetRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/scoring-presets", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteScoringPresetRequest generates requests for DeleteScoringPreset
+func NewDeleteScoringPresetRequest(server string, eventId int, id int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/scoring-presets/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -2782,431 +3211,6 @@ func NewGetOauth2TwitchRedirectRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewCreateCategoryRequest calls the generic CreateCategory builder with application/json body
-func NewCreateCategoryRequest(server string, body CreateCategoryJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateCategoryRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewCreateCategoryRequestWithBody generates requests for CreateCategory with any type of body
-func NewCreateCategoryRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/categories")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteCategoryRequest generates requests for DeleteCategory
-func NewDeleteCategoryRequest(server string, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/categories/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetScoringCategoryRequest generates requests for GetScoringCategory
-func NewGetScoringCategoryRequest(server string, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/categories/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateConditionRequest calls the generic CreateCondition builder with application/json body
-func NewCreateConditionRequest(server string, body CreateConditionJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateConditionRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewCreateConditionRequestWithBody generates requests for CreateCondition with any type of body
-func NewCreateConditionRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/conditions")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetValidMappingsRequest generates requests for GetValidMappings
-func NewGetValidMappingsRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/conditions/valid-mappings")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewDeleteConditionRequest generates requests for DeleteCondition
-func NewDeleteConditionRequest(server string, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/conditions/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateObjectiveRequest calls the generic CreateObjective builder with application/json body
-func NewCreateObjectiveRequest(server string, body CreateObjectiveJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateObjectiveRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewCreateObjectiveRequestWithBody generates requests for CreateObjective with any type of body
-func NewCreateObjectiveRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/objectives")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteObjectiveRequest generates requests for DeleteObjective
-func NewDeleteObjectiveRequest(server string, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/objectives/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetObjectiveRequest generates requests for GetObjective
-func NewGetObjectiveRequest(server string, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/objectives/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateScoringPresetRequest calls the generic CreateScoringPreset builder with application/json body
-func NewCreateScoringPresetRequest(server string, body CreateScoringPresetJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateScoringPresetRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewCreateScoringPresetRequestWithBody generates requests for CreateScoringPreset with any type of body
-func NewCreateScoringPresetRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/presets")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteScoringPresetRequest generates requests for DeleteScoringPreset
-func NewDeleteScoringPresetRequest(server string, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/presets/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetScoringPresetRequest generates requests for GetScoringPreset
-func NewGetScoringPresetRequest(server string, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/scoring/presets/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewGetStreamsRequest generates requests for GetStreams
 func NewGetStreamsRequest(server string) (*http.Request, error) {
 	var err error
@@ -3498,22 +3502,52 @@ type ClientWithResponsesInterface interface {
 
 	CreateEventWithResponse(ctx context.Context, body CreateEventJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateEventResponse, error)
 
-	// GetCurrentEventWithResponse request
-	GetCurrentEventWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetCurrentEventResponse, error)
-
 	// DeleteEventWithResponse request
 	DeleteEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*DeleteEventResponse, error)
 
-	// GetEventWithResponse request
-	GetEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventResponse, error)
+	// GetRulesForEventWithResponse request
+	GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error)
+
+	// CreateCategoryWithBodyWithResponse request with any body
+	CreateCategoryWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
+
+	CreateCategoryWithResponse(ctx context.Context, eventId int, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
+
+	// DeleteCategoryWithResponse request
+	DeleteCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryResponse, error)
+
+	// GetScoringCategoryWithResponse request
+	GetScoringCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*GetScoringCategoryResponse, error)
+
+	// CreateConditionWithBodyWithResponse request with any body
+	CreateConditionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
+
+	CreateConditionWithResponse(ctx context.Context, eventId int, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
+
+	// GetValidMappingsWithResponse request
+	GetValidMappingsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error)
+
+	// DeleteConditionWithResponse request
+	DeleteConditionWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteConditionResponse, error)
 
 	// DuplicateEventWithBodyWithResponse request with any body
 	DuplicateEventWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DuplicateEventResponse, error)
 
 	DuplicateEventWithResponse(ctx context.Context, eventId int, body DuplicateEventJSONRequestBody, reqEditors ...RequestEditorFn) (*DuplicateEventResponse, error)
 
-	// GetRulesForEventWithResponse request
-	GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error)
+	// GetLadderWithResponse request
+	GetLadderWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetLadderResponse, error)
+
+	// CreateObjectiveWithBodyWithResponse request with any body
+	CreateObjectiveWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error)
+
+	CreateObjectiveWithResponse(ctx context.Context, eventId int, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error)
+
+	// DeleteObjectiveWithResponse request
+	DeleteObjectiveWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteObjectiveResponse, error)
+
+	// GetObjectiveWithResponse request
+	GetObjectiveWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*GetObjectiveResponse, error)
 
 	// GetLatestScoresForEventWithResponse request
 	GetLatestScoresForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetLatestScoresForEventResponse, error)
@@ -3523,6 +3557,14 @@ type ClientWithResponsesInterface interface {
 
 	// GetScoringPresetsForEventWithResponse request
 	GetScoringPresetsForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetScoringPresetsForEventResponse, error)
+
+	// CreateScoringPresetWithBodyWithResponse request with any body
+	CreateScoringPresetWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error)
+
+	CreateScoringPresetWithResponse(ctx context.Context, eventId int, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error)
+
+	// DeleteScoringPresetWithResponse request
+	DeleteScoringPresetWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteScoringPresetResponse, error)
 
 	// GetEventSignupsWithResponse request
 	GetEventSignupsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventSignupsResponse, error)
@@ -3604,50 +3646,6 @@ type ClientWithResponsesInterface interface {
 	// GetOauth2TwitchRedirectWithResponse request
 	GetOauth2TwitchRedirectWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2TwitchRedirectResponse, error)
 
-	// CreateCategoryWithBodyWithResponse request with any body
-	CreateCategoryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
-
-	CreateCategoryWithResponse(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
-
-	// DeleteCategoryWithResponse request
-	DeleteCategoryWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryResponse, error)
-
-	// GetScoringCategoryWithResponse request
-	GetScoringCategoryWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetScoringCategoryResponse, error)
-
-	// CreateConditionWithBodyWithResponse request with any body
-	CreateConditionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
-
-	CreateConditionWithResponse(ctx context.Context, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
-
-	// GetValidMappingsWithResponse request
-	GetValidMappingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error)
-
-	// DeleteConditionWithResponse request
-	DeleteConditionWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteConditionResponse, error)
-
-	// CreateObjectiveWithBodyWithResponse request with any body
-	CreateObjectiveWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error)
-
-	CreateObjectiveWithResponse(ctx context.Context, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error)
-
-	// DeleteObjectiveWithResponse request
-	DeleteObjectiveWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteObjectiveResponse, error)
-
-	// GetObjectiveWithResponse request
-	GetObjectiveWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetObjectiveResponse, error)
-
-	// CreateScoringPresetWithBodyWithResponse request with any body
-	CreateScoringPresetWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error)
-
-	CreateScoringPresetWithResponse(ctx context.Context, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error)
-
-	// DeleteScoringPresetWithResponse request
-	DeleteScoringPresetWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteScoringPresetResponse, error)
-
-	// GetScoringPresetWithResponse request
-	GetScoringPresetWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetScoringPresetResponse, error)
-
 	// GetStreamsWithResponse request
 	GetStreamsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetStreamsResponse, error)
 
@@ -3718,28 +3716,6 @@ func (r CreateEventResponse) StatusCode() int {
 	return 0
 }
 
-type GetCurrentEventResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Event
-}
-
-// Status returns HTTPResponse.Status
-func (r GetCurrentEventResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetCurrentEventResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type DeleteEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3761,14 +3737,14 @@ func (r DeleteEventResponse) StatusCode() int {
 	return 0
 }
 
-type GetEventResponse struct {
+type GetRulesForEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *Event
+	JSON200      *Category
 }
 
 // Status returns HTTPResponse.Status
-func (r GetEventResponse) Status() string {
+func (r GetRulesForEventResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3776,7 +3752,137 @@ func (r GetEventResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetEventResponse) StatusCode() int {
+func (r GetRulesForEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateCategoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Category
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateCategoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateCategoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteCategoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteCategoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteCategoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetScoringCategoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Category
+}
+
+// Status returns HTTPResponse.Status
+func (r GetScoringCategoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetScoringCategoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateConditionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Condition
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateConditionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateConditionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetValidMappingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ConditionMappings
+}
+
+// Status returns HTTPResponse.Status
+func (r GetValidMappingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetValidMappingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteConditionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteConditionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteConditionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3805,14 +3911,14 @@ func (r DuplicateEventResponse) StatusCode() int {
 	return 0
 }
 
-type GetRulesForEventResponse struct {
+type GetLadderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Category
+	JSON200      *[]LadderEntry
 }
 
 // Status returns HTTPResponse.Status
-func (r GetRulesForEventResponse) Status() string {
+func (r GetLadderResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3820,7 +3926,72 @@ func (r GetRulesForEventResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetRulesForEventResponse) StatusCode() int {
+func (r GetLadderResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateObjectiveResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *Objective
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateObjectiveResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateObjectiveResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteObjectiveResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteObjectiveResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteObjectiveResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetObjectiveResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Objective
+}
+
+// Status returns HTTPResponse.Status
+func (r GetObjectiveResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetObjectiveResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3886,6 +4057,49 @@ func (r GetScoringPresetsForEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetScoringPresetsForEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateScoringPresetResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ScoringPreset
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateScoringPresetResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateScoringPresetResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteScoringPresetResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteScoringPresetResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteScoringPresetResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4368,266 +4582,6 @@ func (r GetOauth2TwitchRedirectResponse) StatusCode() int {
 	return 0
 }
 
-type CreateCategoryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Category
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateCategoryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateCategoryResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteCategoryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteCategoryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteCategoryResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetScoringCategoryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Category
-}
-
-// Status returns HTTPResponse.Status
-func (r GetScoringCategoryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetScoringCategoryResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateConditionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Condition
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateConditionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateConditionResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetValidMappingsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ConditionMappings
-}
-
-// Status returns HTTPResponse.Status
-func (r GetValidMappingsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetValidMappingsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteConditionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteConditionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteConditionResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateObjectiveResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Objective
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateObjectiveResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateObjectiveResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteObjectiveResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteObjectiveResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteObjectiveResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetObjectiveResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Objective
-}
-
-// Status returns HTTPResponse.Status
-func (r GetObjectiveResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetObjectiveResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateScoringPresetResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ScoringPreset
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateScoringPresetResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateScoringPresetResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteScoringPresetResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteScoringPresetResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteScoringPresetResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetScoringPresetResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ScoringPreset
-}
-
-// Status returns HTTPResponse.Status
-func (r GetScoringPresetResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetScoringPresetResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type GetStreamsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4807,15 +4761,6 @@ func (c *ClientWithResponses) CreateEventWithResponse(ctx context.Context, body 
 	return ParseCreateEventResponse(rsp)
 }
 
-// GetCurrentEventWithResponse request returning *GetCurrentEventResponse
-func (c *ClientWithResponses) GetCurrentEventWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetCurrentEventResponse, error) {
-	rsp, err := c.GetCurrentEvent(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetCurrentEventResponse(rsp)
-}
-
 // DeleteEventWithResponse request returning *DeleteEventResponse
 func (c *ClientWithResponses) DeleteEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*DeleteEventResponse, error) {
 	rsp, err := c.DeleteEvent(ctx, eventId, reqEditors...)
@@ -4825,13 +4770,83 @@ func (c *ClientWithResponses) DeleteEventWithResponse(ctx context.Context, event
 	return ParseDeleteEventResponse(rsp)
 }
 
-// GetEventWithResponse request returning *GetEventResponse
-func (c *ClientWithResponses) GetEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventResponse, error) {
-	rsp, err := c.GetEvent(ctx, eventId, reqEditors...)
+// GetRulesForEventWithResponse request returning *GetRulesForEventResponse
+func (c *ClientWithResponses) GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error) {
+	rsp, err := c.GetRulesForEvent(ctx, eventId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetEventResponse(rsp)
+	return ParseGetRulesForEventResponse(rsp)
+}
+
+// CreateCategoryWithBodyWithResponse request with arbitrary body returning *CreateCategoryResponse
+func (c *ClientWithResponses) CreateCategoryWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
+	rsp, err := c.CreateCategoryWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateCategoryResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateCategoryWithResponse(ctx context.Context, eventId int, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
+	rsp, err := c.CreateCategory(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateCategoryResponse(rsp)
+}
+
+// DeleteCategoryWithResponse request returning *DeleteCategoryResponse
+func (c *ClientWithResponses) DeleteCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryResponse, error) {
+	rsp, err := c.DeleteCategory(ctx, eventId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteCategoryResponse(rsp)
+}
+
+// GetScoringCategoryWithResponse request returning *GetScoringCategoryResponse
+func (c *ClientWithResponses) GetScoringCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*GetScoringCategoryResponse, error) {
+	rsp, err := c.GetScoringCategory(ctx, eventId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetScoringCategoryResponse(rsp)
+}
+
+// CreateConditionWithBodyWithResponse request with arbitrary body returning *CreateConditionResponse
+func (c *ClientWithResponses) CreateConditionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error) {
+	rsp, err := c.CreateConditionWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateConditionResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateConditionWithResponse(ctx context.Context, eventId int, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error) {
+	rsp, err := c.CreateCondition(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateConditionResponse(rsp)
+}
+
+// GetValidMappingsWithResponse request returning *GetValidMappingsResponse
+func (c *ClientWithResponses) GetValidMappingsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error) {
+	rsp, err := c.GetValidMappings(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetValidMappingsResponse(rsp)
+}
+
+// DeleteConditionWithResponse request returning *DeleteConditionResponse
+func (c *ClientWithResponses) DeleteConditionWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteConditionResponse, error) {
+	rsp, err := c.DeleteCondition(ctx, eventId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteConditionResponse(rsp)
 }
 
 // DuplicateEventWithBodyWithResponse request with arbitrary body returning *DuplicateEventResponse
@@ -4851,13 +4866,48 @@ func (c *ClientWithResponses) DuplicateEventWithResponse(ctx context.Context, ev
 	return ParseDuplicateEventResponse(rsp)
 }
 
-// GetRulesForEventWithResponse request returning *GetRulesForEventResponse
-func (c *ClientWithResponses) GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error) {
-	rsp, err := c.GetRulesForEvent(ctx, eventId, reqEditors...)
+// GetLadderWithResponse request returning *GetLadderResponse
+func (c *ClientWithResponses) GetLadderWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetLadderResponse, error) {
+	rsp, err := c.GetLadder(ctx, eventId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetRulesForEventResponse(rsp)
+	return ParseGetLadderResponse(rsp)
+}
+
+// CreateObjectiveWithBodyWithResponse request with arbitrary body returning *CreateObjectiveResponse
+func (c *ClientWithResponses) CreateObjectiveWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error) {
+	rsp, err := c.CreateObjectiveWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateObjectiveResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateObjectiveWithResponse(ctx context.Context, eventId int, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error) {
+	rsp, err := c.CreateObjective(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateObjectiveResponse(rsp)
+}
+
+// DeleteObjectiveWithResponse request returning *DeleteObjectiveResponse
+func (c *ClientWithResponses) DeleteObjectiveWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteObjectiveResponse, error) {
+	rsp, err := c.DeleteObjective(ctx, eventId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteObjectiveResponse(rsp)
+}
+
+// GetObjectiveWithResponse request returning *GetObjectiveResponse
+func (c *ClientWithResponses) GetObjectiveWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*GetObjectiveResponse, error) {
+	rsp, err := c.GetObjective(ctx, eventId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetObjectiveResponse(rsp)
 }
 
 // GetLatestScoresForEventWithResponse request returning *GetLatestScoresForEventResponse
@@ -4885,6 +4935,32 @@ func (c *ClientWithResponses) GetScoringPresetsForEventWithResponse(ctx context.
 		return nil, err
 	}
 	return ParseGetScoringPresetsForEventResponse(rsp)
+}
+
+// CreateScoringPresetWithBodyWithResponse request with arbitrary body returning *CreateScoringPresetResponse
+func (c *ClientWithResponses) CreateScoringPresetWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error) {
+	rsp, err := c.CreateScoringPresetWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateScoringPresetResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateScoringPresetWithResponse(ctx context.Context, eventId int, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error) {
+	rsp, err := c.CreateScoringPreset(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateScoringPresetResponse(rsp)
+}
+
+// DeleteScoringPresetWithResponse request returning *DeleteScoringPresetResponse
+func (c *ClientWithResponses) DeleteScoringPresetWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteScoringPresetResponse, error) {
+	rsp, err := c.DeleteScoringPreset(ctx, eventId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteScoringPresetResponse(rsp)
 }
 
 // GetEventSignupsWithResponse request returning *GetEventSignupsResponse
@@ -5141,146 +5217,6 @@ func (c *ClientWithResponses) GetOauth2TwitchRedirectWithResponse(ctx context.Co
 	return ParseGetOauth2TwitchRedirectResponse(rsp)
 }
 
-// CreateCategoryWithBodyWithResponse request with arbitrary body returning *CreateCategoryResponse
-func (c *ClientWithResponses) CreateCategoryWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
-	rsp, err := c.CreateCategoryWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateCategoryResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateCategoryWithResponse(ctx context.Context, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
-	rsp, err := c.CreateCategory(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateCategoryResponse(rsp)
-}
-
-// DeleteCategoryWithResponse request returning *DeleteCategoryResponse
-func (c *ClientWithResponses) DeleteCategoryWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryResponse, error) {
-	rsp, err := c.DeleteCategory(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteCategoryResponse(rsp)
-}
-
-// GetScoringCategoryWithResponse request returning *GetScoringCategoryResponse
-func (c *ClientWithResponses) GetScoringCategoryWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetScoringCategoryResponse, error) {
-	rsp, err := c.GetScoringCategory(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetScoringCategoryResponse(rsp)
-}
-
-// CreateConditionWithBodyWithResponse request with arbitrary body returning *CreateConditionResponse
-func (c *ClientWithResponses) CreateConditionWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error) {
-	rsp, err := c.CreateConditionWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateConditionResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateConditionWithResponse(ctx context.Context, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error) {
-	rsp, err := c.CreateCondition(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateConditionResponse(rsp)
-}
-
-// GetValidMappingsWithResponse request returning *GetValidMappingsResponse
-func (c *ClientWithResponses) GetValidMappingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error) {
-	rsp, err := c.GetValidMappings(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetValidMappingsResponse(rsp)
-}
-
-// DeleteConditionWithResponse request returning *DeleteConditionResponse
-func (c *ClientWithResponses) DeleteConditionWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteConditionResponse, error) {
-	rsp, err := c.DeleteCondition(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteConditionResponse(rsp)
-}
-
-// CreateObjectiveWithBodyWithResponse request with arbitrary body returning *CreateObjectiveResponse
-func (c *ClientWithResponses) CreateObjectiveWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error) {
-	rsp, err := c.CreateObjectiveWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateObjectiveResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateObjectiveWithResponse(ctx context.Context, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error) {
-	rsp, err := c.CreateObjective(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateObjectiveResponse(rsp)
-}
-
-// DeleteObjectiveWithResponse request returning *DeleteObjectiveResponse
-func (c *ClientWithResponses) DeleteObjectiveWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteObjectiveResponse, error) {
-	rsp, err := c.DeleteObjective(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteObjectiveResponse(rsp)
-}
-
-// GetObjectiveWithResponse request returning *GetObjectiveResponse
-func (c *ClientWithResponses) GetObjectiveWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetObjectiveResponse, error) {
-	rsp, err := c.GetObjective(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetObjectiveResponse(rsp)
-}
-
-// CreateScoringPresetWithBodyWithResponse request with arbitrary body returning *CreateScoringPresetResponse
-func (c *ClientWithResponses) CreateScoringPresetWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error) {
-	rsp, err := c.CreateScoringPresetWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateScoringPresetResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateScoringPresetWithResponse(ctx context.Context, body CreateScoringPresetJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateScoringPresetResponse, error) {
-	rsp, err := c.CreateScoringPreset(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateScoringPresetResponse(rsp)
-}
-
-// DeleteScoringPresetWithResponse request returning *DeleteScoringPresetResponse
-func (c *ClientWithResponses) DeleteScoringPresetWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*DeleteScoringPresetResponse, error) {
-	rsp, err := c.DeleteScoringPreset(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteScoringPresetResponse(rsp)
-}
-
-// GetScoringPresetWithResponse request returning *GetScoringPresetResponse
-func (c *ClientWithResponses) GetScoringPresetWithResponse(ctx context.Context, id int, reqEditors ...RequestEditorFn) (*GetScoringPresetResponse, error) {
-	rsp, err := c.GetScoringPreset(ctx, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetScoringPresetResponse(rsp)
-}
-
 // GetStreamsWithResponse request returning *GetStreamsResponse
 func (c *ClientWithResponses) GetStreamsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetStreamsResponse, error) {
 	rsp, err := c.GetStreams(ctx, reqEditors...)
@@ -5412,32 +5348,6 @@ func ParseCreateEventResponse(rsp *http.Response) (*CreateEventResponse, error) 
 	return response, nil
 }
 
-// ParseGetCurrentEventResponse parses an HTTP response from a GetCurrentEventWithResponse call
-func ParseGetCurrentEventResponse(rsp *http.Response) (*GetCurrentEventResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetCurrentEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Event
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseDeleteEventResponse parses an HTTP response from a DeleteEventWithResponse call
 func ParseDeleteEventResponse(rsp *http.Response) (*DeleteEventResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -5454,27 +5364,163 @@ func ParseDeleteEventResponse(rsp *http.Response) (*DeleteEventResponse, error) 
 	return response, nil
 }
 
-// ParseGetEventResponse parses an HTTP response from a GetEventWithResponse call
-func ParseGetEventResponse(rsp *http.Response) (*GetEventResponse, error) {
+// ParseGetRulesForEventResponse parses an HTTP response from a GetRulesForEventWithResponse call
+func ParseGetRulesForEventResponse(rsp *http.Response) (*GetRulesForEventResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetEventResponse{
+	response := &GetRulesForEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Category
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateCategoryResponse parses an HTTP response from a CreateCategoryWithResponse call
+func ParseCreateCategoryResponse(rsp *http.Response) (*CreateCategoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateCategoryResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Event
+		var dest Category
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON201 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseDeleteCategoryResponse parses an HTTP response from a DeleteCategoryWithResponse call
+func ParseDeleteCategoryResponse(rsp *http.Response) (*DeleteCategoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteCategoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetScoringCategoryResponse parses an HTTP response from a GetScoringCategoryWithResponse call
+func ParseGetScoringCategoryResponse(rsp *http.Response) (*GetScoringCategoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetScoringCategoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Category
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateConditionResponse parses an HTTP response from a CreateConditionWithResponse call
+func ParseCreateConditionResponse(rsp *http.Response) (*CreateConditionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateConditionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Condition
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetValidMappingsResponse parses an HTTP response from a GetValidMappingsWithResponse call
+func ParseGetValidMappingsResponse(rsp *http.Response) (*GetValidMappingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetValidMappingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ConditionMappings
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteConditionResponse parses an HTTP response from a DeleteConditionWithResponse call
+func ParseDeleteConditionResponse(rsp *http.Response) (*DeleteConditionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteConditionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -5506,22 +5552,90 @@ func ParseDuplicateEventResponse(rsp *http.Response) (*DuplicateEventResponse, e
 	return response, nil
 }
 
-// ParseGetRulesForEventResponse parses an HTTP response from a GetRulesForEventWithResponse call
-func ParseGetRulesForEventResponse(rsp *http.Response) (*GetRulesForEventResponse, error) {
+// ParseGetLadderResponse parses an HTTP response from a GetLadderWithResponse call
+func ParseGetLadderResponse(rsp *http.Response) (*GetLadderResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetRulesForEventResponse{
+	response := &GetLadderResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Category
+		var dest []LadderEntry
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateObjectiveResponse parses an HTTP response from a CreateObjectiveWithResponse call
+func ParseCreateObjectiveResponse(rsp *http.Response) (*CreateObjectiveResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateObjectiveResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Objective
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteObjectiveResponse parses an HTTP response from a DeleteObjectiveWithResponse call
+func ParseDeleteObjectiveResponse(rsp *http.Response) (*DeleteObjectiveResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteObjectiveResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetObjectiveResponse parses an HTTP response from a GetObjectiveWithResponse call
+func ParseGetObjectiveResponse(rsp *http.Response) (*GetObjectiveResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetObjectiveResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Objective
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5595,6 +5709,48 @@ func ParseGetScoringPresetsForEventResponse(rsp *http.Response) (*GetScoringPres
 		}
 		response.JSON200 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseCreateScoringPresetResponse parses an HTTP response from a CreateScoringPresetWithResponse call
+func ParseCreateScoringPresetResponse(rsp *http.Response) (*CreateScoringPresetResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateScoringPresetResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ScoringPreset
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteScoringPresetResponse parses an HTTP response from a DeleteScoringPresetWithResponse call
+func ParseDeleteScoringPresetResponse(rsp *http.Response) (*DeleteScoringPresetResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteScoringPresetResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -6087,278 +6243,6 @@ func ParseGetOauth2TwitchRedirectResponse(rsp *http.Response) (*GetOauth2TwitchR
 	response := &GetOauth2TwitchRedirectResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseCreateCategoryResponse parses an HTTP response from a CreateCategoryWithResponse call
-func ParseCreateCategoryResponse(rsp *http.Response) (*CreateCategoryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateCategoryResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Category
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteCategoryResponse parses an HTTP response from a DeleteCategoryWithResponse call
-func ParseDeleteCategoryResponse(rsp *http.Response) (*DeleteCategoryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteCategoryResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseGetScoringCategoryResponse parses an HTTP response from a GetScoringCategoryWithResponse call
-func ParseGetScoringCategoryResponse(rsp *http.Response) (*GetScoringCategoryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetScoringCategoryResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Category
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateConditionResponse parses an HTTP response from a CreateConditionWithResponse call
-func ParseCreateConditionResponse(rsp *http.Response) (*CreateConditionResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateConditionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Condition
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetValidMappingsResponse parses an HTTP response from a GetValidMappingsWithResponse call
-func ParseGetValidMappingsResponse(rsp *http.Response) (*GetValidMappingsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetValidMappingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ConditionMappings
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteConditionResponse parses an HTTP response from a DeleteConditionWithResponse call
-func ParseDeleteConditionResponse(rsp *http.Response) (*DeleteConditionResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteConditionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseCreateObjectiveResponse parses an HTTP response from a CreateObjectiveWithResponse call
-func ParseCreateObjectiveResponse(rsp *http.Response) (*CreateObjectiveResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateObjectiveResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Objective
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteObjectiveResponse parses an HTTP response from a DeleteObjectiveWithResponse call
-func ParseDeleteObjectiveResponse(rsp *http.Response) (*DeleteObjectiveResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteObjectiveResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseGetObjectiveResponse parses an HTTP response from a GetObjectiveWithResponse call
-func ParseGetObjectiveResponse(rsp *http.Response) (*GetObjectiveResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetObjectiveResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Objective
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateScoringPresetResponse parses an HTTP response from a CreateScoringPresetWithResponse call
-func ParseCreateScoringPresetResponse(rsp *http.Response) (*CreateScoringPresetResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateScoringPresetResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ScoringPreset
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteScoringPresetResponse parses an HTTP response from a DeleteScoringPresetWithResponse call
-func ParseDeleteScoringPresetResponse(rsp *http.Response) (*DeleteScoringPresetResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteScoringPresetResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseGetScoringPresetResponse parses an HTTP response from a GetScoringPresetWithResponse call
-func ParseGetScoringPresetResponse(rsp *http.Response) (*GetScoringPresetResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetScoringPresetResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ScoringPreset
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
 	}
 
 	return response, nil

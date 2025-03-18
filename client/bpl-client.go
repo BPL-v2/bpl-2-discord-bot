@@ -47,3 +47,23 @@ func AuthenticatedClient() (*ClientWithResponses, error) {
 	}
 	return bplClient, nil
 }
+
+func (c *ClientWithResponses) GetCurrentEvent() (*Event, error) {
+	resp, err := c.GetEventsWithResponse(context.TODO())
+	if err != nil {
+		return nil, err
+	}
+	if resp.JSON200 == nil {
+		return nil, nil
+	}
+	events := resp.JSON200
+	if len(*events) == 0 {
+		return nil, nil
+	}
+	for _, event := range *events {
+		if event.IsCurrent {
+			return &event, nil
+		}
+	}
+	return nil, nil
+}

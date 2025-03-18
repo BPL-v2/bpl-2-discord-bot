@@ -2,8 +2,8 @@ package commands
 
 import (
 	"bpl2-discord/client"
-	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -25,19 +25,12 @@ var GetTimesCommand = DiscordCommand{
 		Description: "Get the times for the current event",
 	},
 	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, client *client.ClientWithResponses) {
-		resp, err := client.GetCurrentEventWithResponse(context.TODO())
-
+		log.Println("GetTimesCommand called")
+		event, err := client.GetCurrentEvent()
 		if err != nil {
 			EditResponse(s, i, "could not get current event")
 			return
 		}
-
-		if resp.JSON200 == nil {
-			EditResponse(s, i, "no current event")
-			return
-		}
-
-		event := resp.JSON200
 		content := fmt.Sprintf(`
 Times for event "%s":
 Signups: %s

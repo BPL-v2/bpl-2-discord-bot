@@ -4,6 +4,7 @@ import (
 	"bpl2-discord/client"
 	"bpl2-discord/utils"
 	"fmt"
+	"log"
 	"sort"
 	"strings"
 	"sync"
@@ -171,6 +172,7 @@ var CopyCategoryCommand = DiscordCommand{
 		DefaultMemberPermissions: &PermissionManageChannels,
 	},
 	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, client *client.ClientWithResponses) {
+		log.Println("CopyCategoryCommand called")
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
@@ -231,6 +233,7 @@ var DeleteCategoryCommand = DiscordCommand{
 		DefaultMemberPermissions: &PermissionManageChannels,
 	},
 	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, client *client.ClientWithResponses) {
+		log.Println("DeleteCategoryCommand called")
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
