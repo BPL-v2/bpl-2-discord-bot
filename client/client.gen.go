@@ -179,6 +179,14 @@ type ApplicationStatus string
 // ApprovalStatus defines model for ApprovalStatus.
 type ApprovalStatus string
 
+// Atlas defines model for Atlas.
+type Atlas struct {
+	EventId int     `json:"event_id"`
+	Index   int     `json:"index"`
+	Trees   [][]int `json:"trees"`
+	UserId  int     `json:"user_id"`
+}
+
 // Category defines model for Category.
 type Category struct {
 	Id              int            `json:"id"`
@@ -195,6 +203,20 @@ type CategoryCreate struct {
 	Name            string `json:"name"`
 	ParentId        int    `json:"parent_id"`
 	ScoringPresetId *int   `json:"scoring_preset_id,omitempty"`
+}
+
+// Character defines model for Character.
+type Character struct {
+	Ascendancy       string `json:"ascendancy"`
+	AscendancyPoints int    `json:"ascendancy_points"`
+	AtlasNodeCount   int    `json:"atlas_node_count"`
+	EventId          int    `json:"event_id"`
+	Level            int    `json:"level"`
+	MainSkill        string `json:"main_skill"`
+	Name             string `json:"name"`
+	Pantheon         bool   `json:"pantheon"`
+	Timestamp        string `json:"timestamp"`
+	UserId           int    `json:"user_id"`
 }
 
 // Condition defines model for Condition.
@@ -261,6 +283,7 @@ type EventCreate struct {
 // EventStatus defines model for EventStatus.
 type EventStatus struct {
 	ApplicationStatus ApplicationStatus `json:"application_status"`
+	IsTeamLead        bool              `json:"is_team_lead"`
 	TeamId            *int              `json:"team_id,omitempty"`
 }
 
@@ -290,14 +313,15 @@ type JobType string
 
 // LadderEntry defines model for LadderEntry.
 type LadderEntry struct {
-	AccountName    string `json:"account_name"`
-	CharacterClass string `json:"character_class"`
-	CharacterName  string `json:"character_name"`
-	Delve          int    `json:"delve"`
-	Experience     int    `json:"experience"`
-	Level          int    `json:"level"`
-	Rank           int    `json:"rank"`
-	UserId         int    `json:"user_id"`
+	AccountName    string     `json:"account_name"`
+	CharacterClass string     `json:"character_class"`
+	CharacterName  string     `json:"character_name"`
+	Delve          int        `json:"delve"`
+	Experience     int        `json:"experience"`
+	Extra          *Character `json:"extra,omitempty"`
+	Level          int        `json:"level"`
+	Rank           int        `json:"rank"`
+	UserId         int        `json:"user_id"`
 }
 
 // MinimalUser defines model for MinimalUser.
@@ -429,6 +453,7 @@ type Signup struct {
 	ExpectedPlaytime ExpectedPlayTime `json:"expected_playtime"`
 	Id               int              `json:"id"`
 	TeamId           *int             `json:"team_id,omitempty"`
+	TeamLead         bool             `json:"team_lead"`
 	Timestamp        string           `json:"timestamp"`
 	User             NonSensitiveUser `json:"user"`
 }
@@ -467,6 +492,17 @@ type SubmissionCreate struct {
 type SubmissionReview struct {
 	ApprovalStatus ApprovalStatus `json:"approval_status"`
 	ReviewComment  *string        `json:"review_comment,omitempty"`
+}
+
+// SuggestionCreate defines model for SuggestionCreate.
+type SuggestionCreate struct {
+	Id int `json:"id"`
+}
+
+// Suggestions defines model for Suggestions.
+type Suggestions struct {
+	CategoryIds  []int `json:"category_ids"`
+	ObjectiveIds []int `json:"objective_ids"`
 }
 
 // Team defines model for Team.
@@ -570,6 +606,12 @@ type SubmitBountyJSONRequestBody = SubmissionCreate
 // ReviewSubmissionJSONRequestBody defines body for ReviewSubmission for application/json ContentType.
 type ReviewSubmissionJSONRequestBody = SubmissionReview
 
+// CreateCategoryTeamSuggestionJSONRequestBody defines body for CreateCategoryTeamSuggestion for application/json ContentType.
+type CreateCategoryTeamSuggestionJSONRequestBody = SuggestionCreate
+
+// CreateObjectiveTeamSuggestionJSONRequestBody defines body for CreateObjectiveTeamSuggestion for application/json ContentType.
+type CreateObjectiveTeamSuggestionJSONRequestBody = SuggestionCreate
+
 // CreateTeamJSONRequestBody defines body for CreateTeam for application/json ContentType.
 type CreateTeamJSONRequestBody = TeamCreate
 
@@ -672,6 +714,9 @@ type ClientInterface interface {
 	// DeleteEvent request
 	DeleteEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetTeamAtlasesForEvent request
+	GetTeamAtlasesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetRulesForEvent request
 	GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -685,6 +730,12 @@ type ClientInterface interface {
 
 	// GetScoringCategory request
 	GetScoringCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetCharactersForEvent request
+	GetCharactersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetCharacterEventHistoryForUser request
+	GetCharacterEventHistoryForUser(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateConditionWithBody request with any body
 	CreateConditionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -718,6 +769,9 @@ type ClientInterface interface {
 
 	// GetLatestScoresForEvent request
 	GetLatestScoresForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SimpleScoreWebSocket request
+	SimpleScoreWebSocket(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ScoreWebSocket request
 	ScoreWebSocket(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -765,6 +819,25 @@ type ClientInterface interface {
 	ReviewSubmissionWithBody(ctx context.Context, eventId int, submissionId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	ReviewSubmission(ctx context.Context, eventId int, submissionId int, body ReviewSubmissionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTeamSuggestions request
+	GetTeamSuggestions(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateCategoryTeamSuggestionWithBody request with any body
+	CreateCategoryTeamSuggestionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateCategoryTeamSuggestion(ctx context.Context, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteCategoryTeamSuggestion request
+	DeleteCategoryTeamSuggestion(ctx context.Context, eventId int, categoryId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateObjectiveTeamSuggestionWithBody request with any body
+	CreateObjectiveTeamSuggestionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteObjectiveTeamSuggestion request
+	DeleteObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTeams request
 	GetTeams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -837,6 +910,9 @@ type ClientInterface interface {
 	ChangePermissionsWithBody(ctx context.Context, userId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	ChangePermissions(ctx context.Context, userId int, body ChangePermissionsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetUserCharacters request
+	GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetEvents(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -877,6 +953,18 @@ func (c *Client) CreateEvent(ctx context.Context, body CreateEventJSONRequestBod
 
 func (c *Client) DeleteEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteEventRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeamAtlasesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamAtlasesForEventRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -937,6 +1025,30 @@ func (c *Client) DeleteCategory(ctx context.Context, eventId int, id int, reqEdi
 
 func (c *Client) GetScoringCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetScoringCategoryRequest(c.Server, eventId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetCharactersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCharactersForEventRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetCharacterEventHistoryForUser(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCharacterEventHistoryForUserRequest(c.Server, eventId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -1081,6 +1193,18 @@ func (c *Client) GetObjective(ctx context.Context, eventId int, id int, reqEdito
 
 func (c *Client) GetLatestScoresForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetLatestScoresForEventRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SimpleScoreWebSocket(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSimpleScoreWebSocketRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -1285,6 +1409,90 @@ func (c *Client) ReviewSubmissionWithBody(ctx context.Context, eventId int, subm
 
 func (c *Client) ReviewSubmission(ctx context.Context, eventId int, submissionId int, body ReviewSubmissionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewReviewSubmissionRequest(c.Server, eventId, submissionId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeamSuggestions(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeamSuggestionsRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateCategoryTeamSuggestionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCategoryTeamSuggestionRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateCategoryTeamSuggestion(ctx context.Context, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCategoryTeamSuggestionRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteCategoryTeamSuggestion(ctx context.Context, eventId int, categoryId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteCategoryTeamSuggestionRequest(c.Server, eventId, categoryId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateObjectiveTeamSuggestionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateObjectiveTeamSuggestionRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateObjectiveTeamSuggestionRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteObjectiveTeamSuggestionRequest(c.Server, eventId, objectiveId)
 	if err != nil {
 		return nil, err
 	}
@@ -1607,6 +1815,18 @@ func (c *Client) ChangePermissions(ctx context.Context, userId int, body ChangeP
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserCharactersRequest(c.Server, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // NewGetEventsRequest generates requests for GetEvents
 func NewGetEventsRequest(server string) (*http.Request, error) {
 	var err error
@@ -1701,6 +1921,40 @@ func NewDeleteEventRequest(server string, eventId int) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetTeamAtlasesForEventRequest generates requests for GetTeamAtlasesForEvent
+func NewGetTeamAtlasesForEventRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/atlas", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -1854,6 +2108,81 @@ func NewGetScoringCategoryRequest(server string, eventId int, id int) (*http.Req
 	}
 
 	operationPath := fmt.Sprintf("/events/%s/categories/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetCharactersForEventRequest generates requests for GetCharactersForEvent
+func NewGetCharactersForEventRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/characters", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetCharacterEventHistoryForUserRequest generates requests for GetCharacterEventHistoryForUser
+func NewGetCharacterEventHistoryForUserRequest(server string, eventId int, userId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/characters/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2220,6 +2549,40 @@ func NewGetLatestScoresForEventRequest(server string, eventId int) (*http.Reques
 	}
 
 	operationPath := fmt.Sprintf("/events/%s/scores/latest", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewSimpleScoreWebSocketRequest generates requests for SimpleScoreWebSocket
+func NewSimpleScoreWebSocketRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/scores/simple/ws", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2748,6 +3111,216 @@ func NewReviewSubmissionRequestWithBody(server string, eventId int, submissionId
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetTeamSuggestionsRequest generates requests for GetTeamSuggestions
+func NewGetTeamSuggestionsRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/suggestions", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateCategoryTeamSuggestionRequest calls the generic CreateCategoryTeamSuggestion builder with application/json body
+func NewCreateCategoryTeamSuggestionRequest(server string, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateCategoryTeamSuggestionRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewCreateCategoryTeamSuggestionRequestWithBody generates requests for CreateCategoryTeamSuggestion with any type of body
+func NewCreateCategoryTeamSuggestionRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/suggestions/categories", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteCategoryTeamSuggestionRequest generates requests for DeleteCategoryTeamSuggestion
+func NewDeleteCategoryTeamSuggestionRequest(server string, eventId int, categoryId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "category_id", runtime.ParamLocationPath, categoryId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/suggestions/categories/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateObjectiveTeamSuggestionRequest calls the generic CreateObjectiveTeamSuggestion builder with application/json body
+func NewCreateObjectiveTeamSuggestionRequest(server string, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateObjectiveTeamSuggestionRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewCreateObjectiveTeamSuggestionRequestWithBody generates requests for CreateObjectiveTeamSuggestion with any type of body
+func NewCreateObjectiveTeamSuggestionRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/suggestions/objectives", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteObjectiveTeamSuggestionRequest generates requests for DeleteObjectiveTeamSuggestion
+func NewDeleteObjectiveTeamSuggestionRequest(server string, eventId int, objectiveId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "objective_id", runtime.ParamLocationPath, objectiveId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/suggestions/objectives/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -3451,6 +4024,40 @@ func NewChangePermissionsRequestWithBody(server string, userId int, contentType 
 	return req, nil
 }
 
+// NewGetUserCharactersRequest generates requests for GetUserCharacters
+func NewGetUserCharactersRequest(server string, userId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/characters", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -3505,6 +4112,9 @@ type ClientWithResponsesInterface interface {
 	// DeleteEventWithResponse request
 	DeleteEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*DeleteEventResponse, error)
 
+	// GetTeamAtlasesForEventWithResponse request
+	GetTeamAtlasesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamAtlasesForEventResponse, error)
+
 	// GetRulesForEventWithResponse request
 	GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error)
 
@@ -3518,6 +4128,12 @@ type ClientWithResponsesInterface interface {
 
 	// GetScoringCategoryWithResponse request
 	GetScoringCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*GetScoringCategoryResponse, error)
+
+	// GetCharactersForEventWithResponse request
+	GetCharactersForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetCharactersForEventResponse, error)
+
+	// GetCharacterEventHistoryForUserWithResponse request
+	GetCharacterEventHistoryForUserWithResponse(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*GetCharacterEventHistoryForUserResponse, error)
 
 	// CreateConditionWithBodyWithResponse request with any body
 	CreateConditionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
@@ -3551,6 +4167,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetLatestScoresForEventWithResponse request
 	GetLatestScoresForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetLatestScoresForEventResponse, error)
+
+	// SimpleScoreWebSocketWithResponse request
+	SimpleScoreWebSocketWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*SimpleScoreWebSocketResponse, error)
 
 	// ScoreWebSocketWithResponse request
 	ScoreWebSocketWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*ScoreWebSocketResponse, error)
@@ -3598,6 +4217,25 @@ type ClientWithResponsesInterface interface {
 	ReviewSubmissionWithBodyWithResponse(ctx context.Context, eventId int, submissionId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReviewSubmissionResponse, error)
 
 	ReviewSubmissionWithResponse(ctx context.Context, eventId int, submissionId int, body ReviewSubmissionJSONRequestBody, reqEditors ...RequestEditorFn) (*ReviewSubmissionResponse, error)
+
+	// GetTeamSuggestionsWithResponse request
+	GetTeamSuggestionsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamSuggestionsResponse, error)
+
+	// CreateCategoryTeamSuggestionWithBodyWithResponse request with any body
+	CreateCategoryTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryTeamSuggestionResponse, error)
+
+	CreateCategoryTeamSuggestionWithResponse(ctx context.Context, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryTeamSuggestionResponse, error)
+
+	// DeleteCategoryTeamSuggestionWithResponse request
+	DeleteCategoryTeamSuggestionWithResponse(ctx context.Context, eventId int, categoryId int, reqEditors ...RequestEditorFn) (*DeleteCategoryTeamSuggestionResponse, error)
+
+	// CreateObjectiveTeamSuggestionWithBodyWithResponse request with any body
+	CreateObjectiveTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error)
+
+	CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error)
+
+	// DeleteObjectiveTeamSuggestionWithResponse request
+	DeleteObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*DeleteObjectiveTeamSuggestionResponse, error)
 
 	// GetTeamsWithResponse request
 	GetTeamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamsResponse, error)
@@ -3670,6 +4308,9 @@ type ClientWithResponsesInterface interface {
 	ChangePermissionsWithBodyWithResponse(ctx context.Context, userId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ChangePermissionsResponse, error)
 
 	ChangePermissionsWithResponse(ctx context.Context, userId int, body ChangePermissionsJSONRequestBody, reqEditors ...RequestEditorFn) (*ChangePermissionsResponse, error)
+
+	// GetUserCharactersWithResponse request
+	GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error)
 }
 
 type GetEventsResponse struct {
@@ -3731,6 +4372,28 @@ func (r DeleteEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r DeleteEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetTeamAtlasesForEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Atlas
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamAtlasesForEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamAtlasesForEventResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3818,6 +4481,50 @@ func (r GetScoringCategoryResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetScoringCategoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetCharactersForEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Character
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCharactersForEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCharactersForEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetCharacterEventHistoryForUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Character
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCharacterEventHistoryForUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCharacterEventHistoryForUserResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4020,6 +4727,27 @@ func (r GetLatestScoresForEventResponse) StatusCode() int {
 	return 0
 }
 
+type SimpleScoreWebSocketResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r SimpleScoreWebSocketResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SimpleScoreWebSocketResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ScoreWebSocketResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4109,7 +4837,7 @@ func (r DeleteScoringPresetResponse) StatusCode() int {
 type GetEventSignupsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *map[string][]Signup
+	JSON200      *[]Signup
 }
 
 // Status returns HTTPResponse.Status
@@ -4296,6 +5024,112 @@ func (r ReviewSubmissionResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ReviewSubmissionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetTeamSuggestionsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Suggestions
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeamSuggestionsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeamSuggestionsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateCategoryTeamSuggestionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateCategoryTeamSuggestionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateCategoryTeamSuggestionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteCategoryTeamSuggestionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteCategoryTeamSuggestionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteCategoryTeamSuggestionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateObjectiveTeamSuggestionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateObjectiveTeamSuggestionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateObjectiveTeamSuggestionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteObjectiveTeamSuggestionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteObjectiveTeamSuggestionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteObjectiveTeamSuggestionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4735,6 +5569,28 @@ func (r ChangePermissionsResponse) StatusCode() int {
 	return 0
 }
 
+type GetUserCharactersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Character
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUserCharactersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserCharactersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // GetEventsWithResponse request returning *GetEventsResponse
 func (c *ClientWithResponses) GetEventsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetEventsResponse, error) {
 	rsp, err := c.GetEvents(ctx, reqEditors...)
@@ -4768,6 +5624,15 @@ func (c *ClientWithResponses) DeleteEventWithResponse(ctx context.Context, event
 		return nil, err
 	}
 	return ParseDeleteEventResponse(rsp)
+}
+
+// GetTeamAtlasesForEventWithResponse request returning *GetTeamAtlasesForEventResponse
+func (c *ClientWithResponses) GetTeamAtlasesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamAtlasesForEventResponse, error) {
+	rsp, err := c.GetTeamAtlasesForEvent(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamAtlasesForEventResponse(rsp)
 }
 
 // GetRulesForEventWithResponse request returning *GetRulesForEventResponse
@@ -4812,6 +5677,24 @@ func (c *ClientWithResponses) GetScoringCategoryWithResponse(ctx context.Context
 		return nil, err
 	}
 	return ParseGetScoringCategoryResponse(rsp)
+}
+
+// GetCharactersForEventWithResponse request returning *GetCharactersForEventResponse
+func (c *ClientWithResponses) GetCharactersForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetCharactersForEventResponse, error) {
+	rsp, err := c.GetCharactersForEvent(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetCharactersForEventResponse(rsp)
+}
+
+// GetCharacterEventHistoryForUserWithResponse request returning *GetCharacterEventHistoryForUserResponse
+func (c *ClientWithResponses) GetCharacterEventHistoryForUserWithResponse(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*GetCharacterEventHistoryForUserResponse, error) {
+	rsp, err := c.GetCharacterEventHistoryForUser(ctx, eventId, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetCharacterEventHistoryForUserResponse(rsp)
 }
 
 // CreateConditionWithBodyWithResponse request with arbitrary body returning *CreateConditionResponse
@@ -4917,6 +5800,15 @@ func (c *ClientWithResponses) GetLatestScoresForEventWithResponse(ctx context.Co
 		return nil, err
 	}
 	return ParseGetLatestScoresForEventResponse(rsp)
+}
+
+// SimpleScoreWebSocketWithResponse request returning *SimpleScoreWebSocketResponse
+func (c *ClientWithResponses) SimpleScoreWebSocketWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*SimpleScoreWebSocketResponse, error) {
+	rsp, err := c.SimpleScoreWebSocket(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSimpleScoreWebSocketResponse(rsp)
 }
 
 // ScoreWebSocketWithResponse request returning *ScoreWebSocketResponse
@@ -5066,6 +5958,67 @@ func (c *ClientWithResponses) ReviewSubmissionWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseReviewSubmissionResponse(rsp)
+}
+
+// GetTeamSuggestionsWithResponse request returning *GetTeamSuggestionsResponse
+func (c *ClientWithResponses) GetTeamSuggestionsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamSuggestionsResponse, error) {
+	rsp, err := c.GetTeamSuggestions(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeamSuggestionsResponse(rsp)
+}
+
+// CreateCategoryTeamSuggestionWithBodyWithResponse request with arbitrary body returning *CreateCategoryTeamSuggestionResponse
+func (c *ClientWithResponses) CreateCategoryTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryTeamSuggestionResponse, error) {
+	rsp, err := c.CreateCategoryTeamSuggestionWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateCategoryTeamSuggestionResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateCategoryTeamSuggestionWithResponse(ctx context.Context, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryTeamSuggestionResponse, error) {
+	rsp, err := c.CreateCategoryTeamSuggestion(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateCategoryTeamSuggestionResponse(rsp)
+}
+
+// DeleteCategoryTeamSuggestionWithResponse request returning *DeleteCategoryTeamSuggestionResponse
+func (c *ClientWithResponses) DeleteCategoryTeamSuggestionWithResponse(ctx context.Context, eventId int, categoryId int, reqEditors ...RequestEditorFn) (*DeleteCategoryTeamSuggestionResponse, error) {
+	rsp, err := c.DeleteCategoryTeamSuggestion(ctx, eventId, categoryId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteCategoryTeamSuggestionResponse(rsp)
+}
+
+// CreateObjectiveTeamSuggestionWithBodyWithResponse request with arbitrary body returning *CreateObjectiveTeamSuggestionResponse
+func (c *ClientWithResponses) CreateObjectiveTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error) {
+	rsp, err := c.CreateObjectiveTeamSuggestionWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateObjectiveTeamSuggestionResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error) {
+	rsp, err := c.CreateObjectiveTeamSuggestion(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateObjectiveTeamSuggestionResponse(rsp)
+}
+
+// DeleteObjectiveTeamSuggestionWithResponse request returning *DeleteObjectiveTeamSuggestionResponse
+func (c *ClientWithResponses) DeleteObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*DeleteObjectiveTeamSuggestionResponse, error) {
+	rsp, err := c.DeleteObjectiveTeamSuggestion(ctx, eventId, objectiveId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteObjectiveTeamSuggestionResponse(rsp)
 }
 
 // GetTeamsWithResponse request returning *GetTeamsResponse
@@ -5296,6 +6249,15 @@ func (c *ClientWithResponses) ChangePermissionsWithResponse(ctx context.Context,
 	return ParseChangePermissionsResponse(rsp)
 }
 
+// GetUserCharactersWithResponse request returning *GetUserCharactersResponse
+func (c *ClientWithResponses) GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error) {
+	rsp, err := c.GetUserCharacters(ctx, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserCharactersResponse(rsp)
+}
+
 // ParseGetEventsResponse parses an HTTP response from a GetEventsWithResponse call
 func ParseGetEventsResponse(rsp *http.Response) (*GetEventsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -5359,6 +6321,32 @@ func ParseDeleteEventResponse(rsp *http.Response) (*DeleteEventResponse, error) 
 	response := &DeleteEventResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamAtlasesForEventResponse parses an HTTP response from a GetTeamAtlasesForEventWithResponse call
+func ParseGetTeamAtlasesForEventResponse(rsp *http.Response) (*GetTeamAtlasesForEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamAtlasesForEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Atlas
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil
@@ -5448,6 +6436,58 @@ func ParseGetScoringCategoryResponse(rsp *http.Response) (*GetScoringCategoryRes
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Category
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetCharactersForEventResponse parses an HTTP response from a GetCharactersForEventWithResponse call
+func ParseGetCharactersForEventResponse(rsp *http.Response) (*GetCharactersForEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCharactersForEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Character
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetCharacterEventHistoryForUserResponse parses an HTTP response from a GetCharacterEventHistoryForUserWithResponse call
+func ParseGetCharacterEventHistoryForUserResponse(rsp *http.Response) (*GetCharacterEventHistoryForUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCharacterEventHistoryForUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Character
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5672,6 +6712,22 @@ func ParseGetLatestScoresForEventResponse(rsp *http.Response) (*GetLatestScoresF
 	return response, nil
 }
 
+// ParseSimpleScoreWebSocketResponse parses an HTTP response from a SimpleScoreWebSocketWithResponse call
+func ParseSimpleScoreWebSocketResponse(rsp *http.Response) (*SimpleScoreWebSocketResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SimpleScoreWebSocketResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
 // ParseScoreWebSocketResponse parses an HTTP response from a ScoreWebSocketWithResponse call
 func ParseScoreWebSocketResponse(rsp *http.Response) (*ScoreWebSocketResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -5771,7 +6827,7 @@ func ParseGetEventSignupsResponse(rsp *http.Response) (*GetEventSignupsResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest map[string][]Signup
+		var dest []Signup
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5965,6 +7021,96 @@ func ParseReviewSubmissionResponse(rsp *http.Response) (*ReviewSubmissionRespons
 		}
 		response.JSON200 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseGetTeamSuggestionsResponse parses an HTTP response from a GetTeamSuggestionsWithResponse call
+func ParseGetTeamSuggestionsResponse(rsp *http.Response) (*GetTeamSuggestionsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeamSuggestionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Suggestions
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateCategoryTeamSuggestionResponse parses an HTTP response from a CreateCategoryTeamSuggestionWithResponse call
+func ParseCreateCategoryTeamSuggestionResponse(rsp *http.Response) (*CreateCategoryTeamSuggestionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateCategoryTeamSuggestionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseDeleteCategoryTeamSuggestionResponse parses an HTTP response from a DeleteCategoryTeamSuggestionWithResponse call
+func ParseDeleteCategoryTeamSuggestionResponse(rsp *http.Response) (*DeleteCategoryTeamSuggestionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteCategoryTeamSuggestionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseCreateObjectiveTeamSuggestionResponse parses an HTTP response from a CreateObjectiveTeamSuggestionWithResponse call
+func ParseCreateObjectiveTeamSuggestionResponse(rsp *http.Response) (*CreateObjectiveTeamSuggestionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateObjectiveTeamSuggestionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseDeleteObjectiveTeamSuggestionResponse parses an HTTP response from a DeleteObjectiveTeamSuggestionWithResponse call
+func ParseDeleteObjectiveTeamSuggestionResponse(rsp *http.Response) (*DeleteObjectiveTeamSuggestionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteObjectiveTeamSuggestionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -6410,6 +7556,32 @@ func ParseChangePermissionsResponse(rsp *http.Response) (*ChangePermissionsRespo
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest User
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetUserCharactersResponse parses an HTTP response from a GetUserCharactersWithResponse call
+func ParseGetUserCharactersResponse(rsp *http.Response) (*GetUserCharactersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetUserCharactersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Character
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

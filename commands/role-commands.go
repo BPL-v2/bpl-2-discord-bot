@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"strconv"
 	"sync"
 
 	"github.com/bwmarrin/discordgo"
@@ -84,12 +83,10 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 	if err != nil {
 		return 0, err
 	}
-	discordIdToTeamId := make(map[string]string)
-	for teamId, signups := range *signupResponse.JSON200 {
-		for _, signup := range signups {
-			if signup.User.DiscordId != nil {
-				discordIdToTeamId[*signup.User.DiscordId] = teamId
-			}
+	discordIdToTeamId := make(map[string]int)
+	for _, signup := range *signupResponse.JSON200 {
+		if signup.User.DiscordId != nil && signup.TeamId != nil {
+			discordIdToTeamId[*signup.User.DiscordId] = *signup.TeamId
 		}
 	}
 	members, err := GetAllGuildMembers(s, guildId)
@@ -105,15 +102,14 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 		return 0, err
 	}
 
-	teamRoles := make(map[string]string)
+	teamRoles := make(map[int]string)
 	for _, team := range event.Teams {
-		teamId := strconv.Itoa(team.Id)
 		for _, role := range allRoles {
 			if role.Name == team.Name {
-				teamRoles[teamId] = role.ID
+				teamRoles[team.Id] = role.ID
 			}
 		}
-		if _, ok := teamRoles[teamId]; !ok {
+		if _, ok := teamRoles[team.Id]; !ok {
 			fmt.Println("could not find role for team", team.Name)
 			return 0, fmt.Errorf("could not find role for team %s", team.Name)
 		}
@@ -128,9 +124,7 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 					newRoles = append(newRoles, roleId)
 				}
 			}
-			if teamId != "0" {
-				newRoles = append(newRoles, teamRoles[teamId])
-			}
+			newRoles = append(newRoles, teamRoles[teamId])
 			fmt.Println(member.User.Username, member.Roles, newRoles)
 			if !utils.HaveSameEntries(member.Roles, newRoles) {
 				counter++
