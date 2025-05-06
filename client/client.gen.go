@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	ApiKeyAuthScopes = "ApiKeyAuth.Scopes"
+	BearerAuthScopes = "BearerAuth.Scopes"
 )
 
 // Defines values for AggregationType.
@@ -50,17 +50,6 @@ const (
 	Changed   Difftype = "Changed"
 	Removed   Difftype = "Removed"
 	Unchanged Difftype = "Unchanged"
-)
-
-// Defines values for ExpectedPlayTime.
-const (
-	Extreme  ExpectedPlayTime = "EXTREME"
-	High     ExpectedPlayTime = "HIGH"
-	Low      ExpectedPlayTime = "LOW"
-	Medium   ExpectedPlayTime = "MEDIUM"
-	NoLife   ExpectedPlayTime = "NO_LIFE"
-	VeryHigh ExpectedPlayTime = "VERY_HIGH"
-	VeryLow  ExpectedPlayTime = "VERY_LOW"
 )
 
 // Defines values for FieldType.
@@ -170,6 +159,20 @@ const (
 	OBJECTIVE ScoringPresetType = "OBJECTIVE"
 )
 
+// Defines values for OauthCallbackParamsProvider.
+const (
+	OauthCallbackParamsProviderDiscord OauthCallbackParamsProvider = "discord"
+	OauthCallbackParamsProviderPoe     OauthCallbackParamsProvider = "poe"
+	OauthCallbackParamsProviderTwitch  OauthCallbackParamsProvider = "twitch"
+)
+
+// Defines values for OauthRedirectParamsProvider.
+const (
+	OauthRedirectParamsProviderDiscord OauthRedirectParamsProvider = "discord"
+	OauthRedirectParamsProviderPoe     OauthRedirectParamsProvider = "poe"
+	OauthRedirectParamsProviderTwitch  OauthRedirectParamsProvider = "twitch"
+)
+
 // AggregationType defines model for AggregationType.
 type AggregationType string
 
@@ -185,6 +188,20 @@ type Atlas struct {
 	Index   int     `json:"index"`
 	Trees   [][]int `json:"trees"`
 	UserId  int     `json:"user_id"`
+}
+
+// CallbackBody defines model for CallbackBody.
+type CallbackBody struct {
+	Code        string `json:"code"`
+	RedirectUrl string `json:"redirect_url"`
+	State       string `json:"state"`
+}
+
+// CallbackResponse defines model for CallbackResponse.
+type CallbackResponse struct {
+	AuthToken string `json:"auth_token"`
+	LastPath  string `json:"last_path"`
+	User      User   `json:"user"`
 }
 
 // Category defines model for Category.
@@ -246,11 +263,6 @@ type ConditionMappings struct {
 // Difftype defines model for Difftype.
 type Difftype string
 
-// DiscordBotLoginBody defines model for DiscordBotLoginBody.
-type DiscordBotLoginBody struct {
-	Token string `json:"token"`
-}
-
 // Event defines model for Event.
 type Event struct {
 	ApplicationStartTime string      `json:"application_start_time"`
@@ -286,9 +298,6 @@ type EventStatus struct {
 	IsTeamLead        bool              `json:"is_team_lead"`
 	TeamId            *int              `json:"team_id,omitempty"`
 }
-
-// ExpectedPlayTime defines model for ExpectedPlayTime.
-type ExpectedPlayTime string
 
 // FieldType defines model for FieldType.
 type FieldType string
@@ -450,7 +459,7 @@ type ScoringPresetType string
 
 // Signup defines model for Signup.
 type Signup struct {
-	ExpectedPlaytime ExpectedPlayTime `json:"expected_playtime"`
+	ExpectedPlaytime int              `json:"expected_playtime"`
 	Id               int              `json:"id"`
 	TeamId           *int             `json:"team_id,omitempty"`
 	TeamLead         bool             `json:"team_lead"`
@@ -460,7 +469,7 @@ type Signup struct {
 
 // SignupCreate defines model for SignupCreate.
 type SignupCreate struct {
-	ExpectedPlaytime ExpectedPlayTime `json:"expected_playtime"`
+	ExpectedPlaytime int `json:"expected_playtime"`
 }
 
 // Submission defines model for Submission.
@@ -570,6 +579,21 @@ type UserUpdate struct {
 // AddUsersToTeamsJSONBody defines parameters for AddUsersToTeams.
 type AddUsersToTeamsJSONBody = []TeamUserCreate
 
+// OauthCallbackParamsProvider defines parameters for OauthCallback.
+type OauthCallbackParamsProvider string
+
+// OauthRedirectParams defines parameters for OauthRedirect.
+type OauthRedirectParams struct {
+	// RedirectUrl Redirect URL for oauth provider
+	RedirectUrl *string `form:"redirect_url,omitempty" json:"redirect_url,omitempty"`
+
+	// LastUrl Last URL to redirect to after oauth is finished
+	LastUrl *string `form:"last_url,omitempty" json:"last_url,omitempty"`
+}
+
+// OauthRedirectParamsProvider defines parameters for OauthRedirect.
+type OauthRedirectParamsProvider string
+
 // RemoveAuthParams defines parameters for RemoveAuth.
 type RemoveAuthParams struct {
 	// Provider Provider
@@ -621,8 +645,8 @@ type AddUsersToTeamsJSONRequestBody = AddUsersToTeamsJSONBody
 // StartJobJSONRequestBody defines body for StartJob for application/json ContentType.
 type StartJobJSONRequestBody = JobCreate
 
-// LoginDiscordBotJSONRequestBody defines body for LoginDiscordBot for application/json ContentType.
-type LoginDiscordBotJSONRequestBody = DiscordBotLoginBody
+// OauthCallbackJSONRequestBody defines body for OauthCallback for application/json ContentType.
+type OauthCallbackJSONRequestBody = CallbackBody
 
 // UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
 type UpdateUserJSONRequestBody = UserUpdate
@@ -703,6 +727,12 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// GetUserCharacters request
+	GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetCharacterEventHistoryForUser request
+	GetCharacterEventHistoryForUser(ctx context.Context, userId int, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetEvents request
 	GetEvents(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -713,6 +743,9 @@ type ClientInterface interface {
 
 	// DeleteEvent request
 	DeleteEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetEvent request
+	GetEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTeamAtlasesForEvent request
 	GetTeamAtlasesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -733,9 +766,6 @@ type ClientInterface interface {
 
 	// GetCharactersForEvent request
 	GetCharactersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetCharacterEventHistoryForUser request
-	GetCharacterEventHistoryForUser(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateConditionWithBody request with any body
 	CreateConditionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -869,31 +899,22 @@ type ClientInterface interface {
 
 	StartJob(ctx context.Context, body StartJobJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetOauth2Discord request
-	GetOauth2Discord(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// LoginDiscordBot request
+	LoginDiscordBot(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// LoginDiscordBotWithBody request with any body
-	LoginDiscordBotWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// OauthCallbackWithBody request with any body
+	OauthCallbackWithBody(ctx context.Context, provider OauthCallbackParamsProvider, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	LoginDiscordBot(ctx context.Context, body LoginDiscordBotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	OauthCallback(ctx context.Context, provider OauthCallbackParamsProvider, body OauthCallbackJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetOauth2DiscordRedirect request
-	GetOauth2DiscordRedirect(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetOauth2Twitch request
-	GetOauth2Twitch(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetOauth2TwitchRedirect request
-	GetOauth2TwitchRedirect(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// OauthRedirect request
+	OauthRedirect(ctx context.Context, provider OauthRedirectParamsProvider, params *OauthRedirectParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetStreams request
 	GetStreams(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetAllUsers request
 	GetAllUsers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// Logout request
-	Logout(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// RemoveAuth request
 	RemoveAuth(ctx context.Context, params *RemoveAuthParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -906,13 +927,37 @@ type ClientInterface interface {
 
 	UpdateUser(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetUserById request
+	GetUserById(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ChangePermissionsWithBody request with any body
 	ChangePermissionsWithBody(ctx context.Context, userId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	ChangePermissions(ctx context.Context, userId int, body ChangePermissionsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
 
-	// GetUserCharacters request
-	GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+func (c *Client) GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserCharactersRequest(c.Server, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetCharacterEventHistoryForUser(ctx context.Context, userId int, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCharacterEventHistoryForUserRequest(c.Server, userId, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) GetEvents(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -953,6 +998,18 @@ func (c *Client) CreateEvent(ctx context.Context, body CreateEventJSONRequestBod
 
 func (c *Client) DeleteEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteEventRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetEventRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -1037,18 +1094,6 @@ func (c *Client) GetScoringCategory(ctx context.Context, eventId int, id int, re
 
 func (c *Client) GetCharactersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetCharactersForEventRequest(c.Server, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetCharacterEventHistoryForUser(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetCharacterEventHistoryForUserRequest(c.Server, eventId, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -1635,8 +1680,8 @@ func (c *Client) StartJob(ctx context.Context, body StartJobJSONRequestBody, req
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetOauth2Discord(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOauth2DiscordRequest(c.Server)
+func (c *Client) LoginDiscordBot(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewLoginDiscordBotRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -1647,8 +1692,8 @@ func (c *Client) GetOauth2Discord(ctx context.Context, reqEditors ...RequestEdit
 	return c.Client.Do(req)
 }
 
-func (c *Client) LoginDiscordBotWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewLoginDiscordBotRequestWithBody(c.Server, contentType, body)
+func (c *Client) OauthCallbackWithBody(ctx context.Context, provider OauthCallbackParamsProvider, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOauthCallbackRequestWithBody(c.Server, provider, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1659,8 +1704,8 @@ func (c *Client) LoginDiscordBotWithBody(ctx context.Context, contentType string
 	return c.Client.Do(req)
 }
 
-func (c *Client) LoginDiscordBot(ctx context.Context, body LoginDiscordBotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewLoginDiscordBotRequest(c.Server, body)
+func (c *Client) OauthCallback(ctx context.Context, provider OauthCallbackParamsProvider, body OauthCallbackJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOauthCallbackRequest(c.Server, provider, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1671,32 +1716,8 @@ func (c *Client) LoginDiscordBot(ctx context.Context, body LoginDiscordBotJSONRe
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetOauth2DiscordRedirect(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOauth2DiscordRedirectRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetOauth2Twitch(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOauth2TwitchRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetOauth2TwitchRedirect(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetOauth2TwitchRedirectRequest(c.Server)
+func (c *Client) OauthRedirect(ctx context.Context, provider OauthRedirectParamsProvider, params *OauthRedirectParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOauthRedirectRequest(c.Server, provider, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1721,18 +1742,6 @@ func (c *Client) GetStreams(ctx context.Context, reqEditors ...RequestEditorFn) 
 
 func (c *Client) GetAllUsers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetAllUsersRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) Logout(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewLogoutRequest(c.Server)
 	if err != nil {
 		return nil, err
 	}
@@ -1791,6 +1800,18 @@ func (c *Client) UpdateUser(ctx context.Context, body UpdateUserJSONRequestBody,
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetUserById(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserByIdRequest(c.Server, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) ChangePermissionsWithBody(ctx context.Context, userId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewChangePermissionsRequestWithBody(c.Server, userId, contentType, body)
 	if err != nil {
@@ -1815,16 +1836,79 @@ func (c *Client) ChangePermissions(ctx context.Context, userId int, body ChangeP
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserCharactersRequest(c.Server, userId)
+// NewGetUserCharactersRequest generates requests for GetUserCharacters
+func NewGetUserCharactersRequest(server string, userId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
 	if err != nil {
 		return nil, err
 	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
 		return nil, err
 	}
-	return c.Client.Do(req)
+
+	operationPath := fmt.Sprintf("/characters/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetCharacterEventHistoryForUserRequest generates requests for GetCharacterEventHistoryForUser
+func NewGetCharacterEventHistoryForUserRequest(server string, userId int, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/characters/%s/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewGetEventsRequest generates requests for GetEvents
@@ -1921,6 +2005,40 @@ func NewDeleteEventRequest(server string, eventId int) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetEventRequest generates requests for GetEvent
+func NewGetEventRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -2142,47 +2260,6 @@ func NewGetCharactersForEventRequest(server string, eventId int) (*http.Request,
 	}
 
 	operationPath := fmt.Sprintf("/events/%s/characters", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetCharacterEventHistoryForUserRequest generates requests for GetCharacterEventHistoryForUser
-func NewGetCharacterEventHistoryForUserRequest(server string, eventId int, userId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/characters/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3636,8 +3713,8 @@ func NewStartJobRequestWithBody(server string, contentType string, body io.Reade
 	return req, nil
 }
 
-// NewGetOauth2DiscordRequest generates requests for GetOauth2Discord
-func NewGetOauth2DiscordRequest(server string) (*http.Request, error) {
+// NewLoginDiscordBotRequest generates requests for LoginDiscordBot
+func NewLoginDiscordBotRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -3645,7 +3722,7 @@ func NewGetOauth2DiscordRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/oauth2/discord")
+	operationPath := fmt.Sprintf("/oauth2/discord/bot-login")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3655,7 +3732,7 @@ func NewGetOauth2DiscordRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3663,27 +3740,34 @@ func NewGetOauth2DiscordRequest(server string) (*http.Request, error) {
 	return req, nil
 }
 
-// NewLoginDiscordBotRequest calls the generic LoginDiscordBot builder with application/json body
-func NewLoginDiscordBotRequest(server string, body LoginDiscordBotJSONRequestBody) (*http.Request, error) {
+// NewOauthCallbackRequest calls the generic OauthCallback builder with application/json body
+func NewOauthCallbackRequest(server string, provider OauthCallbackParamsProvider, body OauthCallbackJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewLoginDiscordBotRequestWithBody(server, "application/json", bodyReader)
+	return NewOauthCallbackRequestWithBody(server, provider, "application/json", bodyReader)
 }
 
-// NewLoginDiscordBotRequestWithBody generates requests for LoginDiscordBot with any type of body
-func NewLoginDiscordBotRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewOauthCallbackRequestWithBody generates requests for OauthCallback with any type of body
+func NewOauthCallbackRequestWithBody(server string, provider OauthCallbackParamsProvider, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "provider", runtime.ParamLocationPath, provider)
+	if err != nil {
+		return nil, err
+	}
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/oauth2/discord/bot-login")
+	operationPath := fmt.Sprintf("/oauth2/%s/callback", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3703,16 +3787,23 @@ func NewLoginDiscordBotRequestWithBody(server string, contentType string, body i
 	return req, nil
 }
 
-// NewGetOauth2DiscordRedirectRequest generates requests for GetOauth2DiscordRedirect
-func NewGetOauth2DiscordRedirectRequest(server string) (*http.Request, error) {
+// NewOauthRedirectRequest generates requests for OauthRedirect
+func NewOauthRedirectRequest(server string, provider OauthRedirectParamsProvider, params *OauthRedirectParams) (*http.Request, error) {
 	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "provider", runtime.ParamLocationPath, provider)
+	if err != nil {
+		return nil, err
+	}
 
 	serverURL, err := url.Parse(server)
 	if err != nil {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/oauth2/discord/redirect")
+	operationPath := fmt.Sprintf("/oauth2/%s/redirect", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3722,58 +3813,42 @@ func NewGetOauth2DiscordRedirectRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
+	if params != nil {
+		queryValues := queryURL.Query()
 
-	return req, nil
-}
+		if params.RedirectUrl != nil {
 
-// NewGetOauth2TwitchRequest generates requests for GetOauth2Twitch
-func NewGetOauth2TwitchRequest(server string) (*http.Request, error) {
-	var err error
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "redirect_url", runtime.ParamLocationQuery, *params.RedirectUrl); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
 
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
+		}
 
-	operationPath := fmt.Sprintf("/oauth2/twitch")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
+		if params.LastUrl != nil {
 
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "last_url", runtime.ParamLocationQuery, *params.LastUrl); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
+		}
 
-	return req, nil
-}
-
-// NewGetOauth2TwitchRedirectRequest generates requests for GetOauth2TwitchRedirect
-func NewGetOauth2TwitchRedirectRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/oauth2/twitch/redirect")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
+		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
@@ -3831,33 +3906,6 @@ func NewGetAllUsersRequest(server string) (*http.Request, error) {
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewLogoutRequest generates requests for Logout
-func NewLogoutRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/logout")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -3977,6 +4025,40 @@ func NewUpdateUserRequestWithBody(server string, contentType string, body io.Rea
 	return req, nil
 }
 
+// NewGetUserByIdRequest generates requests for GetUserById
+func NewGetUserByIdRequest(server string, userId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewChangePermissionsRequest calls the generic ChangePermissions builder with application/json body
 func NewChangePermissionsRequest(server string, userId int, body ChangePermissionsJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -3994,7 +4076,7 @@ func NewChangePermissionsRequestWithBody(server string, userId int, contentType 
 
 	var pathParam0 string
 
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -4020,40 +4102,6 @@ func NewChangePermissionsRequestWithBody(server string, userId int, contentType 
 	}
 
 	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetUserCharactersRequest generates requests for GetUserCharacters
-func NewGetUserCharactersRequest(server string, userId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/users/%s/characters", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
 
 	return req, nil
 }
@@ -4101,6 +4149,12 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// GetUserCharactersWithResponse request
+	GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error)
+
+	// GetCharacterEventHistoryForUserWithResponse request
+	GetCharacterEventHistoryForUserWithResponse(ctx context.Context, userId int, eventId int, reqEditors ...RequestEditorFn) (*GetCharacterEventHistoryForUserResponse, error)
+
 	// GetEventsWithResponse request
 	GetEventsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetEventsResponse, error)
 
@@ -4111,6 +4165,9 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteEventWithResponse request
 	DeleteEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*DeleteEventResponse, error)
+
+	// GetEventWithResponse request
+	GetEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventResponse, error)
 
 	// GetTeamAtlasesForEventWithResponse request
 	GetTeamAtlasesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamAtlasesForEventResponse, error)
@@ -4131,9 +4188,6 @@ type ClientWithResponsesInterface interface {
 
 	// GetCharactersForEventWithResponse request
 	GetCharactersForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetCharactersForEventResponse, error)
-
-	// GetCharacterEventHistoryForUserWithResponse request
-	GetCharacterEventHistoryForUserWithResponse(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*GetCharacterEventHistoryForUserResponse, error)
 
 	// CreateConditionWithBodyWithResponse request with any body
 	CreateConditionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
@@ -4267,31 +4321,22 @@ type ClientWithResponsesInterface interface {
 
 	StartJobWithResponse(ctx context.Context, body StartJobJSONRequestBody, reqEditors ...RequestEditorFn) (*StartJobResponse, error)
 
-	// GetOauth2DiscordWithResponse request
-	GetOauth2DiscordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2DiscordResponse, error)
+	// LoginDiscordBotWithResponse request
+	LoginDiscordBotWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*LoginDiscordBotResponse, error)
 
-	// LoginDiscordBotWithBodyWithResponse request with any body
-	LoginDiscordBotWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*LoginDiscordBotResponse, error)
+	// OauthCallbackWithBodyWithResponse request with any body
+	OauthCallbackWithBodyWithResponse(ctx context.Context, provider OauthCallbackParamsProvider, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*OauthCallbackResponse, error)
 
-	LoginDiscordBotWithResponse(ctx context.Context, body LoginDiscordBotJSONRequestBody, reqEditors ...RequestEditorFn) (*LoginDiscordBotResponse, error)
+	OauthCallbackWithResponse(ctx context.Context, provider OauthCallbackParamsProvider, body OauthCallbackJSONRequestBody, reqEditors ...RequestEditorFn) (*OauthCallbackResponse, error)
 
-	// GetOauth2DiscordRedirectWithResponse request
-	GetOauth2DiscordRedirectWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2DiscordRedirectResponse, error)
-
-	// GetOauth2TwitchWithResponse request
-	GetOauth2TwitchWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2TwitchResponse, error)
-
-	// GetOauth2TwitchRedirectWithResponse request
-	GetOauth2TwitchRedirectWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2TwitchRedirectResponse, error)
+	// OauthRedirectWithResponse request
+	OauthRedirectWithResponse(ctx context.Context, provider OauthRedirectParamsProvider, params *OauthRedirectParams, reqEditors ...RequestEditorFn) (*OauthRedirectResponse, error)
 
 	// GetStreamsWithResponse request
 	GetStreamsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetStreamsResponse, error)
 
 	// GetAllUsersWithResponse request
 	GetAllUsersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetAllUsersResponse, error)
-
-	// LogoutWithResponse request
-	LogoutWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*LogoutResponse, error)
 
 	// RemoveAuthWithResponse request
 	RemoveAuthWithResponse(ctx context.Context, params *RemoveAuthParams, reqEditors ...RequestEditorFn) (*RemoveAuthResponse, error)
@@ -4304,13 +4349,57 @@ type ClientWithResponsesInterface interface {
 
 	UpdateUserWithResponse(ctx context.Context, body UpdateUserJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateUserResponse, error)
 
+	// GetUserByIdWithResponse request
+	GetUserByIdWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserByIdResponse, error)
+
 	// ChangePermissionsWithBodyWithResponse request with any body
 	ChangePermissionsWithBodyWithResponse(ctx context.Context, userId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ChangePermissionsResponse, error)
 
 	ChangePermissionsWithResponse(ctx context.Context, userId int, body ChangePermissionsJSONRequestBody, reqEditors ...RequestEditorFn) (*ChangePermissionsResponse, error)
+}
 
-	// GetUserCharactersWithResponse request
-	GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error)
+type GetUserCharactersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Character
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUserCharactersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserCharactersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetCharacterEventHistoryForUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Character
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCharacterEventHistoryForUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCharacterEventHistoryForUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type GetEventsResponse struct {
@@ -4372,6 +4461,28 @@ func (r DeleteEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r DeleteEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Event
+}
+
+// Status returns HTTPResponse.Status
+func (r GetEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetEventResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4503,28 +4614,6 @@ func (r GetCharactersForEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetCharactersForEventResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetCharacterEventHistoryForUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]Character
-}
-
-// Status returns HTTPResponse.Status
-func (r GetCharacterEventHistoryForUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetCharacterEventHistoryForUserResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5310,27 +5399,6 @@ func (r StartJobResponse) StatusCode() int {
 	return 0
 }
 
-type GetOauth2DiscordResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r GetOauth2DiscordResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetOauth2DiscordResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type LoginDiscordBotResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5353,13 +5421,13 @@ func (r LoginDiscordBotResponse) StatusCode() int {
 	return 0
 }
 
-type GetOauth2DiscordRedirectResponse struct {
+type OauthCallbackResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r GetOauth2DiscordRedirectResponse) Status() string {
+func (r OauthCallbackResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5367,20 +5435,20 @@ func (r GetOauth2DiscordRedirectResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetOauth2DiscordRedirectResponse) StatusCode() int {
+func (r OauthCallbackResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetOauth2TwitchResponse struct {
+type OauthRedirectResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 }
 
 // Status returns HTTPResponse.Status
-func (r GetOauth2TwitchResponse) Status() string {
+func (r OauthRedirectResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5388,28 +5456,7 @@ func (r GetOauth2TwitchResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetOauth2TwitchResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetOauth2TwitchRedirectResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r GetOauth2TwitchRedirectResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetOauth2TwitchRedirectResponse) StatusCode() int {
+func (r OauthRedirectResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5454,27 +5501,6 @@ func (r GetAllUsersResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetAllUsersResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type LogoutResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r LogoutResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r LogoutResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5547,6 +5573,28 @@ func (r UpdateUserResponse) StatusCode() int {
 	return 0
 }
 
+type GetUserByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *User
+}
+
+// Status returns HTTPResponse.Status
+func (r GetUserByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ChangePermissionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5569,26 +5617,22 @@ func (r ChangePermissionsResponse) StatusCode() int {
 	return 0
 }
 
-type GetUserCharactersResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]Character
+// GetUserCharactersWithResponse request returning *GetUserCharactersResponse
+func (c *ClientWithResponses) GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error) {
+	rsp, err := c.GetUserCharacters(ctx, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserCharactersResponse(rsp)
 }
 
-// Status returns HTTPResponse.Status
-func (r GetUserCharactersResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
+// GetCharacterEventHistoryForUserWithResponse request returning *GetCharacterEventHistoryForUserResponse
+func (c *ClientWithResponses) GetCharacterEventHistoryForUserWithResponse(ctx context.Context, userId int, eventId int, reqEditors ...RequestEditorFn) (*GetCharacterEventHistoryForUserResponse, error) {
+	rsp, err := c.GetCharacterEventHistoryForUser(ctx, userId, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
 	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetUserCharactersResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
+	return ParseGetCharacterEventHistoryForUserResponse(rsp)
 }
 
 // GetEventsWithResponse request returning *GetEventsResponse
@@ -5624,6 +5668,15 @@ func (c *ClientWithResponses) DeleteEventWithResponse(ctx context.Context, event
 		return nil, err
 	}
 	return ParseDeleteEventResponse(rsp)
+}
+
+// GetEventWithResponse request returning *GetEventResponse
+func (c *ClientWithResponses) GetEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventResponse, error) {
+	rsp, err := c.GetEvent(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetEventResponse(rsp)
 }
 
 // GetTeamAtlasesForEventWithResponse request returning *GetTeamAtlasesForEventResponse
@@ -5686,15 +5739,6 @@ func (c *ClientWithResponses) GetCharactersForEventWithResponse(ctx context.Cont
 		return nil, err
 	}
 	return ParseGetCharactersForEventResponse(rsp)
-}
-
-// GetCharacterEventHistoryForUserWithResponse request returning *GetCharacterEventHistoryForUserResponse
-func (c *ClientWithResponses) GetCharacterEventHistoryForUserWithResponse(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*GetCharacterEventHistoryForUserResponse, error) {
-	rsp, err := c.GetCharacterEventHistoryForUser(ctx, eventId, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetCharacterEventHistoryForUserResponse(rsp)
 }
 
 // CreateConditionWithBodyWithResponse request with arbitrary body returning *CreateConditionResponse
@@ -6117,57 +6161,39 @@ func (c *ClientWithResponses) StartJobWithResponse(ctx context.Context, body Sta
 	return ParseStartJobResponse(rsp)
 }
 
-// GetOauth2DiscordWithResponse request returning *GetOauth2DiscordResponse
-func (c *ClientWithResponses) GetOauth2DiscordWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2DiscordResponse, error) {
-	rsp, err := c.GetOauth2Discord(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetOauth2DiscordResponse(rsp)
-}
-
-// LoginDiscordBotWithBodyWithResponse request with arbitrary body returning *LoginDiscordBotResponse
-func (c *ClientWithResponses) LoginDiscordBotWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*LoginDiscordBotResponse, error) {
-	rsp, err := c.LoginDiscordBotWithBody(ctx, contentType, body, reqEditors...)
+// LoginDiscordBotWithResponse request returning *LoginDiscordBotResponse
+func (c *ClientWithResponses) LoginDiscordBotWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*LoginDiscordBotResponse, error) {
+	rsp, err := c.LoginDiscordBot(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
 	return ParseLoginDiscordBotResponse(rsp)
 }
 
-func (c *ClientWithResponses) LoginDiscordBotWithResponse(ctx context.Context, body LoginDiscordBotJSONRequestBody, reqEditors ...RequestEditorFn) (*LoginDiscordBotResponse, error) {
-	rsp, err := c.LoginDiscordBot(ctx, body, reqEditors...)
+// OauthCallbackWithBodyWithResponse request with arbitrary body returning *OauthCallbackResponse
+func (c *ClientWithResponses) OauthCallbackWithBodyWithResponse(ctx context.Context, provider OauthCallbackParamsProvider, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*OauthCallbackResponse, error) {
+	rsp, err := c.OauthCallbackWithBody(ctx, provider, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseLoginDiscordBotResponse(rsp)
+	return ParseOauthCallbackResponse(rsp)
 }
 
-// GetOauth2DiscordRedirectWithResponse request returning *GetOauth2DiscordRedirectResponse
-func (c *ClientWithResponses) GetOauth2DiscordRedirectWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2DiscordRedirectResponse, error) {
-	rsp, err := c.GetOauth2DiscordRedirect(ctx, reqEditors...)
+func (c *ClientWithResponses) OauthCallbackWithResponse(ctx context.Context, provider OauthCallbackParamsProvider, body OauthCallbackJSONRequestBody, reqEditors ...RequestEditorFn) (*OauthCallbackResponse, error) {
+	rsp, err := c.OauthCallback(ctx, provider, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetOauth2DiscordRedirectResponse(rsp)
+	return ParseOauthCallbackResponse(rsp)
 }
 
-// GetOauth2TwitchWithResponse request returning *GetOauth2TwitchResponse
-func (c *ClientWithResponses) GetOauth2TwitchWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2TwitchResponse, error) {
-	rsp, err := c.GetOauth2Twitch(ctx, reqEditors...)
+// OauthRedirectWithResponse request returning *OauthRedirectResponse
+func (c *ClientWithResponses) OauthRedirectWithResponse(ctx context.Context, provider OauthRedirectParamsProvider, params *OauthRedirectParams, reqEditors ...RequestEditorFn) (*OauthRedirectResponse, error) {
+	rsp, err := c.OauthRedirect(ctx, provider, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetOauth2TwitchResponse(rsp)
-}
-
-// GetOauth2TwitchRedirectWithResponse request returning *GetOauth2TwitchRedirectResponse
-func (c *ClientWithResponses) GetOauth2TwitchRedirectWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetOauth2TwitchRedirectResponse, error) {
-	rsp, err := c.GetOauth2TwitchRedirect(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetOauth2TwitchRedirectResponse(rsp)
+	return ParseOauthRedirectResponse(rsp)
 }
 
 // GetStreamsWithResponse request returning *GetStreamsResponse
@@ -6186,15 +6212,6 @@ func (c *ClientWithResponses) GetAllUsersWithResponse(ctx context.Context, reqEd
 		return nil, err
 	}
 	return ParseGetAllUsersResponse(rsp)
-}
-
-// LogoutWithResponse request returning *LogoutResponse
-func (c *ClientWithResponses) LogoutWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*LogoutResponse, error) {
-	rsp, err := c.Logout(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseLogoutResponse(rsp)
 }
 
 // RemoveAuthWithResponse request returning *RemoveAuthResponse
@@ -6232,6 +6249,15 @@ func (c *ClientWithResponses) UpdateUserWithResponse(ctx context.Context, body U
 	return ParseUpdateUserResponse(rsp)
 }
 
+// GetUserByIdWithResponse request returning *GetUserByIdResponse
+func (c *ClientWithResponses) GetUserByIdWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserByIdResponse, error) {
+	rsp, err := c.GetUserById(ctx, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetUserByIdResponse(rsp)
+}
+
 // ChangePermissionsWithBodyWithResponse request with arbitrary body returning *ChangePermissionsResponse
 func (c *ClientWithResponses) ChangePermissionsWithBodyWithResponse(ctx context.Context, userId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ChangePermissionsResponse, error) {
 	rsp, err := c.ChangePermissionsWithBody(ctx, userId, contentType, body, reqEditors...)
@@ -6249,13 +6275,56 @@ func (c *ClientWithResponses) ChangePermissionsWithResponse(ctx context.Context,
 	return ParseChangePermissionsResponse(rsp)
 }
 
-// GetUserCharactersWithResponse request returning *GetUserCharactersResponse
-func (c *ClientWithResponses) GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error) {
-	rsp, err := c.GetUserCharacters(ctx, userId, reqEditors...)
+// ParseGetUserCharactersResponse parses an HTTP response from a GetUserCharactersWithResponse call
+func ParseGetUserCharactersResponse(rsp *http.Response) (*GetUserCharactersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetUserCharactersResponse(rsp)
+
+	response := &GetUserCharactersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Character
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetCharacterEventHistoryForUserResponse parses an HTTP response from a GetCharacterEventHistoryForUserWithResponse call
+func ParseGetCharacterEventHistoryForUserResponse(rsp *http.Response) (*GetCharacterEventHistoryForUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCharacterEventHistoryForUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Character
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseGetEventsResponse parses an HTTP response from a GetEventsWithResponse call
@@ -6321,6 +6390,32 @@ func ParseDeleteEventResponse(rsp *http.Response) (*DeleteEventResponse, error) 
 	response := &DeleteEventResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetEventResponse parses an HTTP response from a GetEventWithResponse call
+func ParseGetEventResponse(rsp *http.Response) (*GetEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Event
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil
@@ -6455,32 +6550,6 @@ func ParseGetCharactersForEventResponse(rsp *http.Response) (*GetCharactersForEv
 	}
 
 	response := &GetCharactersForEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Character
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetCharacterEventHistoryForUserResponse parses an HTTP response from a GetCharacterEventHistoryForUserWithResponse call
-func ParseGetCharacterEventHistoryForUserResponse(rsp *http.Response) (*GetCharacterEventHistoryForUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetCharacterEventHistoryForUserResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -7304,22 +7373,6 @@ func ParseStartJobResponse(rsp *http.Response) (*StartJobResponse, error) {
 	return response, nil
 }
 
-// ParseGetOauth2DiscordResponse parses an HTTP response from a GetOauth2DiscordWithResponse call
-func ParseGetOauth2DiscordResponse(rsp *http.Response) (*GetOauth2DiscordResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetOauth2DiscordResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
 // ParseLoginDiscordBotResponse parses an HTTP response from a LoginDiscordBotWithResponse call
 func ParseLoginDiscordBotResponse(rsp *http.Response) (*LoginDiscordBotResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -7346,15 +7399,15 @@ func ParseLoginDiscordBotResponse(rsp *http.Response) (*LoginDiscordBotResponse,
 	return response, nil
 }
 
-// ParseGetOauth2DiscordRedirectResponse parses an HTTP response from a GetOauth2DiscordRedirectWithResponse call
-func ParseGetOauth2DiscordRedirectResponse(rsp *http.Response) (*GetOauth2DiscordRedirectResponse, error) {
+// ParseOauthCallbackResponse parses an HTTP response from a OauthCallbackWithResponse call
+func ParseOauthCallbackResponse(rsp *http.Response) (*OauthCallbackResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetOauth2DiscordRedirectResponse{
+	response := &OauthCallbackResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -7362,31 +7415,15 @@ func ParseGetOauth2DiscordRedirectResponse(rsp *http.Response) (*GetOauth2Discor
 	return response, nil
 }
 
-// ParseGetOauth2TwitchResponse parses an HTTP response from a GetOauth2TwitchWithResponse call
-func ParseGetOauth2TwitchResponse(rsp *http.Response) (*GetOauth2TwitchResponse, error) {
+// ParseOauthRedirectResponse parses an HTTP response from a OauthRedirectWithResponse call
+func ParseOauthRedirectResponse(rsp *http.Response) (*OauthRedirectResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetOauth2TwitchResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseGetOauth2TwitchRedirectResponse parses an HTTP response from a GetOauth2TwitchRedirectWithResponse call
-func ParseGetOauth2TwitchRedirectResponse(rsp *http.Response) (*GetOauth2TwitchRedirectResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetOauth2TwitchRedirectResponse{
+	response := &OauthRedirectResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -7441,22 +7478,6 @@ func ParseGetAllUsersResponse(rsp *http.Response) (*GetAllUsersResponse, error) 
 		}
 		response.JSON200 = &dest
 
-	}
-
-	return response, nil
-}
-
-// ParseLogoutResponse parses an HTTP response from a LogoutWithResponse call
-func ParseLogoutResponse(rsp *http.Response) (*LogoutResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &LogoutResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -7540,15 +7561,15 @@ func ParseUpdateUserResponse(rsp *http.Response) (*UpdateUserResponse, error) {
 	return response, nil
 }
 
-// ParseChangePermissionsResponse parses an HTTP response from a ChangePermissionsWithResponse call
-func ParseChangePermissionsResponse(rsp *http.Response) (*ChangePermissionsResponse, error) {
+// ParseGetUserByIdResponse parses an HTTP response from a GetUserByIdWithResponse call
+func ParseGetUserByIdResponse(rsp *http.Response) (*GetUserByIdResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ChangePermissionsResponse{
+	response := &GetUserByIdResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -7566,22 +7587,22 @@ func ParseChangePermissionsResponse(rsp *http.Response) (*ChangePermissionsRespo
 	return response, nil
 }
 
-// ParseGetUserCharactersResponse parses an HTTP response from a GetUserCharactersWithResponse call
-func ParseGetUserCharactersResponse(rsp *http.Response) (*GetUserCharactersResponse, error) {
+// ParseChangePermissionsResponse parses an HTTP response from a ChangePermissionsWithResponse call
+func ParseChangePermissionsResponse(rsp *http.Response) (*ChangePermissionsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetUserCharactersResponse{
+	response := &ChangePermissionsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Character
+		var dest User
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

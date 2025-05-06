@@ -2,30 +2,50 @@ package client
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
-	"net/http/cookiejar"
-	"net/url"
 	"os"
+	"time"
+
+	"github.com/golang-jwt/jwt"
 )
 
+type AuthTransport struct {
+	Transport http.RoundTripper
+	Token     string
+}
+
+func (a *AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	fmt.Println("Adding auth header")
+	req.Header.Set("Authorization", "Bearer "+a.Token)
+	return a.Transport.RoundTrip(req)
+}
+
 func (c *ClientWithResponses) Authenticate() error {
-	BackendUrl := os.Getenv("BACKEND_URL_FOR_DISCORD_BOT")
-	resp, err := c.LoginDiscordBotWithResponse(context.TODO(), LoginDiscordBotJSONRequestBody{
-		Token: os.Getenv("DISCORD_BOT_TOKEN"),
-	})
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+		jwt.MapClaims{
+			"user_id":     0,
+			"permissions": []string{"admin"},
+			"exp":         time.Now().Add(time.Hour * 24 * 1000).Unix(),
+		})
 
+	jwt, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	fmt.Println("JWT: ", jwt)
 	if err != nil {
-		return err
+		log.Fatalf("could not sign token: %s", err)
 	}
-	token := *resp.JSON200
-	URL, err := url.Parse(BackendUrl)
 
-	jar, _ := cookiejar.New(nil)
-	jar.SetCookies(URL, []*http.Cookie{{Name: "auth", Value: token}})
+	BackendUrl := os.Getenv("BACKEND_URL_FOR_DISCORD_BOT")
+	httpClient := &http.Client{
+		Transport: &AuthTransport{
+			Transport: http.DefaultTransport,
+			Token:     jwt,
+		},
+	}
 
-	clientWithCookie := &http.Client{Jar: jar}
-	newClient, err := NewClientWithResponses(BackendUrl, WithHTTPClient(clientWithCookie))
+	// Pass the custom HTTP client to NewClientWithResponses
+	newClient, err := NewClientWithResponses(BackendUrl, WithHTTPClient(httpClient))
 	if err != nil {
 		return err
 	}
