@@ -80,9 +80,11 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 	}
 
 	signupResponse, err := client.GetEventSignupsWithResponse(context.TODO(), event.Id)
-	if err != nil {
+	if err != nil || signupResponse.StatusCode() > 299 {
+		fmt.Println("could not get signups", err)
 		return 0, err
 	}
+
 	discordIdToTeamId := make(map[string]int)
 	for _, signup := range *signupResponse.JSON200 {
 		if signup.User.DiscordId != nil && signup.TeamId != nil {
@@ -90,10 +92,6 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 		}
 	}
 	members, err := GetAllGuildMembers(s, guildId)
-	for _, member := range members {
-		fmt.Println(member.User.Username)
-	}
-
 	if err != nil {
 		return 0, err
 	}
@@ -117,26 +115,27 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 	wg := sync.WaitGroup{}
 	counter := 0
 	for _, member := range members {
-		if teamId, ok := discordIdToTeamId[member.User.ID]; ok {
-			newRoles := make([]string, 0)
-			for _, roleId := range member.Roles {
-				if !utils.ValuesContain(teamRoles, roleId) {
-					newRoles = append(newRoles, roleId)
-				}
+		teamId := discordIdToTeamId[member.User.ID]
+		newRoles := make([]string, 0)
+		for _, roleId := range member.Roles {
+			if !utils.ValuesContain(teamRoles, roleId) {
+				newRoles = append(newRoles, roleId)
 			}
+		}
+		if teamId != 0 {
 			newRoles = append(newRoles, teamRoles[teamId])
-			fmt.Println(member.User.Username, member.Roles, newRoles)
-			if !utils.HaveSameEntries(member.Roles, newRoles) {
-				counter++
-				wg.Add(1)
-				go func(member *discordgo.Member) {
-					defer wg.Done()
-					_, err := s.GuildMemberEdit(guildId, member.User.ID, &discordgo.GuildMemberParams{Roles: &newRoles})
-					if err != nil {
-						fmt.Println("could not assign roles to", member.User.Username, err)
-					}
-				}(member)
-			}
+		}
+		if !utils.HaveSameEntries(member.Roles, newRoles) {
+			fmt.Println("assigning role to", member.User.Username)
+			counter++
+			wg.Add(1)
+			go func(member *discordgo.Member) {
+				defer wg.Done()
+				_, err := s.GuildMemberEdit(guildId, member.User.ID, &discordgo.GuildMemberParams{Roles: &newRoles})
+				if err != nil {
+					fmt.Println("could not assign roles to", member.User.Username, err)
+				}
+			}(member)
 		}
 	}
 	wg.Wait()
