@@ -3,6 +3,7 @@ package commands
 import (
 	"bpl2-discord/client"
 	"bpl2-discord/utils"
+	"fmt"
 	"log"
 	"os"
 
@@ -18,6 +19,8 @@ var commands = []DiscordCommand{
 	RoleCreateCommand,
 
 	GetTimesCommand,
+	SignupswhenCommand,
+	SortWhenCommand,
 
 	CopyCategoryCommand,
 	DeleteCategoryCommand,
@@ -66,32 +69,35 @@ func commandHandler(commandMap map[string]DiscordCommand, bplClient *client.Clie
 
 func cleanUpDeprecatedCommands(session *discordgo.Session, commandMap map[string]DiscordCommand) {
 	App := os.Getenv("DISCORD_CLIENT_ID")
-	oldCommands, err := session.ApplicationCommands(App, "")
+	Guild := os.Getenv("DISCORD_GUILD_ID")
+	oldCommands, err := session.ApplicationCommands(App, Guild)
 	if err != nil {
 		log.Fatalf("could not fetch old commands: %s", err)
 		return
 	}
 	for _, command := range oldCommands {
-		if _, ok := commandMap[command.Name]; ok {
-			err := session.ApplicationCommandDelete(App, "", command.ID)
-			if err != nil {
-				log.Fatalf("could not delete command %s: %s", command.Name, err)
-			}
+		// if _, ok := commandMap[command.Name]; !ok {
+		fmt.Println("deleting command", command.Name)
+		err := session.ApplicationCommandDelete(App, Guild, command.ID)
+		if err != nil {
+			log.Fatalf("could not delete command %s: %s", command.Name, err)
 		}
 	}
-	return
+	fmt.Println("deleted commands")
 }
 
 func RegisterCommands(session *discordgo.Session, bplClient *client.ClientWithResponses) error {
 	App := os.Getenv("DISCORD_CLIENT_ID")
+	Guild := os.Getenv("DISCORD_GUILD_ID")
 	commandMap := make(map[string]DiscordCommand)
 	for _, c := range commands {
 		commandMap[c.Command.Name] = c
 	}
 	session.AddHandler(commandHandler(commandMap, bplClient))
 	cleanUpDeprecatedCommands(session, commandMap)
-
-	_, err := session.ApplicationCommandBulkOverwrite(App, "", utils.Map(commands, func(c DiscordCommand) *discordgo.ApplicationCommand {
+	fmt.Println("registering commands")
+	_, err := session.ApplicationCommandBulkOverwrite(App, Guild, utils.Map(commands, func(c DiscordCommand) *discordgo.ApplicationCommand {
+		fmt.Println(c.Command.Name)
 		return c.Command
 	}))
 	if err != nil {
