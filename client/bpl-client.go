@@ -67,7 +67,7 @@ func AuthenticatedClient() (*ClientWithResponses, error) {
 	}
 	return bplClient, nil
 }
-func (c *ClientWithResponses) GetEvents() ([]Event, error) {
+func (c *ClientWithResponses) GetAllEvents() ([]Event, error) {
 	resp, err := c.GetEventsWithResponse(context.TODO())
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (c *ClientWithResponses) GetEvents() ([]Event, error) {
 
 func (c *ClientWithResponses) GetCurrentEvent() (*Event, error) {
 
-	events, err := c.GetEvents()
+	events, err := c.GetAllEvents()
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func (c *ClientWithResponses) GetCurrentEvent() (*Event, error) {
 	return nil, nil
 }
 func (c *ClientWithResponses) GetLatestEvent() (*Event, error) {
-	events, err := c.GetEvents()
+	events, err := c.GetAllEvents()
 	if err != nil {
 		return nil, fmt.Errorf("could not get events: %w", err)
 	}

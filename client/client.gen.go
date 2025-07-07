@@ -22,11 +22,13 @@ const (
 
 // Defines values for AggregationType.
 const (
-	EARLIEST          AggregationType = "EARLIEST"
-	EARLIESTFRESHITEM AggregationType = "EARLIEST_FRESH_ITEM"
-	MAXIMUM           AggregationType = "MAXIMUM"
-	MINIMUM           AggregationType = "MINIMUM"
-	SUMLATEST         AggregationType = "SUM_LATEST"
+	AggregationTypeDifferenceBetween AggregationType = "DIFFERENCE_BETWEEN"
+	AggregationTypeEarliest          AggregationType = "EARLIEST"
+	AggregationTypeEarliestFreshItem AggregationType = "EARLIEST_FRESH_ITEM"
+	AggregationTypeMaximum           AggregationType = "MAXIMUM"
+	AggregationTypeMinimum           AggregationType = "MINIMUM"
+	AggregationTypeNone              AggregationType = "NONE"
+	AggregationTypeSumLatest         AggregationType = "SUM_LATEST"
 )
 
 // Defines values for ApplicationStatus.
@@ -66,20 +68,30 @@ const (
 	PoE2 GameVersion = "poe2"
 )
 
+// Defines values for GemSocket.
+const (
+	W GemSocket = "W"
+)
+
 // Defines values for ItemField.
 const (
 	BASETYPE       ItemField = "BASE_TYPE"
 	CRAFTEDMODS    ItemField = "CRAFTED_MODS"
 	ENCHANTS       ItemField = "ENCHANT_MODS"
 	EXPLICITS      ItemField = "EXPLICIT_MODS"
+	FACETORLENSEXP ItemField = "FACETOR_LENS_EXP"
 	FRACTUREDMODS  ItemField = "FRACTURED_MODS"
 	FRAMETYPE      ItemField = "FRAME_TYPE"
 	ILVL           ItemField = "ILVL"
 	IMPLICITS      ItemField = "IMPLICIT_MODS"
 	INCUBATORKILLS ItemField = "INCUBATOR_KILLS"
+	INFLUENCES     ItemField = "INFLUENCES"
 	ISCORRUPTED    ItemField = "IS_CORRUPTED"
+	ISSPLIT        ItemField = "IS_SPLIT"
 	ISVAAL         ItemField = "IS_VAAL"
+	ITEMCLASS      ItemField = "ITEM_CLASS"
 	LEVEL          ItemField = "LEVEL"
+	MAPTIER        ItemField = "MAP_TIER"
 	MAXLINKS       ItemField = "MAX_LINKS"
 	NAME           ItemField = "NAME"
 	QUALITY        ItemField = "QUALITY"
@@ -93,34 +105,59 @@ const (
 	TYPELINE       ItemField = "TYPE_LINE"
 )
 
+// Defines values for ItemSocketItem.
+const (
+	ItemSocketItemActiveGem  ItemSocketItem = "activegem"
+	ItemSocketItemEmerald    ItemSocketItem = "emerald"
+	ItemSocketItemRuby       ItemSocketItem = "ruby"
+	ItemSocketItemRune       ItemSocketItem = "rune"
+	ItemSocketItemSapphire   ItemSocketItem = "sapphire"
+	ItemSocketItemSoulcore   ItemSocketItem = "soulcore"
+	ItemSocketItemSupportGem ItemSocketItem = "supportgem"
+)
+
+// Defines values for ItemSocketType.
+const (
+	ItemSocketTypeGem   ItemSocketType = "gem"
+	ItemSocketTypeJewel ItemSocketType = "jewel"
+	ItemSocketTypeRune  ItemSocketType = "rune"
+)
+
 // Defines values for JobType.
 const (
-	EvaluateStashChanges JobType = "EvaluateStashChanges"
-	FetchCharacterData   JobType = "FetchCharacterData"
-	FetchStashChanges    JobType = "FetchStashChanges"
+	DetermineGuildStashAccess JobType = "DetermineGuildStashAccess"
+	EvaluateStashChanges      JobType = "EvaluateStashChanges"
+	FetchCharacterData        JobType = "FetchCharacterData"
+	FetchGuildStashes         JobType = "FetchGuildStashes"
+	FetchStashChanges         JobType = "FetchStashChanges"
 )
 
 // Defines values for NumberField.
 const (
-	ASCENDANCY      NumberField = "ASCENDANCY"
-	DELVEDEPTH      NumberField = "DELVE_DEPTH"
-	PANTHEON        NumberField = "PANTHEON"
-	PLAYERLEVEL     NumberField = "PLAYER_LEVEL"
-	PLAYERSCORE     NumberField = "PLAYER_SCORE"
-	STACKSIZE       NumberField = "STACK_SIZE"
-	SUBMISSIONVALUE NumberField = "SUBMISSION_VALUE"
+	NumberFieldAscendancy         NumberField = "ASCENDANCY"
+	NumberFieldDelveDepth         NumberField = "DELVE_DEPTH"
+	NumberFieldDelveDepthPast100  NumberField = "DELVE_DEPTH_PAST_100"
+	NumberFieldFinishedObjectives NumberField = "FINISHED_OBJECTIVES"
+	NumberFieldPantheon           NumberField = "PANTHEON"
+	NumberFieldPlayerLevel        NumberField = "PLAYER_LEVEL"
+	NumberFieldPlayerScore        NumberField = "PLAYER_SCORE"
+	NumberFieldStackSize          NumberField = "STACK_SIZE"
+	NumberFieldSubmissionValue    NumberField = "SUBMISSION_VALUE"
 )
 
 // Defines values for ObjectiveType.
 const (
-	ITEM       ObjectiveType = "ITEM"
-	PLAYER     ObjectiveType = "PLAYER"
-	SUBMISSION ObjectiveType = "SUBMISSION"
+	ObjectiveTypeCategory   ObjectiveType = "CATEGORY"
+	ObjectiveTypeItem       ObjectiveType = "ITEM"
+	ObjectiveTypePlayer     ObjectiveType = "PLAYER"
+	ObjectiveTypeSubmission ObjectiveType = "SUBMISSION"
+	ObjectiveTypeTeam       ObjectiveType = "TEAM"
 )
 
 // Defines values for Operator.
 const (
 	CONTAINS      Operator = "CONTAINS"
+	CONTAINSALL   Operator = "CONTAINS_ALL"
 	CONTAINSMATCH Operator = "CONTAINS_MATCH"
 	EQ            Operator = "EQ"
 	GT            Operator = "GT"
@@ -137,9 +174,9 @@ const (
 // Defines values for Permission.
 const (
 	PermissionAdmin             Permission = "admin"
-	PermissionCommandTeam       Permission = "command_team"
-	PermissionJudge             Permission = "judge"
+	PermissionManager           Permission = "manager"
 	PermissionObjectiveDesigner Permission = "objective_designer"
+	PermissionSubmissionJudge   Permission = "submission_judge"
 )
 
 // Defines values for ScoringMethod.
@@ -204,36 +241,33 @@ type CallbackResponse struct {
 	User      User   `json:"user"`
 }
 
-// Category defines model for Category.
-type Category struct {
-	Id              int            `json:"id"`
-	Name            string         `json:"name"`
-	Objectives      []Objective    `json:"objectives"`
-	ScoringPreset   *ScoringPreset `json:"scoring_preset,omitempty"`
-	ScoringPresetId *int           `json:"scoring_preset_id,omitempty"`
-	SubCategories   []Category     `json:"sub_categories"`
-}
-
-// CategoryCreate defines model for CategoryCreate.
-type CategoryCreate struct {
-	Id              *int   `json:"id,omitempty"`
-	Name            string `json:"name"`
-	ParentId        int    `json:"parent_id"`
-	ScoringPresetId *int   `json:"scoring_preset_id,omitempty"`
-}
-
 // Character defines model for Character.
 type Character struct {
 	Ascendancy       string `json:"ascendancy"`
 	AscendancyPoints int    `json:"ascendancy_points"`
 	AtlasNodeCount   int    `json:"atlas_node_count"`
 	EventId          int    `json:"event_id"`
+	Id               int    `json:"id"`
 	Level            int    `json:"level"`
 	MainSkill        string `json:"main_skill"`
 	Name             string `json:"name"`
 	Pantheon         bool   `json:"pantheon"`
-	Timestamp        string `json:"timestamp"`
 	UserId           int    `json:"user_id"`
+}
+
+// CharacterStat defines model for CharacterStat.
+type CharacterStat struct {
+	Armour     int `json:"armour"`
+	Dps        int `json:"dps"`
+	Ehp        int `json:"ehp"`
+	EleMaxHit  int `json:"ele_max_hit"`
+	Es         int `json:"es"`
+	Evasion    int `json:"evasion"`
+	Hp         int `json:"hp"`
+	Mana       int `json:"mana"`
+	PhysMaxHit int `json:"phys_max_hit"`
+	Timestamp  int `json:"timestamp"`
+	Xp         int `json:"xp"`
 }
 
 // Condition defines model for Condition.
@@ -263,8 +297,85 @@ type ConditionMappings struct {
 // Difftype defines model for Difftype.
 type Difftype string
 
+// DisplayItem defines model for DisplayItem.
+type DisplayItem struct {
+	AbyssJewel           *bool           `json:"abyssJewel,omitempty"`
+	AdditionalProperties *[]ItemProperty `json:"additionalProperties,omitempty"`
+	BaseType             *string         `json:"baseType,omitempty"`
+	Colour               *string         `json:"colour,omitempty"`
+	Corrupted            *bool           `json:"corrupted,omitempty"`
+	CosmeticMods         *[]string       `json:"cosmeticMods,omitempty"`
+	CraftedMods          *[]string       `json:"craftedMods,omitempty"`
+	Delve                *bool           `json:"delve,omitempty"`
+	Duplicated           *bool           `json:"duplicated,omitempty"`
+	Elder                *bool           `json:"elder,omitempty"`
+	EnchantMods          *[]string       `json:"enchantMods,omitempty"`
+	ExplicitMods         *[]string       `json:"explicitMods,omitempty"`
+	Extended             *ItemExtended   `json:"extended,omitempty"`
+	FoilVariation        *int            `json:"foilVariation,omitempty"`
+	Foreseeing           *bool           `json:"foreseeing,omitempty"`
+	Fractured            *bool           `json:"fractured,omitempty"`
+	FracturedMods        *[]string       `json:"fracturedMods,omitempty"`
+	FrameType            *int            `json:"frameType,omitempty"`
+	GemSockets           *[]GemSocket    `json:"gemSockets,omitempty"`
+
+	// GrantedSkills PoE2 only
+	GrantedSkills     *[]ItemProperty    `json:"grantedSkills,omitempty"`
+	H                 *int               `json:"h,omitempty"`
+	Hybrid            *ItemHybrid        `json:"hybrid,omitempty"`
+	Icon              *string            `json:"icon,omitempty"`
+	Id                *string            `json:"id,omitempty"`
+	Identified        *bool              `json:"identified,omitempty"`
+	Ilvl              *int               `json:"ilvl,omitempty"`
+	ImplicitMods      *[]string          `json:"implicitMods,omitempty"`
+	IncubatedItem     *ItemIncubatedItem `json:"incubatedItem,omitempty"`
+	Influences        *map[string]bool   `json:"influences,omitempty"`
+	InventoryId       *string            `json:"inventoryId,omitempty"`
+	IsRelic           *bool              `json:"isRelic,omitempty"`
+	ItemLevel         *int               `json:"itemLevel,omitempty"`
+	LogbookMods       *[]ItemLogbookMod  `json:"logbookMods,omitempty"`
+	MemoryItem        *bool              `json:"memoryItem,omitempty"`
+	Name              *string            `json:"name,omitempty"`
+	NotableProperties *[]ItemProperty    `json:"notableProperties,omitempty"`
+
+	// ObjectiveId field added by our backend
+	ObjectiveId   *int            `json:"objectiveId,omitempty"`
+	Properties    *[]ItemProperty `json:"properties,omitempty"`
+	Rarity        *string         `json:"rarity,omitempty"`
+	Rewards       *[]ItemReward   `json:"rewards,omitempty"`
+	Ruthless      *bool           `json:"ruthless,omitempty"`
+	ScourgeMods   *[]string       `json:"scourgeMods,omitempty"`
+	Searing       *bool           `json:"searing,omitempty"`
+	Shaper        *bool           `json:"shaper,omitempty"`
+	Socket        *int            `json:"socket,omitempty"`
+	SocketedItems *[]DisplayItem  `json:"socketedItems,omitempty"`
+	Sockets       *[]ItemSocket   `json:"sockets,omitempty"`
+	Split         *bool           `json:"split,omitempty"`
+	StackSize     *int            `json:"stackSize,omitempty"`
+	Support       *bool           `json:"support,omitempty"`
+
+	// SupportGemRequirements PoE2 only
+	SupportGemRequirements *[]ItemProperty     `json:"supportGemRequirements,omitempty"`
+	Synthesised            *bool               `json:"synthesised,omitempty"`
+	TalismanTier           *int                `json:"talismanTier,omitempty"`
+	Tangled                *bool               `json:"tangled,omitempty"`
+	TypeLine               *string             `json:"typeLine,omitempty"`
+	UltimatumMods          *[]ItemUltimatumMod `json:"ultimatumMods,omitempty"`
+	Unmodifiable           *bool               `json:"unmodifiable,omitempty"`
+	UtilityMods            *[]string           `json:"utilityMods,omitempty"`
+	Veiled                 *bool               `json:"veiled,omitempty"`
+	VeiledMods             *[]string           `json:"veiledMods,omitempty"`
+	W                      *int                `json:"w,omitempty"`
+
+	// WeaponRequirements PoE2 only
+	WeaponRequirements *[]ItemProperty `json:"weaponRequirements,omitempty"`
+	X                  *int            `json:"x,omitempty"`
+	Y                  *int            `json:"y,omitempty"`
+}
+
 // Event defines model for Event.
 type Event struct {
+	ApplicationEndTime   string      `json:"application_end_time"`
 	ApplicationStartTime string      `json:"application_start_time"`
 	EventEndTime         string      `json:"event_end_time"`
 	EventStartTime       string      `json:"event_start_time"`
@@ -276,10 +387,12 @@ type Event struct {
 	MaxSize              int         `json:"max_size"`
 	Name                 string      `json:"name"`
 	Teams                []Team      `json:"teams"`
+	WaitlistSize         int         `json:"waitlist_size"`
 }
 
 // EventCreate defines model for EventCreate.
 type EventCreate struct {
+	ApplicationEndTime   string      `json:"application_end_time"`
 	ApplicationStartTime string      `json:"application_start_time"`
 	EventEndTime         string      `json:"event_end_time"`
 	EventStartTime       string      `json:"event_start_time"`
@@ -290,12 +403,15 @@ type EventCreate struct {
 	IsPublic             *bool       `json:"is_public,omitempty"`
 	MaxSize              int         `json:"max_size"`
 	Name                 string      `json:"name"`
+	WaitlistSize         int         `json:"waitlist_size"`
 }
 
 // EventStatus defines model for EventStatus.
 type EventStatus struct {
 	ApplicationStatus ApplicationStatus `json:"application_status"`
 	IsTeamLead        bool              `json:"is_team_lead"`
+	NumberOfSignups   int               `json:"number_of_signups"`
+	Partner           *string           `json:"partner,omitempty"`
 	TeamId            *int              `json:"team_id,omitempty"`
 }
 
@@ -305,8 +421,187 @@ type FieldType string
 // GameVersion defines model for GameVersion.
 type GameVersion string
 
+// GemSocket defines model for GemSocket.
+type GemSocket string
+
+// GuildStashTab defines model for GuildStashTab.
+type GuildStashTab struct {
+	Color        *string `json:"color,omitempty"`
+	FetchEnabled bool    `json:"fetch_enabled"`
+	Id           string  `json:"id"`
+	Index        *int    `json:"index,omitempty"`
+	LastFetch    string  `json:"last_fetch"`
+	Name         string  `json:"name"`
+	ParentId     *string `json:"parent_id,omitempty"`
+	Type         string  `json:"type"`
+	UserIds      []int   `json:"user_ids"`
+}
+
+// GuildStashTabGGG defines model for GuildStashTabGGG.
+type GuildStashTabGGG struct {
+	Children *[]GuildStashTabGGG `json:"children,omitempty"`
+	Id       *string             `json:"id,omitempty"`
+	Index    *int                `json:"index,omitempty"`
+	Items    *[]DisplayItem      `json:"items,omitempty"`
+	Metadata *StashTabMetadata   `json:"metadata,omitempty"`
+	Name     *string             `json:"name,omitempty"`
+	Parent   *string             `json:"parent,omitempty"`
+	Type     *string             `json:"type,omitempty"`
+}
+
+// Item defines model for Item.
+type Item struct {
+	AbyssJewel           *bool           `json:"abyssJewel,omitempty"`
+	AdditionalProperties *[]ItemProperty `json:"additionalProperties,omitempty"`
+	BaseType             *string         `json:"baseType,omitempty"`
+	Colour               *string         `json:"colour,omitempty"`
+	Corrupted            *bool           `json:"corrupted,omitempty"`
+	CosmeticMods         *[]string       `json:"cosmeticMods,omitempty"`
+	CraftedMods          *[]string       `json:"craftedMods,omitempty"`
+	Delve                *bool           `json:"delve,omitempty"`
+	Duplicated           *bool           `json:"duplicated,omitempty"`
+	Elder                *bool           `json:"elder,omitempty"`
+	EnchantMods          *[]string       `json:"enchantMods,omitempty"`
+	ExplicitMods         *[]string       `json:"explicitMods,omitempty"`
+	Extended             *ItemExtended   `json:"extended,omitempty"`
+	FoilVariation        *int            `json:"foilVariation,omitempty"`
+	Foreseeing           *bool           `json:"foreseeing,omitempty"`
+	Fractured            *bool           `json:"fractured,omitempty"`
+	FracturedMods        *[]string       `json:"fracturedMods,omitempty"`
+	FrameType            *int            `json:"frameType,omitempty"`
+	GemSockets           *[]GemSocket    `json:"gemSockets,omitempty"`
+
+	// GrantedSkills PoE2 only
+	GrantedSkills     *[]ItemProperty    `json:"grantedSkills,omitempty"`
+	Hybrid            *ItemHybrid        `json:"hybrid,omitempty"`
+	Id                *string            `json:"id,omitempty"`
+	Ilvl              *int               `json:"ilvl,omitempty"`
+	ImplicitMods      *[]string          `json:"implicitMods,omitempty"`
+	IncubatedItem     *ItemIncubatedItem `json:"incubatedItem,omitempty"`
+	Influences        *map[string]bool   `json:"influences,omitempty"`
+	InventoryId       *string            `json:"inventoryId,omitempty"`
+	IsRelic           *bool              `json:"isRelic,omitempty"`
+	ItemLevel         *int               `json:"itemLevel,omitempty"`
+	LogbookMods       *[]ItemLogbookMod  `json:"logbookMods,omitempty"`
+	MemoryItem        *bool              `json:"memoryItem,omitempty"`
+	Name              *string            `json:"name,omitempty"`
+	NotableProperties *[]ItemProperty    `json:"notableProperties,omitempty"`
+	Properties        *[]ItemProperty    `json:"properties,omitempty"`
+	Rarity            *string            `json:"rarity,omitempty"`
+	Rewards           *[]ItemReward      `json:"rewards,omitempty"`
+	Ruthless          *bool              `json:"ruthless,omitempty"`
+	ScourgeMods       *[]string          `json:"scourgeMods,omitempty"`
+	Searing           *bool              `json:"searing,omitempty"`
+	Shaper            *bool              `json:"shaper,omitempty"`
+	Socket            *int               `json:"socket,omitempty"`
+	SocketedItems     *[]Item            `json:"socketedItems,omitempty"`
+	Sockets           *[]ItemSocket      `json:"sockets,omitempty"`
+	Split             *bool              `json:"split,omitempty"`
+	StackSize         *int               `json:"stackSize,omitempty"`
+	Support           *bool              `json:"support,omitempty"`
+
+	// SupportGemRequirements PoE2 only
+	SupportGemRequirements *[]ItemProperty     `json:"supportGemRequirements,omitempty"`
+	Synthesised            *bool               `json:"synthesised,omitempty"`
+	TalismanTier           *int                `json:"talismanTier,omitempty"`
+	Tangled                *bool               `json:"tangled,omitempty"`
+	TypeLine               *string             `json:"typeLine,omitempty"`
+	UltimatumMods          *[]ItemUltimatumMod `json:"ultimatumMods,omitempty"`
+	Unmodifiable           *bool               `json:"unmodifiable,omitempty"`
+	UtilityMods            *[]string           `json:"utilityMods,omitempty"`
+	Veiled                 *bool               `json:"veiled,omitempty"`
+	VeiledMods             *[]string           `json:"veiledMods,omitempty"`
+
+	// WeaponRequirements PoE2 only
+	WeaponRequirements *[]ItemProperty `json:"weaponRequirements,omitempty"`
+	X                  *int            `json:"x,omitempty"`
+	Y                  *int            `json:"y,omitempty"`
+}
+
+// ItemExtended defines model for ItemExtended.
+type ItemExtended struct {
+	Category      *string   `json:"category,omitempty"`
+	Prefixes      *int      `json:"prefixes,omitempty"`
+	Subcategories *[]string `json:"subcategories,omitempty"`
+	Suffixes      *int      `json:"suffixes,omitempty"`
+}
+
 // ItemField defines model for ItemField.
 type ItemField string
+
+// ItemHybrid defines model for ItemHybrid.
+type ItemHybrid struct {
+	BaseTypeName *string         `json:"baseTypeName,omitempty"`
+	ExplicitMods *[]string       `json:"explicitMods,omitempty"`
+	IsVaalGem    *bool           `json:"isVaalGem,omitempty"`
+	Properties   *[]ItemProperty `json:"properties,omitempty"`
+	SecDescrText *string         `json:"secDescrText,omitempty"`
+}
+
+// ItemIncubatedItem defines model for ItemIncubatedItem.
+type ItemIncubatedItem struct {
+	Level    *int    `json:"level,omitempty"`
+	Name     *string `json:"name,omitempty"`
+	Progress *int    `json:"progress,omitempty"`
+	Total    *int    `json:"total,omitempty"`
+}
+
+// ItemLogbookMod defines model for ItemLogbookMod.
+type ItemLogbookMod struct {
+	Faction *ItemLogbookModFaction `json:"faction,omitempty"`
+	Mods    *[]string              `json:"mods,omitempty"`
+	Name    *string                `json:"name,omitempty"`
+}
+
+// ItemLogbookModFaction defines model for ItemLogbookModFaction.
+type ItemLogbookModFaction struct {
+	Id   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+// ItemProperty defines model for ItemProperty.
+type ItemProperty struct {
+	DisplayMode *int `json:"displayMode,omitempty"`
+
+	// Icon PoE2 only
+	Icon     *string                     `json:"icon,omitempty"`
+	Name     *string                     `json:"name,omitempty"`
+	Progress *float32                    `json:"progress,omitempty"`
+	Suffix   *string                     `json:"suffix,omitempty"`
+	Type     *int                        `json:"type,omitempty"`
+	Values   *[][]map[string]interface{} `json:"values,omitempty"`
+}
+
+// ItemReward defines model for ItemReward.
+type ItemReward struct {
+	Label   *string         `json:"label,omitempty"`
+	Rewards *map[string]int `json:"rewards,omitempty"`
+}
+
+// ItemSocket defines model for ItemSocket.
+type ItemSocket struct {
+	Attr  *string `json:"attr,omitempty"`
+	Group *int    `json:"group,omitempty"`
+
+	// Item PoE2 only
+	Item    *ItemSocketItem `json:"item,omitempty"`
+	SColour *string         `json:"sColour,omitempty"`
+
+	// Type PoE2 only
+	Type *ItemSocketType `json:"type,omitempty"`
+}
+
+// ItemSocketItem defines model for ItemSocketItem.
+type ItemSocketItem string
+
+// ItemSocketType defines model for ItemSocketType.
+type ItemSocketType string
+
+// ItemUltimatumMod defines model for ItemUltimatumMod.
+type ItemUltimatumMod struct {
+	Tier *int    `json:"tier,omitempty"`
+	Type *string `json:"type,omitempty"`
+}
 
 // JobCreate defines model for JobCreate.
 type JobCreate struct {
@@ -330,7 +625,8 @@ type LadderEntry struct {
 	Extra          *Character `json:"extra,omitempty"`
 	Level          int        `json:"level"`
 	Rank           int        `json:"rank"`
-	UserId         int        `json:"user_id"`
+	TwitchAccount  *string    `json:"twitch_account,omitempty"`
+	UserId         *int       `json:"user_id,omitempty"`
 }
 
 // MinimalUser defines model for MinimalUser.
@@ -356,13 +652,14 @@ type NumberField string
 // Objective defines model for Objective.
 type Objective struct {
 	Aggregation     AggregationType `json:"aggregation"`
-	CategoryId      int             `json:"category_id"`
+	Children        []Objective     `json:"children"`
 	Conditions      []Condition     `json:"conditions"`
 	Extra           string          `json:"extra"`
 	Id              int             `json:"id"`
 	Name            string          `json:"name"`
 	NumberField     NumberField     `json:"number_field"`
 	ObjectiveType   ObjectiveType   `json:"objective_type"`
+	ParentId        int             `json:"parent_id"`
 	RequiredNumber  int             `json:"required_number"`
 	ScoringPreset   *ScoringPreset  `json:"scoring_preset,omitempty"`
 	ScoringPresetId *int            `json:"scoring_preset_id,omitempty"`
@@ -381,13 +678,13 @@ type ObjectiveConditionCreate struct {
 // ObjectiveCreate defines model for ObjectiveCreate.
 type ObjectiveCreate struct {
 	Aggregation     AggregationType            `json:"aggregation"`
-	CategoryId      int                        `json:"category_id"`
 	Conditions      []ObjectiveConditionCreate `json:"conditions"`
 	Extra           *string                    `json:"extra,omitempty"`
 	Id              *int                       `json:"id,omitempty"`
 	Name            string                     `json:"name"`
 	NumberField     NumberField                `json:"number_field"`
 	ObjectiveType   ObjectiveType              `json:"objective_type"`
+	ParentId        int                        `json:"parent_id"`
 	RequiredNumber  int                        `json:"required_number"`
 	ScoringPresetId *int                       `json:"scoring_preset_id,omitempty"`
 	ValidFrom       *string                    `json:"valid_from,omitempty"`
@@ -423,13 +720,12 @@ type Score struct {
 
 // ScoreDiff defines model for ScoreDiff.
 type ScoreDiff struct {
-	DiffType  Difftype `json:"diff_type"`
-	FieldDiff []string `json:"field_diff"`
-	Score     Score    `json:"score"`
+	DiffType    Difftype `json:"diff_type"`
+	FieldDiff   []string `json:"field_diff"`
+	ObjectiveId int      `json:"objective_id"`
+	Score       Score    `json:"score"`
+	TeamId      int      `json:"team_id"`
 }
-
-// ScoreMap defines model for ScoreMap.
-type ScoreMap map[string]ScoreDiff
 
 // ScoringMethod defines model for ScoringMethod.
 type ScoringMethod string
@@ -439,6 +735,7 @@ type ScoringPreset struct {
 	Description   string            `json:"description"`
 	Id            int               `json:"id"`
 	Name          string            `json:"name"`
+	PointCap      *int              `json:"point_cap,omitempty"`
 	Points        []float32         `json:"points"`
 	ScoringMethod ScoringMethod     `json:"scoring_method"`
 	Type          ScoringPresetType `json:"type"`
@@ -449,6 +746,7 @@ type ScoringPresetCreate struct {
 	Description   *string           `json:"description,omitempty"`
 	Id            *int              `json:"id,omitempty"`
 	Name          string            `json:"name"`
+	PointCap      *int              `json:"point_cap,omitempty"`
 	Points        []float32         `json:"points"`
 	ScoringMethod ScoringMethod     `json:"scoring_method"`
 	Type          ScoringPresetType `json:"type"`
@@ -459,32 +757,59 @@ type ScoringPresetType string
 
 // Signup defines model for Signup.
 type Signup struct {
-	ExpectedPlaytime int              `json:"expected_playtime"`
-	Id               int              `json:"id"`
-	TeamId           *int             `json:"team_id,omitempty"`
-	TeamLead         bool             `json:"team_lead"`
-	Timestamp        string           `json:"timestamp"`
-	User             NonSensitiveUser `json:"user"`
+	ExpectedPlaytime int               `json:"expected_playtime"`
+	NeedsHelp        *bool             `json:"needs_help,omitempty"`
+	Partner          *NonSensitiveUser `json:"partner,omitempty"`
+	PartnerId        *int              `json:"partner_id,omitempty"`
+	TeamId           *int              `json:"team_id,omitempty"`
+	TeamLead         bool              `json:"team_lead"`
+	Timestamp        string            `json:"timestamp"`
+	User             NonSensitiveUser  `json:"user"`
+	WantsToHelp      *bool             `json:"wants_to_help,omitempty"`
 }
 
 // SignupCreate defines model for SignupCreate.
 type SignupCreate struct {
-	ExpectedPlaytime int `json:"expected_playtime"`
+	ExpectedPlaytime   int     `json:"expected_playtime"`
+	NeedsHelp          *bool   `json:"needs_help,omitempty"`
+	PartnerAccountName *string `json:"partner_account_name,omitempty"`
+	WantsToHelp        *bool   `json:"wants_to_help,omitempty"`
+}
+
+// StashTab defines model for StashTab.
+type StashTab struct {
+	Children *[]StashTab       `json:"children,omitempty"`
+	Id       *string           `json:"id,omitempty"`
+	Index    *int              `json:"index,omitempty"`
+	Items    *[]Item           `json:"items,omitempty"`
+	Metadata *StashTabMetadata `json:"metadata,omitempty"`
+	Name     *string           `json:"name,omitempty"`
+	Parent   *string           `json:"parent,omitempty"`
+	Type     *string           `json:"type,omitempty"`
+}
+
+// StashTabMetadata defines model for StashTabMetadata.
+type StashTabMetadata struct {
+	Colour *string                 `json:"colour,omitempty"`
+	Folder *bool                   `json:"folder,omitempty"`
+	Items  *int                    `json:"items,omitempty"`
+	Layout *map[string]interface{} `json:"layout,omitempty"`
+	Public *bool                   `json:"public,omitempty"`
 }
 
 // Submission defines model for Submission.
 type Submission struct {
-	ApprovalStatus ApprovalStatus    `json:"approval_status"`
-	Comment        string            `json:"comment"`
-	Id             int               `json:"id"`
-	Number         int               `json:"number"`
-	Objective      *Objective        `json:"objective,omitempty"`
-	Proof          string            `json:"proof"`
-	ReviewComment  *string           `json:"review_comment,omitempty"`
-	ReviewerId     *int              `json:"reviewer_id,omitempty"`
-	TeamId         *int              `json:"team_id,omitempty"`
-	Timestamp      string            `json:"timestamp"`
-	User           *NonSensitiveUser `json:"user,omitempty"`
+	ApprovalStatus ApprovalStatus `json:"approval_status"`
+	Comment        string         `json:"comment"`
+	Id             int            `json:"id"`
+	Number         int            `json:"number"`
+	ObjectiveId    int            `json:"objective_id"`
+	Proof          string         `json:"proof"`
+	ReviewComment  *string        `json:"review_comment,omitempty"`
+	ReviewerId     *int           `json:"reviewer_id,omitempty"`
+	TeamId         *int           `json:"team_id,omitempty"`
+	Timestamp      string         `json:"timestamp"`
+	UserId         int            `json:"user_id"`
 }
 
 // SubmissionCreate defines model for SubmissionCreate.
@@ -503,17 +828,6 @@ type SubmissionReview struct {
 	ReviewComment  *string        `json:"review_comment,omitempty"`
 }
 
-// SuggestionCreate defines model for SuggestionCreate.
-type SuggestionCreate struct {
-	Id int `json:"id"`
-}
-
-// Suggestions defines model for Suggestions.
-type Suggestions struct {
-	CategoryIds  []int `json:"category_ids"`
-	ObjectiveIds []int `json:"objective_ids"`
-}
-
 // Team defines model for Team.
 type Team struct {
 	AllowedClasses []string `json:"allowed_classes"`
@@ -529,6 +843,12 @@ type TeamCreate struct {
 	Color          *string  `json:"color,omitempty"`
 	Id             *int     `json:"id,omitempty"`
 	Name           string   `json:"name"`
+}
+
+// TeamSubmissionCreate defines model for TeamSubmissionCreate.
+type TeamSubmissionCreate struct {
+	ObjectiveId int   `json:"objective_id"`
+	TeamIds     []int `json:"team_ids"`
 }
 
 // TeamUserCreate defines model for TeamUserCreate.
@@ -606,9 +926,6 @@ type ChangePermissionsJSONBody = []Permission
 // CreateEventJSONRequestBody defines body for CreateEvent for application/json ContentType.
 type CreateEventJSONRequestBody = EventCreate
 
-// CreateCategoryJSONRequestBody defines body for CreateCategory for application/json ContentType.
-type CreateCategoryJSONRequestBody = CategoryCreate
-
 // CreateConditionJSONRequestBody defines body for CreateCondition for application/json ContentType.
 type CreateConditionJSONRequestBody = ConditionCreate
 
@@ -627,14 +944,11 @@ type CreateSignupJSONRequestBody = SignupCreate
 // SubmitBountyJSONRequestBody defines body for SubmitBounty for application/json ContentType.
 type SubmitBountyJSONRequestBody = SubmissionCreate
 
+// SetBulkSubmissionForAdminJSONRequestBody defines body for SetBulkSubmissionForAdmin for application/json ContentType.
+type SetBulkSubmissionForAdminJSONRequestBody = TeamSubmissionCreate
+
 // ReviewSubmissionJSONRequestBody defines body for ReviewSubmission for application/json ContentType.
 type ReviewSubmissionJSONRequestBody = SubmissionReview
-
-// CreateCategoryTeamSuggestionJSONRequestBody defines body for CreateCategoryTeamSuggestion for application/json ContentType.
-type CreateCategoryTeamSuggestionJSONRequestBody = SuggestionCreate
-
-// CreateObjectiveTeamSuggestionJSONRequestBody defines body for CreateObjectiveTeamSuggestion for application/json ContentType.
-type CreateObjectiveTeamSuggestionJSONRequestBody = SuggestionCreate
 
 // CreateTeamJSONRequestBody defines body for CreateTeam for application/json ContentType.
 type CreateTeamJSONRequestBody = TeamCreate
@@ -727,12 +1041,6 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetUserCharacters request
-	GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetCharacterEventHistoryForUser request
-	GetCharacterEventHistoryForUser(ctx context.Context, userId int, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// GetEvents request
 	GetEvents(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -749,20 +1057,6 @@ type ClientInterface interface {
 
 	// GetTeamAtlasesForEvent request
 	GetTeamAtlasesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetRulesForEvent request
-	GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateCategoryWithBody request with any body
-	CreateCategoryWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateCategory(ctx context.Context, eventId int, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteCategory request
-	DeleteCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetScoringCategory request
-	GetScoringCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetCharactersForEvent request
 	GetCharactersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -785,6 +1079,9 @@ type ClientInterface interface {
 
 	// GetLadder request
 	GetLadder(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetObjectiveTreeForEvent request
+	GetObjectiveTreeForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateObjectiveWithBody request with any body
 	CreateObjectiveWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -831,8 +1128,8 @@ type ClientInterface interface {
 
 	CreateSignup(ctx context.Context, eventId int, body CreateSignupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetEventStatusForUser request
-	GetEventStatusForUser(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetEventStatus request
+	GetEventStatus(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetSubmissions request
 	GetSubmissions(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -841,6 +1138,11 @@ type ClientInterface interface {
 	SubmitBountyWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	SubmitBounty(ctx context.Context, eventId int, body SubmitBountyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SetBulkSubmissionForAdminWithBody request with any body
+	SetBulkSubmissionForAdminWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	SetBulkSubmissionForAdmin(ctx context.Context, eventId int, body SetBulkSubmissionForAdminJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteSubmission request
 	DeleteSubmission(ctx context.Context, eventId int, submissionId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -853,21 +1155,11 @@ type ClientInterface interface {
 	// GetTeamSuggestions request
 	GetTeamSuggestions(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateCategoryTeamSuggestionWithBody request with any body
-	CreateCategoryTeamSuggestionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateCategoryTeamSuggestion(ctx context.Context, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteCategoryTeamSuggestion request
-	DeleteCategoryTeamSuggestion(ctx context.Context, eventId int, categoryId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateObjectiveTeamSuggestionWithBody request with any body
-	CreateObjectiveTeamSuggestionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// DeleteObjectiveTeamSuggestion request
 	DeleteObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateObjectiveTeamSuggestion request
+	CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTeams request
 	GetTeams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -934,30 +1226,27 @@ type ClientInterface interface {
 	ChangePermissionsWithBody(ctx context.Context, userId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	ChangePermissions(ctx context.Context, userId int, body ChangePermissionsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-}
 
-func (c *Client) GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetUserCharactersRequest(c.Server, userId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
+	// GetUserCharacters request
+	GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-func (c *Client) GetCharacterEventHistoryForUser(ctx context.Context, userId int, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetCharacterEventHistoryForUserRequest(c.Server, userId, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
+	// GetCharacterHistory request
+	GetCharacterHistory(ctx context.Context, userId int, characterId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGuildStashForUser request
+	GetGuildStashForUser(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateGuildStash request
+	UpdateGuildStash(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGuildStashTab request
+	GetGuildStashTab(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SwitchStashFetching request
+	SwitchStashFetching(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateStashTab request
+	UpdateStashTab(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetEvents(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -1022,66 +1311,6 @@ func (c *Client) GetEvent(ctx context.Context, eventId int, reqEditors ...Reques
 
 func (c *Client) GetTeamAtlasesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTeamAtlasesForEventRequest(c.Server, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetRulesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetRulesForEventRequest(c.Server, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateCategoryWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateCategoryRequestWithBody(c.Server, eventId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateCategory(ctx context.Context, eventId int, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateCategoryRequest(c.Server, eventId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteCategoryRequest(c.Server, eventId, id)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetScoringCategory(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetScoringCategoryRequest(c.Server, eventId, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1178,6 +1407,18 @@ func (c *Client) DuplicateEvent(ctx context.Context, eventId int, body Duplicate
 
 func (c *Client) GetLadder(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetLadderRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetObjectiveTreeForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetObjectiveTreeForEventRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -1380,8 +1621,8 @@ func (c *Client) CreateSignup(ctx context.Context, eventId int, body CreateSignu
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetEventStatusForUser(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetEventStatusForUserRequest(c.Server, eventId)
+func (c *Client) GetEventStatus(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetEventStatusRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -1418,6 +1659,30 @@ func (c *Client) SubmitBountyWithBody(ctx context.Context, eventId int, contentT
 
 func (c *Client) SubmitBounty(ctx context.Context, eventId int, body SubmitBountyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewSubmitBountyRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SetBulkSubmissionForAdminWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetBulkSubmissionForAdminRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SetBulkSubmissionForAdmin(ctx context.Context, eventId int, body SetBulkSubmissionForAdminJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetBulkSubmissionForAdminRequest(c.Server, eventId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1476,68 +1741,20 @@ func (c *Client) GetTeamSuggestions(ctx context.Context, eventId int, reqEditors
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateCategoryTeamSuggestionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateCategoryTeamSuggestionRequestWithBody(c.Server, eventId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateCategoryTeamSuggestion(ctx context.Context, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateCategoryTeamSuggestionRequest(c.Server, eventId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteCategoryTeamSuggestion(ctx context.Context, eventId int, categoryId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteCategoryTeamSuggestionRequest(c.Server, eventId, categoryId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateObjectiveTeamSuggestionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateObjectiveTeamSuggestionRequestWithBody(c.Server, eventId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateObjectiveTeamSuggestionRequest(c.Server, eventId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) DeleteObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteObjectiveTeamSuggestionRequest(c.Server, eventId, objectiveId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateObjectiveTeamSuggestionRequest(c.Server, eventId, objectiveId)
 	if err != nil {
 		return nil, err
 	}
@@ -1836,79 +2053,88 @@ func (c *Client) ChangePermissions(ctx context.Context, userId int, body ChangeP
 	return c.Client.Do(req)
 }
 
-// NewGetUserCharactersRequest generates requests for GetUserCharacters
-func NewGetUserCharactersRequest(server string, userId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "userId", runtime.ParamLocationPath, userId)
+func (c *Client) GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetUserCharactersRequest(c.Server, userId)
 	if err != nil {
 		return nil, err
 	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
 		return nil, err
 	}
-
-	operationPath := fmt.Sprintf("/characters/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
+	return c.Client.Do(req)
 }
 
-// NewGetCharacterEventHistoryForUserRequest generates requests for GetCharacterEventHistoryForUser
-func NewGetCharacterEventHistoryForUserRequest(server string, userId int, eventId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+func (c *Client) GetCharacterHistory(ctx context.Context, userId int, characterId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCharacterHistoryRequest(c.Server, userId, characterId)
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
 
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+func (c *Client) GetGuildStashForUser(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGuildStashForUserRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
 
-	serverURL, err := url.Parse(server)
+func (c *Client) UpdateGuildStash(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGuildStashRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
-
-	operationPath := fmt.Sprintf("/characters/%s/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
 	}
+	return c.Client.Do(req)
+}
 
-	queryURL, err := serverURL.Parse(operationPath)
+func (c *Client) GetGuildStashTab(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGuildStashTabRequest(c.Server, eventId, stashId)
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
 
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
+func (c *Client) SwitchStashFetching(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSwitchStashFetchingRequest(c.Server, eventId, stashId)
 	if err != nil {
 		return nil, err
 	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
 
-	return req, nil
+func (c *Client) UpdateStashTab(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateStashTabRequest(c.Server, eventId, stashId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 // NewGetEventsRequest generates requests for GetEvents
@@ -2063,169 +2289,6 @@ func NewGetTeamAtlasesForEventRequest(server string, eventId int) (*http.Request
 	}
 
 	operationPath := fmt.Sprintf("/events/%s/atlas", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetRulesForEventRequest generates requests for GetRulesForEvent
-func NewGetRulesForEventRequest(server string, eventId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/categories", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateCategoryRequest calls the generic CreateCategory builder with application/json body
-func NewCreateCategoryRequest(server string, eventId int, body CreateCategoryJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateCategoryRequestWithBody(server, eventId, "application/json", bodyReader)
-}
-
-// NewCreateCategoryRequestWithBody generates requests for CreateCategory with any type of body
-func NewCreateCategoryRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/categories", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteCategoryRequest generates requests for DeleteCategory
-func NewDeleteCategoryRequest(server string, eventId int, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/categories/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewGetScoringCategoryRequest generates requests for GetScoringCategory
-func NewGetScoringCategoryRequest(server string, eventId int, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/categories/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2463,6 +2526,40 @@ func NewGetLadderRequest(server string, eventId int) (*http.Request, error) {
 	}
 
 	operationPath := fmt.Sprintf("/events/%s/ladder", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetObjectiveTreeForEventRequest generates requests for GetObjectiveTreeForEvent
+func NewGetObjectiveTreeForEventRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/objectives", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2982,8 +3079,8 @@ func NewCreateSignupRequestWithBody(server string, eventId int, contentType stri
 	return req, nil
 }
 
-// NewGetEventStatusForUserRequest generates requests for GetEventStatusForUser
-func NewGetEventStatusForUserRequest(server string, eventId int) (*http.Request, error) {
+// NewGetEventStatusRequest generates requests for GetEventStatus
+func NewGetEventStatusRequest(server string, eventId int) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3078,6 +3175,53 @@ func NewSubmitBountyRequestWithBody(server string, eventId int, contentType stri
 	}
 
 	operationPath := fmt.Sprintf("/events/%s/submissions", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewSetBulkSubmissionForAdminRequest calls the generic SetBulkSubmissionForAdmin builder with application/json body
+func NewSetBulkSubmissionForAdminRequest(server string, eventId int, body SetBulkSubmissionForAdminJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSetBulkSubmissionForAdminRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewSetBulkSubmissionForAdminRequestWithBody generates requests for SetBulkSubmissionForAdmin with any type of body
+func NewSetBulkSubmissionForAdminRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/submissions/admin", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3226,141 +3370,6 @@ func NewGetTeamSuggestionsRequest(server string, eventId int) (*http.Request, er
 	return req, nil
 }
 
-// NewCreateCategoryTeamSuggestionRequest calls the generic CreateCategoryTeamSuggestion builder with application/json body
-func NewCreateCategoryTeamSuggestionRequest(server string, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateCategoryTeamSuggestionRequestWithBody(server, eventId, "application/json", bodyReader)
-}
-
-// NewCreateCategoryTeamSuggestionRequestWithBody generates requests for CreateCategoryTeamSuggestion with any type of body
-func NewCreateCategoryTeamSuggestionRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/suggestions/categories", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewDeleteCategoryTeamSuggestionRequest generates requests for DeleteCategoryTeamSuggestion
-func NewDeleteCategoryTeamSuggestionRequest(server string, eventId int, categoryId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "category_id", runtime.ParamLocationPath, categoryId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/suggestions/categories/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateObjectiveTeamSuggestionRequest calls the generic CreateObjectiveTeamSuggestion builder with application/json body
-func NewCreateObjectiveTeamSuggestionRequest(server string, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateObjectiveTeamSuggestionRequestWithBody(server, eventId, "application/json", bodyReader)
-}
-
-// NewCreateObjectiveTeamSuggestionRequestWithBody generates requests for CreateObjectiveTeamSuggestion with any type of body
-func NewCreateObjectiveTeamSuggestionRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/suggestions/objectives", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
 // NewDeleteObjectiveTeamSuggestionRequest generates requests for DeleteObjectiveTeamSuggestion
 func NewDeleteObjectiveTeamSuggestionRequest(server string, eventId int, objectiveId int) (*http.Request, error) {
 	var err error
@@ -3384,7 +3393,7 @@ func NewDeleteObjectiveTeamSuggestionRequest(server string, eventId int, objecti
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/events/%s/suggestions/objectives/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/events/%s/suggestions/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3395,6 +3404,47 @@ func NewDeleteObjectiveTeamSuggestionRequest(server string, eventId int, objecti
 	}
 
 	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateObjectiveTeamSuggestionRequest generates requests for CreateObjectiveTeamSuggestion
+func NewCreateObjectiveTeamSuggestionRequest(server string, eventId int, objectiveId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "objective_id", runtime.ParamLocationPath, objectiveId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/suggestions/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -4106,6 +4156,272 @@ func NewChangePermissionsRequestWithBody(server string, userId int, contentType 
 	return req, nil
 }
 
+// NewGetUserCharactersRequest generates requests for GetUserCharacters
+func NewGetUserCharactersRequest(server string, userId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/characters", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetCharacterHistoryRequest generates requests for GetCharacterHistory
+func NewGetCharacterHistoryRequest(server string, userId int, characterId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "character_id", runtime.ParamLocationPath, characterId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/characters/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGuildStashForUserRequest generates requests for GetGuildStashForUser
+func NewGetGuildStashForUserRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guild-stash", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateGuildStashRequest generates requests for UpdateGuildStash
+func NewUpdateGuildStashRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guild-stash", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGuildStashTabRequest generates requests for GetGuildStashTab
+func NewGetGuildStashTabRequest(server string, eventId int, stashId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "stash_id", runtime.ParamLocationPath, stashId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guild-stash/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewSwitchStashFetchingRequest generates requests for SwitchStashFetching
+func NewSwitchStashFetchingRequest(server string, eventId int, stashId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "stash_id", runtime.ParamLocationPath, stashId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guild-stash/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateStashTabRequest generates requests for UpdateStashTab
+func NewUpdateStashTabRequest(server string, eventId int, stashId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "stash_id", runtime.ParamLocationPath, stashId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guild-stash/%s/update", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -4149,12 +4465,6 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetUserCharactersWithResponse request
-	GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error)
-
-	// GetCharacterEventHistoryForUserWithResponse request
-	GetCharacterEventHistoryForUserWithResponse(ctx context.Context, userId int, eventId int, reqEditors ...RequestEditorFn) (*GetCharacterEventHistoryForUserResponse, error)
-
 	// GetEventsWithResponse request
 	GetEventsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetEventsResponse, error)
 
@@ -4171,20 +4481,6 @@ type ClientWithResponsesInterface interface {
 
 	// GetTeamAtlasesForEventWithResponse request
 	GetTeamAtlasesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamAtlasesForEventResponse, error)
-
-	// GetRulesForEventWithResponse request
-	GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error)
-
-	// CreateCategoryWithBodyWithResponse request with any body
-	CreateCategoryWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
-
-	CreateCategoryWithResponse(ctx context.Context, eventId int, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error)
-
-	// DeleteCategoryWithResponse request
-	DeleteCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryResponse, error)
-
-	// GetScoringCategoryWithResponse request
-	GetScoringCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*GetScoringCategoryResponse, error)
 
 	// GetCharactersForEventWithResponse request
 	GetCharactersForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetCharactersForEventResponse, error)
@@ -4207,6 +4503,9 @@ type ClientWithResponsesInterface interface {
 
 	// GetLadderWithResponse request
 	GetLadderWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetLadderResponse, error)
+
+	// GetObjectiveTreeForEventWithResponse request
+	GetObjectiveTreeForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetObjectiveTreeForEventResponse, error)
 
 	// CreateObjectiveWithBodyWithResponse request with any body
 	CreateObjectiveWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error)
@@ -4253,8 +4552,8 @@ type ClientWithResponsesInterface interface {
 
 	CreateSignupWithResponse(ctx context.Context, eventId int, body CreateSignupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSignupResponse, error)
 
-	// GetEventStatusForUserWithResponse request
-	GetEventStatusForUserWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventStatusForUserResponse, error)
+	// GetEventStatusWithResponse request
+	GetEventStatusWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventStatusResponse, error)
 
 	// GetSubmissionsWithResponse request
 	GetSubmissionsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetSubmissionsResponse, error)
@@ -4263,6 +4562,11 @@ type ClientWithResponsesInterface interface {
 	SubmitBountyWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SubmitBountyResponse, error)
 
 	SubmitBountyWithResponse(ctx context.Context, eventId int, body SubmitBountyJSONRequestBody, reqEditors ...RequestEditorFn) (*SubmitBountyResponse, error)
+
+	// SetBulkSubmissionForAdminWithBodyWithResponse request with any body
+	SetBulkSubmissionForAdminWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetBulkSubmissionForAdminResponse, error)
+
+	SetBulkSubmissionForAdminWithResponse(ctx context.Context, eventId int, body SetBulkSubmissionForAdminJSONRequestBody, reqEditors ...RequestEditorFn) (*SetBulkSubmissionForAdminResponse, error)
 
 	// DeleteSubmissionWithResponse request
 	DeleteSubmissionWithResponse(ctx context.Context, eventId int, submissionId int, reqEditors ...RequestEditorFn) (*DeleteSubmissionResponse, error)
@@ -4275,21 +4579,11 @@ type ClientWithResponsesInterface interface {
 	// GetTeamSuggestionsWithResponse request
 	GetTeamSuggestionsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamSuggestionsResponse, error)
 
-	// CreateCategoryTeamSuggestionWithBodyWithResponse request with any body
-	CreateCategoryTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryTeamSuggestionResponse, error)
-
-	CreateCategoryTeamSuggestionWithResponse(ctx context.Context, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryTeamSuggestionResponse, error)
-
-	// DeleteCategoryTeamSuggestionWithResponse request
-	DeleteCategoryTeamSuggestionWithResponse(ctx context.Context, eventId int, categoryId int, reqEditors ...RequestEditorFn) (*DeleteCategoryTeamSuggestionResponse, error)
-
-	// CreateObjectiveTeamSuggestionWithBodyWithResponse request with any body
-	CreateObjectiveTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error)
-
-	CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error)
-
 	// DeleteObjectiveTeamSuggestionWithResponse request
 	DeleteObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*DeleteObjectiveTeamSuggestionResponse, error)
+
+	// CreateObjectiveTeamSuggestionWithResponse request
+	CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error)
 
 	// GetTeamsWithResponse request
 	GetTeamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamsResponse, error)
@@ -4356,50 +4650,27 @@ type ClientWithResponsesInterface interface {
 	ChangePermissionsWithBodyWithResponse(ctx context.Context, userId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ChangePermissionsResponse, error)
 
 	ChangePermissionsWithResponse(ctx context.Context, userId int, body ChangePermissionsJSONRequestBody, reqEditors ...RequestEditorFn) (*ChangePermissionsResponse, error)
-}
 
-type GetUserCharactersResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]Character
-}
+	// GetUserCharactersWithResponse request
+	GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error)
 
-// Status returns HTTPResponse.Status
-func (r GetUserCharactersResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
+	// GetCharacterHistoryWithResponse request
+	GetCharacterHistoryWithResponse(ctx context.Context, userId int, characterId int, reqEditors ...RequestEditorFn) (*GetCharacterHistoryResponse, error)
 
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetUserCharactersResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
+	// GetGuildStashForUserWithResponse request
+	GetGuildStashForUserWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetGuildStashForUserResponse, error)
 
-type GetCharacterEventHistoryForUserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *[]Character
-}
+	// UpdateGuildStashWithResponse request
+	UpdateGuildStashWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*UpdateGuildStashResponse, error)
 
-// Status returns HTTPResponse.Status
-func (r GetCharacterEventHistoryForUserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
+	// GetGuildStashTabWithResponse request
+	GetGuildStashTabWithResponse(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*GetGuildStashTabResponse, error)
 
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetCharacterEventHistoryForUserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
+	// SwitchStashFetchingWithResponse request
+	SwitchStashFetchingWithResponse(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*SwitchStashFetchingResponse, error)
+
+	// UpdateStashTabWithResponse request
+	UpdateStashTabWithResponse(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*UpdateStashTabResponse, error)
 }
 
 type GetEventsResponse struct {
@@ -4505,93 +4776,6 @@ func (r GetTeamAtlasesForEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetTeamAtlasesForEventResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetRulesForEventResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Category
-}
-
-// Status returns HTTPResponse.Status
-func (r GetRulesForEventResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetRulesForEventResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateCategoryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Category
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateCategoryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateCategoryResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteCategoryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteCategoryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteCategoryResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetScoringCategoryResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *Category
-}
-
-// Status returns HTTPResponse.Status
-func (r GetScoringCategoryResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetScoringCategoryResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4729,6 +4913,28 @@ func (r GetLadderResponse) StatusCode() int {
 	return 0
 }
 
+type GetObjectiveTreeForEventResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Objective
+}
+
+// Status returns HTTPResponse.Status
+func (r GetObjectiveTreeForEventResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetObjectiveTreeForEventResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type CreateObjectiveResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4797,7 +5003,7 @@ func (r GetObjectiveResponse) StatusCode() int {
 type GetLatestScoresForEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ScoreMap
+	JSON200      *[]ScoreDiff
 }
 
 // Status returns HTTPResponse.Status
@@ -5010,14 +5216,14 @@ func (r CreateSignupResponse) StatusCode() int {
 	return 0
 }
 
-type GetEventStatusForUserResponse struct {
+type GetEventStatusResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *EventStatus
 }
 
 // Status returns HTTPResponse.Status
-func (r GetEventStatusForUserResponse) Status() string {
+func (r GetEventStatusResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5025,7 +5231,7 @@ func (r GetEventStatusForUserResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetEventStatusForUserResponse) StatusCode() int {
+func (r GetEventStatusResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5070,6 +5276,28 @@ func (r SubmitBountyResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r SubmitBountyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type SetBulkSubmissionForAdminResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *[]Submission
+}
+
+// Status returns HTTPResponse.Status
+func (r SetBulkSubmissionForAdminResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SetBulkSubmissionForAdminResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5122,7 +5350,7 @@ func (r ReviewSubmissionResponse) StatusCode() int {
 type GetTeamSuggestionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Suggestions
+	JSON200      *[]int
 }
 
 // Status returns HTTPResponse.Status
@@ -5135,69 +5363,6 @@ func (r GetTeamSuggestionsResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetTeamSuggestionsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateCategoryTeamSuggestionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateCategoryTeamSuggestionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateCategoryTeamSuggestionResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteCategoryTeamSuggestionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteCategoryTeamSuggestionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteCategoryTeamSuggestionResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateObjectiveTeamSuggestionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateObjectiveTeamSuggestionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateObjectiveTeamSuggestionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5219,6 +5384,27 @@ func (r DeleteObjectiveTeamSuggestionResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r DeleteObjectiveTeamSuggestionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateObjectiveTeamSuggestionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateObjectiveTeamSuggestionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateObjectiveTeamSuggestionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5617,22 +5803,157 @@ func (r ChangePermissionsResponse) StatusCode() int {
 	return 0
 }
 
-// GetUserCharactersWithResponse request returning *GetUserCharactersResponse
-func (c *ClientWithResponses) GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error) {
-	rsp, err := c.GetUserCharacters(ctx, userId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetUserCharactersResponse(rsp)
+type GetUserCharactersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Character
 }
 
-// GetCharacterEventHistoryForUserWithResponse request returning *GetCharacterEventHistoryForUserResponse
-func (c *ClientWithResponses) GetCharacterEventHistoryForUserWithResponse(ctx context.Context, userId int, eventId int, reqEditors ...RequestEditorFn) (*GetCharacterEventHistoryForUserResponse, error) {
-	rsp, err := c.GetCharacterEventHistoryForUser(ctx, userId, eventId, reqEditors...)
-	if err != nil {
-		return nil, err
+// Status returns HTTPResponse.Status
+func (r GetUserCharactersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
 	}
-	return ParseGetCharacterEventHistoryForUserResponse(rsp)
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetUserCharactersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetCharacterHistoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]CharacterStat
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCharacterHistoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCharacterHistoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetGuildStashForUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]GuildStashTab
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGuildStashForUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGuildStashForUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateGuildStashResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]GuildStashTab
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateGuildStashResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateGuildStashResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetGuildStashTabResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *GuildStashTabGGG
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGuildStashTabResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGuildStashTabResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type SwitchStashFetchingResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *GuildStashTab
+}
+
+// Status returns HTTPResponse.Status
+func (r SwitchStashFetchingResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SwitchStashFetchingResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateStashTabResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateStashTabResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateStashTabResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 // GetEventsWithResponse request returning *GetEventsResponse
@@ -5686,50 +6007,6 @@ func (c *ClientWithResponses) GetTeamAtlasesForEventWithResponse(ctx context.Con
 		return nil, err
 	}
 	return ParseGetTeamAtlasesForEventResponse(rsp)
-}
-
-// GetRulesForEventWithResponse request returning *GetRulesForEventResponse
-func (c *ClientWithResponses) GetRulesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetRulesForEventResponse, error) {
-	rsp, err := c.GetRulesForEvent(ctx, eventId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetRulesForEventResponse(rsp)
-}
-
-// CreateCategoryWithBodyWithResponse request with arbitrary body returning *CreateCategoryResponse
-func (c *ClientWithResponses) CreateCategoryWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
-	rsp, err := c.CreateCategoryWithBody(ctx, eventId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateCategoryResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateCategoryWithResponse(ctx context.Context, eventId int, body CreateCategoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryResponse, error) {
-	rsp, err := c.CreateCategory(ctx, eventId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateCategoryResponse(rsp)
-}
-
-// DeleteCategoryWithResponse request returning *DeleteCategoryResponse
-func (c *ClientWithResponses) DeleteCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteCategoryResponse, error) {
-	rsp, err := c.DeleteCategory(ctx, eventId, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteCategoryResponse(rsp)
-}
-
-// GetScoringCategoryWithResponse request returning *GetScoringCategoryResponse
-func (c *ClientWithResponses) GetScoringCategoryWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*GetScoringCategoryResponse, error) {
-	rsp, err := c.GetScoringCategory(ctx, eventId, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetScoringCategoryResponse(rsp)
 }
 
 // GetCharactersForEventWithResponse request returning *GetCharactersForEventResponse
@@ -5800,6 +6077,15 @@ func (c *ClientWithResponses) GetLadderWithResponse(ctx context.Context, eventId
 		return nil, err
 	}
 	return ParseGetLadderResponse(rsp)
+}
+
+// GetObjectiveTreeForEventWithResponse request returning *GetObjectiveTreeForEventResponse
+func (c *ClientWithResponses) GetObjectiveTreeForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetObjectiveTreeForEventResponse, error) {
+	rsp, err := c.GetObjectiveTreeForEvent(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetObjectiveTreeForEventResponse(rsp)
 }
 
 // CreateObjectiveWithBodyWithResponse request with arbitrary body returning *CreateObjectiveResponse
@@ -5943,13 +6229,13 @@ func (c *ClientWithResponses) CreateSignupWithResponse(ctx context.Context, even
 	return ParseCreateSignupResponse(rsp)
 }
 
-// GetEventStatusForUserWithResponse request returning *GetEventStatusForUserResponse
-func (c *ClientWithResponses) GetEventStatusForUserWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventStatusForUserResponse, error) {
-	rsp, err := c.GetEventStatusForUser(ctx, eventId, reqEditors...)
+// GetEventStatusWithResponse request returning *GetEventStatusResponse
+func (c *ClientWithResponses) GetEventStatusWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventStatusResponse, error) {
+	rsp, err := c.GetEventStatus(ctx, eventId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetEventStatusForUserResponse(rsp)
+	return ParseGetEventStatusResponse(rsp)
 }
 
 // GetSubmissionsWithResponse request returning *GetSubmissionsResponse
@@ -5976,6 +6262,23 @@ func (c *ClientWithResponses) SubmitBountyWithResponse(ctx context.Context, even
 		return nil, err
 	}
 	return ParseSubmitBountyResponse(rsp)
+}
+
+// SetBulkSubmissionForAdminWithBodyWithResponse request with arbitrary body returning *SetBulkSubmissionForAdminResponse
+func (c *ClientWithResponses) SetBulkSubmissionForAdminWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetBulkSubmissionForAdminResponse, error) {
+	rsp, err := c.SetBulkSubmissionForAdminWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetBulkSubmissionForAdminResponse(rsp)
+}
+
+func (c *ClientWithResponses) SetBulkSubmissionForAdminWithResponse(ctx context.Context, eventId int, body SetBulkSubmissionForAdminJSONRequestBody, reqEditors ...RequestEditorFn) (*SetBulkSubmissionForAdminResponse, error) {
+	rsp, err := c.SetBulkSubmissionForAdmin(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetBulkSubmissionForAdminResponse(rsp)
 }
 
 // DeleteSubmissionWithResponse request returning *DeleteSubmissionResponse
@@ -6013,49 +6316,6 @@ func (c *ClientWithResponses) GetTeamSuggestionsWithResponse(ctx context.Context
 	return ParseGetTeamSuggestionsResponse(rsp)
 }
 
-// CreateCategoryTeamSuggestionWithBodyWithResponse request with arbitrary body returning *CreateCategoryTeamSuggestionResponse
-func (c *ClientWithResponses) CreateCategoryTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCategoryTeamSuggestionResponse, error) {
-	rsp, err := c.CreateCategoryTeamSuggestionWithBody(ctx, eventId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateCategoryTeamSuggestionResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateCategoryTeamSuggestionWithResponse(ctx context.Context, eventId int, body CreateCategoryTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCategoryTeamSuggestionResponse, error) {
-	rsp, err := c.CreateCategoryTeamSuggestion(ctx, eventId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateCategoryTeamSuggestionResponse(rsp)
-}
-
-// DeleteCategoryTeamSuggestionWithResponse request returning *DeleteCategoryTeamSuggestionResponse
-func (c *ClientWithResponses) DeleteCategoryTeamSuggestionWithResponse(ctx context.Context, eventId int, categoryId int, reqEditors ...RequestEditorFn) (*DeleteCategoryTeamSuggestionResponse, error) {
-	rsp, err := c.DeleteCategoryTeamSuggestion(ctx, eventId, categoryId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteCategoryTeamSuggestionResponse(rsp)
-}
-
-// CreateObjectiveTeamSuggestionWithBodyWithResponse request with arbitrary body returning *CreateObjectiveTeamSuggestionResponse
-func (c *ClientWithResponses) CreateObjectiveTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error) {
-	rsp, err := c.CreateObjectiveTeamSuggestionWithBody(ctx, eventId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateObjectiveTeamSuggestionResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error) {
-	rsp, err := c.CreateObjectiveTeamSuggestion(ctx, eventId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateObjectiveTeamSuggestionResponse(rsp)
-}
-
 // DeleteObjectiveTeamSuggestionWithResponse request returning *DeleteObjectiveTeamSuggestionResponse
 func (c *ClientWithResponses) DeleteObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*DeleteObjectiveTeamSuggestionResponse, error) {
 	rsp, err := c.DeleteObjectiveTeamSuggestion(ctx, eventId, objectiveId, reqEditors...)
@@ -6063,6 +6323,15 @@ func (c *ClientWithResponses) DeleteObjectiveTeamSuggestionWithResponse(ctx cont
 		return nil, err
 	}
 	return ParseDeleteObjectiveTeamSuggestionResponse(rsp)
+}
+
+// CreateObjectiveTeamSuggestionWithResponse request returning *CreateObjectiveTeamSuggestionResponse
+func (c *ClientWithResponses) CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error) {
+	rsp, err := c.CreateObjectiveTeamSuggestion(ctx, eventId, objectiveId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateObjectiveTeamSuggestionResponse(rsp)
 }
 
 // GetTeamsWithResponse request returning *GetTeamsResponse
@@ -6275,56 +6544,67 @@ func (c *ClientWithResponses) ChangePermissionsWithResponse(ctx context.Context,
 	return ParseChangePermissionsResponse(rsp)
 }
 
-// ParseGetUserCharactersResponse parses an HTTP response from a GetUserCharactersWithResponse call
-func ParseGetUserCharactersResponse(rsp *http.Response) (*GetUserCharactersResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetUserCharactersWithResponse request returning *GetUserCharactersResponse
+func (c *ClientWithResponses) GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error) {
+	rsp, err := c.GetUserCharacters(ctx, userId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-
-	response := &GetUserCharactersResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Character
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
+	return ParseGetUserCharactersResponse(rsp)
 }
 
-// ParseGetCharacterEventHistoryForUserResponse parses an HTTP response from a GetCharacterEventHistoryForUserWithResponse call
-func ParseGetCharacterEventHistoryForUserResponse(rsp *http.Response) (*GetCharacterEventHistoryForUserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
+// GetCharacterHistoryWithResponse request returning *GetCharacterHistoryResponse
+func (c *ClientWithResponses) GetCharacterHistoryWithResponse(ctx context.Context, userId int, characterId int, reqEditors ...RequestEditorFn) (*GetCharacterHistoryResponse, error) {
+	rsp, err := c.GetCharacterHistory(ctx, userId, characterId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
+	return ParseGetCharacterHistoryResponse(rsp)
+}
 
-	response := &GetCharacterEventHistoryForUserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
+// GetGuildStashForUserWithResponse request returning *GetGuildStashForUserResponse
+func (c *ClientWithResponses) GetGuildStashForUserWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetGuildStashForUserResponse, error) {
+	rsp, err := c.GetGuildStashForUser(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
 	}
+	return ParseGetGuildStashForUserResponse(rsp)
+}
 
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Character
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
+// UpdateGuildStashWithResponse request returning *UpdateGuildStashResponse
+func (c *ClientWithResponses) UpdateGuildStashWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*UpdateGuildStashResponse, error) {
+	rsp, err := c.UpdateGuildStash(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
 	}
+	return ParseUpdateGuildStashResponse(rsp)
+}
 
-	return response, nil
+// GetGuildStashTabWithResponse request returning *GetGuildStashTabResponse
+func (c *ClientWithResponses) GetGuildStashTabWithResponse(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*GetGuildStashTabResponse, error) {
+	rsp, err := c.GetGuildStashTab(ctx, eventId, stashId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGuildStashTabResponse(rsp)
+}
+
+// SwitchStashFetchingWithResponse request returning *SwitchStashFetchingResponse
+func (c *ClientWithResponses) SwitchStashFetchingWithResponse(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*SwitchStashFetchingResponse, error) {
+	rsp, err := c.SwitchStashFetching(ctx, eventId, stashId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSwitchStashFetchingResponse(rsp)
+}
+
+// UpdateStashTabWithResponse request returning *UpdateStashTabResponse
+func (c *ClientWithResponses) UpdateStashTabWithResponse(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*UpdateStashTabResponse, error) {
+	rsp, err := c.UpdateStashTab(ctx, eventId, stashId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateStashTabResponse(rsp)
 }
 
 // ParseGetEventsResponse parses an HTTP response from a GetEventsWithResponse call
@@ -6437,100 +6717,6 @@ func ParseGetTeamAtlasesForEventResponse(rsp *http.Response) (*GetTeamAtlasesFor
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest []Atlas
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetRulesForEventResponse parses an HTTP response from a GetRulesForEventWithResponse call
-func ParseGetRulesForEventResponse(rsp *http.Response) (*GetRulesForEventResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetRulesForEventResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Category
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseCreateCategoryResponse parses an HTTP response from a CreateCategoryWithResponse call
-func ParseCreateCategoryResponse(rsp *http.Response) (*CreateCategoryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateCategoryResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Category
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteCategoryResponse parses an HTTP response from a DeleteCategoryWithResponse call
-func ParseDeleteCategoryResponse(rsp *http.Response) (*DeleteCategoryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteCategoryResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseGetScoringCategoryResponse parses an HTTP response from a GetScoringCategoryWithResponse call
-func ParseGetScoringCategoryResponse(rsp *http.Response) (*GetScoringCategoryResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetScoringCategoryResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Category
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -6687,6 +6873,32 @@ func ParseGetLadderResponse(rsp *http.Response) (*GetLadderResponse, error) {
 	return response, nil
 }
 
+// ParseGetObjectiveTreeForEventResponse parses an HTTP response from a GetObjectiveTreeForEventWithResponse call
+func ParseGetObjectiveTreeForEventResponse(rsp *http.Response) (*GetObjectiveTreeForEventResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetObjectiveTreeForEventResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Objective
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseCreateObjectiveResponse parses an HTTP response from a CreateObjectiveWithResponse call
 func ParseCreateObjectiveResponse(rsp *http.Response) (*CreateObjectiveResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -6770,7 +6982,7 @@ func ParseGetLatestScoresForEventResponse(rsp *http.Response) (*GetLatestScoresF
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ScoreMap
+		var dest []ScoreDiff
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -6975,15 +7187,15 @@ func ParseCreateSignupResponse(rsp *http.Response) (*CreateSignupResponse, error
 	return response, nil
 }
 
-// ParseGetEventStatusForUserResponse parses an HTTP response from a GetEventStatusForUserWithResponse call
-func ParseGetEventStatusForUserResponse(rsp *http.Response) (*GetEventStatusForUserResponse, error) {
+// ParseGetEventStatusResponse parses an HTTP response from a GetEventStatusWithResponse call
+func ParseGetEventStatusResponse(rsp *http.Response) (*GetEventStatusResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetEventStatusForUserResponse{
+	response := &GetEventStatusResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -7053,6 +7265,32 @@ func ParseSubmitBountyResponse(rsp *http.Response) (*SubmitBountyResponse, error
 	return response, nil
 }
 
+// ParseSetBulkSubmissionForAdminResponse parses an HTTP response from a SetBulkSubmissionForAdminWithResponse call
+func ParseSetBulkSubmissionForAdminResponse(rsp *http.Response) (*SetBulkSubmissionForAdminResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SetBulkSubmissionForAdminResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest []Submission
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseDeleteSubmissionResponse parses an HTTP response from a DeleteSubmissionWithResponse call
 func ParseDeleteSubmissionResponse(rsp *http.Response) (*DeleteSubmissionResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -7110,7 +7348,7 @@ func ParseGetTeamSuggestionsResponse(rsp *http.Response) (*GetTeamSuggestionsRes
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Suggestions
+		var dest []int
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -7121,31 +7359,15 @@ func ParseGetTeamSuggestionsResponse(rsp *http.Response) (*GetTeamSuggestionsRes
 	return response, nil
 }
 
-// ParseCreateCategoryTeamSuggestionResponse parses an HTTP response from a CreateCategoryTeamSuggestionWithResponse call
-func ParseCreateCategoryTeamSuggestionResponse(rsp *http.Response) (*CreateCategoryTeamSuggestionResponse, error) {
+// ParseDeleteObjectiveTeamSuggestionResponse parses an HTTP response from a DeleteObjectiveTeamSuggestionWithResponse call
+func ParseDeleteObjectiveTeamSuggestionResponse(rsp *http.Response) (*DeleteObjectiveTeamSuggestionResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateCategoryTeamSuggestionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseDeleteCategoryTeamSuggestionResponse parses an HTTP response from a DeleteCategoryTeamSuggestionWithResponse call
-func ParseDeleteCategoryTeamSuggestionResponse(rsp *http.Response) (*DeleteCategoryTeamSuggestionResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteCategoryTeamSuggestionResponse{
+	response := &DeleteObjectiveTeamSuggestionResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -7162,22 +7384,6 @@ func ParseCreateObjectiveTeamSuggestionResponse(rsp *http.Response) (*CreateObje
 	}
 
 	response := &CreateObjectiveTeamSuggestionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
-// ParseDeleteObjectiveTeamSuggestionResponse parses an HTTP response from a DeleteObjectiveTeamSuggestionWithResponse call
-func ParseDeleteObjectiveTeamSuggestionResponse(rsp *http.Response) (*DeleteObjectiveTeamSuggestionResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteObjectiveTeamSuggestionResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -7608,6 +7814,178 @@ func ParseChangePermissionsResponse(rsp *http.Response) (*ChangePermissionsRespo
 		}
 		response.JSON200 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseGetUserCharactersResponse parses an HTTP response from a GetUserCharactersWithResponse call
+func ParseGetUserCharactersResponse(rsp *http.Response) (*GetUserCharactersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetUserCharactersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Character
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetCharacterHistoryResponse parses an HTTP response from a GetCharacterHistoryWithResponse call
+func ParseGetCharacterHistoryResponse(rsp *http.Response) (*GetCharacterHistoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCharacterHistoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []CharacterStat
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGuildStashForUserResponse parses an HTTP response from a GetGuildStashForUserWithResponse call
+func ParseGetGuildStashForUserResponse(rsp *http.Response) (*GetGuildStashForUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGuildStashForUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []GuildStashTab
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateGuildStashResponse parses an HTTP response from a UpdateGuildStashWithResponse call
+func ParseUpdateGuildStashResponse(rsp *http.Response) (*UpdateGuildStashResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateGuildStashResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []GuildStashTab
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGuildStashTabResponse parses an HTTP response from a GetGuildStashTabWithResponse call
+func ParseGetGuildStashTabResponse(rsp *http.Response) (*GetGuildStashTabResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGuildStashTabResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest GuildStashTabGGG
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseSwitchStashFetchingResponse parses an HTTP response from a SwitchStashFetchingWithResponse call
+func ParseSwitchStashFetchingResponse(rsp *http.Response) (*SwitchStashFetchingResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SwitchStashFetchingResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest GuildStashTab
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateStashTabResponse parses an HTTP response from a UpdateStashTabWithResponse call
+func ParseUpdateStashTabResponse(rsp *http.Response) (*UpdateStashTabResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateStashTabResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
