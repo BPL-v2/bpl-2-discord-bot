@@ -67,23 +67,54 @@ func AuthenticatedClient() (*ClientWithResponses, error) {
 	}
 	return bplClient, nil
 }
-
-func (c *ClientWithResponses) GetCurrentEvent() (*Event, error) {
+func (c *ClientWithResponses) GetEvents() ([]Event, error) {
 	resp, err := c.GetEventsWithResponse(context.TODO())
 	if err != nil {
 		return nil, err
 	}
 	if resp.JSON200 == nil {
-		return nil, nil
+		return nil, fmt.Errorf("no events found")
 	}
 	events := resp.JSON200
 	if len(*events) == 0 {
-		return nil, nil
+		return nil, fmt.Errorf("no events found")
 	}
-	for _, event := range *events {
+	return *events, nil
+}
+
+func (c *ClientWithResponses) GetCurrentEvent() (*Event, error) {
+
+	events, err := c.GetEvents()
+	if err != nil {
+		return nil, err
+	}
+	for _, event := range events {
 		if event.IsCurrent {
 			return &event, nil
 		}
 	}
 	return nil, nil
+}
+func (c *ClientWithResponses) GetLatestEvent() (*Event, error) {
+	events, err := c.GetEvents()
+	if err != nil {
+		return nil, fmt.Errorf("could not get events: %w", err)
+	}
+	latestEvent := events[0]
+	latestStartTime, err := time.Parse(time.RFC3339, latestEvent.EventStartTime)
+	if err != nil {
+		return nil, fmt.Errorf("could not parse latest event start time: %w", err)
+	}
+	for _, event := range events {
+		currentStartTime, err := time.Parse(time.RFC3339, event.EventStartTime)
+		if err != nil {
+			return nil, fmt.Errorf("could not parse event start time: %w", err)
+		}
+		if currentStartTime.After(latestStartTime) {
+			latestStartTime = currentStartTime
+			latestEvent = event
+		}
+	}
+	return &latestEvent, nil
+
 }

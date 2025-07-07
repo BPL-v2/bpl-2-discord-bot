@@ -27,7 +27,7 @@ var GetTimesCommand = DiscordCommand{
 	},
 	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, client *client.ClientWithResponses) {
 		log.Println("GetTimesCommand called")
-		event, err := client.GetCurrentEvent()
+		event, err := client.GetLatestEvent()
 		if err != nil {
 			EditResponse(s, i, "could not get current event")
 			return
@@ -70,6 +70,8 @@ var sortWhenMessages = []string{
 	"When my code stops having a mind of its own.",
 	"After I stop making up new excuses as to why I can't tell you the time.",
 	"After boat league is over.",
+	"How would I know? Nobody is telling me anything.",
+	"That's a great question, let me ask my friend Google.",
 }
 
 var SortWhenCommand = DiscordCommand{
@@ -97,7 +99,7 @@ var SignupswhenCommand = DiscordCommand{
 	},
 	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, client *client.ClientWithResponses) {
 		log.Println("SignupswhenCommand called")
-		event, err := client.GetCurrentEvent()
+		event, err := client.GetLatestEvent()
 		if err != nil {
 			EditResponse(s, i, "could not get current event")
 			return
