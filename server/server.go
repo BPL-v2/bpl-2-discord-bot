@@ -3,7 +3,6 @@ package server
 import (
 	"bpl2-discord/client"
 	"bpl2-discord/commands"
-	"bpl2-discord/utils"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
@@ -44,7 +43,7 @@ func getAllGuildMembers(session *discordgo.Session) gin.HandlerFunc {
 			c.JSON(500, gin.H{"message": "error getting members"})
 			return
 		}
-		c.JSON(200, utils.Map(members, func(m *discordgo.Member) string { return m.User.ID }))
+		c.JSON(200, members)
 	}
 
 }
