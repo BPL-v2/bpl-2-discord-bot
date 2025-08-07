@@ -35,3 +35,7 @@ jobs:
       - name: Push Docker image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/bpl2-discord-bot:${{ steps.get_tag.outputs.tag }}
+
+      - name: Notify watchtower
+        run: |
+          curl -X POST "${{vars.SERVER_URL}}/watchtower/v1/update" -H "Authorization: Bearer ${{ secrets.WATCHTOWER_TOKEN }}"
