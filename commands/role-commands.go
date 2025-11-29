@@ -103,7 +103,7 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 	teamRoles := make(map[int]string)
 	for _, team := range event.Teams {
 		for _, role := range allRoles {
-			if role.Name == team.Name {
+			if role.Name == team.Name || role.Name == ("Team "+team.Name) {
 				teamRoles[team.Id] = role.ID
 			}
 		}
