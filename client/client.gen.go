@@ -20,6 +20,13 @@ const (
 	BearerAuthScopes = "BearerAuth.Scopes"
 )
 
+// Defines values for Action.
+const (
+	ActionAdded    Action = "added"
+	ActionModified Action = "modified"
+	ActionRemoved  Action = "removed"
+)
+
 // Defines values for AggregationType.
 const (
 	AggregationTypeDifferenceBetween AggregationType = "DIFFERENCE_BETWEEN"
@@ -75,34 +82,45 @@ const (
 
 // Defines values for ItemField.
 const (
-	BASETYPE       ItemField = "BASE_TYPE"
-	CRAFTEDMODS    ItemField = "CRAFTED_MODS"
-	ENCHANTS       ItemField = "ENCHANT_MODS"
-	EXPLICITS      ItemField = "EXPLICIT_MODS"
-	FACETORLENSEXP ItemField = "FACETOR_LENS_EXP"
-	FRACTUREDMODS  ItemField = "FRACTURED_MODS"
-	FRAMETYPE      ItemField = "FRAME_TYPE"
-	ILVL           ItemField = "ILVL"
-	IMPLICITS      ItemField = "IMPLICIT_MODS"
-	INCUBATORKILLS ItemField = "INCUBATOR_KILLS"
-	INFLUENCES     ItemField = "INFLUENCES"
-	ISCORRUPTED    ItemField = "IS_CORRUPTED"
-	ISSPLIT        ItemField = "IS_SPLIT"
-	ISVAAL         ItemField = "IS_VAAL"
-	ITEMCLASS      ItemField = "ITEM_CLASS"
-	LEVEL          ItemField = "LEVEL"
-	MAPTIER        ItemField = "MAP_TIER"
-	MAXLINKS       ItemField = "MAX_LINKS"
-	NAME           ItemField = "NAME"
-	QUALITY        ItemField = "QUALITY"
-	RARITY         ItemField = "RARITY"
-	RITUALBOSSES   ItemField = "RITUAL_VESSEL_BOSSES"
-	RITUALMAP      ItemField = "RITUAL_VESSEL_MAP"
-	SANCTUMMODS    ItemField = "SANCTUM_AFFLICTIONS"
-	SOCKETS        ItemField = "SOCKETS"
-	TALISMANTIER   ItemField = "TALISMAN_TIER"
-	TEMPLEROOMS    ItemField = "TEMPLE_ROOMS"
-	TYPELINE       ItemField = "TYPE_LINE"
+	BASETYPE              ItemField = "BASE_TYPE"
+	CRAFTEDMODS           ItemField = "CRAFTED_MODS"
+	ENCHANTS              ItemField = "ENCHANT_MODS"
+	EXPLICITS             ItemField = "EXPLICIT_MODS"
+	FACETORLENSEXP        ItemField = "FACETOR_LENS_EXP"
+	FOULBORNMODS          ItemField = "FOULBORN_MODS"
+	FRACTUREDMODS         ItemField = "FRACTURED_MODS"
+	FRAMETYPE             ItemField = "FRAME_TYPE"
+	HEISTROGUEREQUIREMENT ItemField = "HEIST_ROGUE_REQUIREMENT"
+	HEISTTARGET           ItemField = "HEIST_TARGET"
+	ICONNAME              ItemField = "ICON_NAME"
+	ILVL                  ItemField = "ILVL"
+	IMPLICITS             ItemField = "IMPLICIT_MODS"
+	INCUBATORKILLS        ItemField = "INCUBATOR_KILLS"
+	INFLUENCES            ItemField = "INFLUENCES"
+	ISCORRUPTED           ItemField = "IS_CORRUPTED"
+	ISFOULBORN            ItemField = "IS_FOULBORN"
+	ISIDENTIFIED          ItemField = "IS_IDENTIFIED"
+	ISMIRRORED            ItemField = "IS_MIRRORED"
+	ISSPLIT               ItemField = "IS_SPLIT"
+	ISVAAL                ItemField = "IS_VAAL"
+	ITEMCLASS             ItemField = "ITEM_CLASS"
+	LEVEL                 ItemField = "LEVEL"
+	MAPPACKSIZE           ItemField = "MAP_PACK_SIZE"
+	MAPQUANT              ItemField = "MAP_QUANT"
+	MAPRARITY             ItemField = "MAP_RARITY"
+	MAPTIER               ItemField = "MAP_TIER"
+	MAXLINKS              ItemField = "MAX_LINKS"
+	MEMORYSTRANDS         ItemField = "MEMORY_STRANDS"
+	NAME                  ItemField = "NAME"
+	QUALITY               ItemField = "QUALITY"
+	RARITY                ItemField = "RARITY"
+	RITUALBOSSES          ItemField = "RITUAL_VESSEL_BOSSES"
+	RITUALMAP             ItemField = "RITUAL_VESSEL_MAP"
+	SANCTUMMODS           ItemField = "SANCTUM_AFFLICTIONS"
+	SOCKETS               ItemField = "SOCKETS"
+	TALISMANTIER          ItemField = "TALISMAN_TIER"
+	TEMPLEROOMS           ItemField = "TEMPLE_ROOMS"
+	TYPELINE              ItemField = "TYPE_LINE"
 )
 
 // Defines values for ItemSocketItem.
@@ -130,6 +148,7 @@ const (
 	FetchCharacterData        JobType = "FetchCharacterData"
 	FetchGuildStashes         JobType = "FetchGuildStashes"
 	FetchStashChanges         JobType = "FetchStashChanges"
+	RefreshPoETokens          JobType = "RefreshPoETokens"
 )
 
 // Defines values for NumberField.
@@ -159,6 +178,7 @@ const (
 	CONTAINS      Operator = "CONTAINS"
 	CONTAINSALL   Operator = "CONTAINS_ALL"
 	CONTAINSMATCH Operator = "CONTAINS_MATCH"
+	DOESNOTMATCH  Operator = "DOES_NOT_MATCH"
 	EQ            Operator = "EQ"
 	GT            Operator = "GT"
 	IN            Operator = "IN"
@@ -181,6 +201,7 @@ const (
 
 // Defines values for ScoringMethod.
 const (
+	BINGO3             ScoringMethod = "BINGO_3"
 	BONUSPERCOMPLETION ScoringMethod = "BONUS_PER_COMPLETION"
 	POINTSFROMVALUE    ScoringMethod = "POINTS_FROM_VALUE"
 	PRESENCE           ScoringMethod = "PRESENCE"
@@ -194,6 +215,22 @@ const (
 const (
 	CATEGORY  ScoringPresetType = "CATEGORY"
 	OBJECTIVE ScoringPresetType = "OBJECTIVE"
+)
+
+// Defines values for TimingKey.
+const (
+	CharacterNameRefetchDelay          TimingKey = "delay_after_character_name_is_refetched"
+	CharacterRefetchDelay              TimingKey = "delay_after_character_is_refetched"
+	CharacterRefetchDelayImportant     TimingKey = "delay_after_po_relevant_character_is_refetched"
+	CharacterRefetchDelayInactive      TimingKey = "delay_after_inactive_character_is_refetched"
+	GuildstashUpdateInterval           TimingKey = "guildstash_update_interval"
+	InactivityDuration                 TimingKey = "character_inactivity_duration"
+	LadderUpdateInterval               TimingKey = "ladder_update_interval"
+	LeagueAccountRefetchDelay          TimingKey = "delay_after_league_account_is_refetched"
+	LeagueAccountRefetchDelayImportant TimingKey = "delay_after_po_relevant_league_account_is_refetched"
+	LeagueAccountRefetchDelayInactive  TimingKey = "delay_after_inactive_league_account_is_refetched"
+	PoBRecalculationDelay              TimingKey = "delay_after_pob_is_recalculated"
+	PublicStashUpdateInterval          TimingKey = "public_stash_update_interval"
 )
 
 // Defines values for OauthCallbackParamsProvider.
@@ -210,6 +247,14 @@ const (
 	OauthRedirectParamsProviderTwitch  OauthRedirectParamsProvider = "twitch"
 )
 
+// Action defines model for Action.
+type Action string
+
+// AddGuildStashHistoryResponse defines model for AddGuildStashHistoryResponse.
+type AddGuildStashHistoryResponse struct {
+	NumberOfAddedEntries int `json:"number_of_added_entries"`
+}
+
 // AggregationType defines model for AggregationType.
 type AggregationType string
 
@@ -221,10 +266,17 @@ type ApprovalStatus string
 
 // Atlas defines model for Atlas.
 type Atlas struct {
-	EventId int     `json:"event_id"`
-	Index   int     `json:"index"`
-	Trees   [][]int `json:"trees"`
-	UserId  int     `json:"user_id"`
+	EventId int              `json:"event_id"`
+	Index   int              `json:"index"`
+	Trees   map[string][]int `json:"trees"`
+	UserId  int              `json:"user_id"`
+}
+
+// AtlasProgression defines model for AtlasProgression.
+type AtlasProgression struct {
+	Index     *int   `json:"index,omitempty"`
+	Nodes     *[]int `json:"nodes,omitempty"`
+	Timestamp *int   `json:"timestamp,omitempty"`
 }
 
 // CallbackBody defines model for CallbackBody.
@@ -247,44 +299,35 @@ type Character struct {
 	AscendancyPoints int    `json:"ascendancy_points"`
 	AtlasNodeCount   int    `json:"atlas_node_count"`
 	EventId          int    `json:"event_id"`
-	Id               int    `json:"id"`
+	Id               string `json:"id"`
 	Level            int    `json:"level"`
 	MainSkill        string `json:"main_skill"`
 	Name             string `json:"name"`
 	Pantheon         bool   `json:"pantheon"`
-	UserId           int    `json:"user_id"`
+	UserId           *int   `json:"user_id,omitempty"`
 }
 
 // CharacterStat defines model for CharacterStat.
 type CharacterStat struct {
-	Armour     int `json:"armour"`
-	Dps        int `json:"dps"`
-	Ehp        int `json:"ehp"`
-	EleMaxHit  int `json:"ele_max_hit"`
-	Es         int `json:"es"`
-	Evasion    int `json:"evasion"`
-	Hp         int `json:"hp"`
-	Mana       int `json:"mana"`
-	PhysMaxHit int `json:"phys_max_hit"`
-	Timestamp  int `json:"timestamp"`
-	Xp         int `json:"xp"`
+	Armour        int `json:"armour"`
+	Dps           int `json:"dps"`
+	Ehp           int `json:"ehp"`
+	EleMaxHit     int `json:"ele_max_hit"`
+	Es            int `json:"es"`
+	Evasion       int `json:"evasion"`
+	Hp            int `json:"hp"`
+	Mana          int `json:"mana"`
+	MovementSpeed int `json:"movement_speed"`
+	PhysMaxHit    int `json:"phys_max_hit"`
+	Timestamp     int `json:"timestamp"`
+	Xp            int `json:"xp"`
 }
 
 // Condition defines model for Condition.
 type Condition struct {
 	Field    ItemField `json:"field"`
-	Id       int       `json:"id"`
 	Operator Operator  `json:"operator"`
 	Value    string    `json:"value"`
-}
-
-// ConditionCreate defines model for ConditionCreate.
-type ConditionCreate struct {
-	Field       ItemField `json:"field"`
-	Id          *int      `json:"id,omitempty"`
-	ObjectiveId int       `json:"objective_id"`
-	Operator    Operator  `json:"operator"`
-	Value       string    `json:"value"`
 }
 
 // ConditionMappings defines model for ConditionMappings.
@@ -335,6 +378,8 @@ type DisplayItem struct {
 	ItemLevel         *int               `json:"itemLevel,omitempty"`
 	LogbookMods       *[]ItemLogbookMod  `json:"logbookMods,omitempty"`
 	MemoryItem        *bool              `json:"memoryItem,omitempty"`
+	Mutated           *bool              `json:"mutated,omitempty"`
+	MutatedMods       *[]string          `json:"mutatedMods,omitempty"`
 	Name              *string            `json:"name,omitempty"`
 	NotableProperties *[]ItemProperty    `json:"notableProperties,omitempty"`
 
@@ -386,6 +431,7 @@ type Event struct {
 	IsPublic             bool        `json:"is_public"`
 	MaxSize              int         `json:"max_size"`
 	Name                 string      `json:"name"`
+	Patch                *string     `json:"patch,omitempty"`
 	Teams                []Team      `json:"teams"`
 	WaitlistSize         int         `json:"waitlist_size"`
 }
@@ -403,16 +449,19 @@ type EventCreate struct {
 	IsPublic             *bool       `json:"is_public,omitempty"`
 	MaxSize              int         `json:"max_size"`
 	Name                 string      `json:"name"`
+	Patch                *string     `json:"patch,omitempty"`
 	WaitlistSize         int         `json:"waitlist_size"`
 }
 
 // EventStatus defines model for EventStatus.
 type EventStatus struct {
-	ApplicationStatus ApplicationStatus `json:"application_status"`
-	IsTeamLead        bool              `json:"is_team_lead"`
-	NumberOfSignups   int               `json:"number_of_signups"`
-	Partner           *string           `json:"partner,omitempty"`
-	TeamId            *int              `json:"team_id,omitempty"`
+	ApplicationStatus           ApplicationStatus `json:"application_status"`
+	IsTeamLead                  bool              `json:"is_team_lead"`
+	NumberOfSignups             int               `json:"number_of_signups"`
+	NumberOfSignupsBefore       int               `json:"number_of_signups_before"`
+	PartnerWish                 *string           `json:"partner_wish,omitempty"`
+	TeamId                      *int              `json:"team_id,omitempty"`
+	UsersWhoWantToSignUpWithYou *[]string         `json:"users_who_want_to_sign_up_with_you,omitempty"`
 }
 
 // FieldType defines model for FieldType.
@@ -423,6 +472,50 @@ type GameVersion string
 
 // GemSocket defines model for GemSocket.
 type GemSocket string
+
+// Guild defines model for Guild.
+type Guild struct {
+	Id     int    `json:"id"`
+	Name   string `json:"name"`
+	Tag    string `json:"tag"`
+	TeamId *int   `json:"team_id,omitempty"`
+}
+
+// GuildStashChangeResponse defines model for GuildStashChangeResponse.
+type GuildStashChangeResponse struct {
+	Entries *[]struct {
+		Account *struct {
+			Name *string `json:"name,omitempty"`
+		} `json:"account,omitempty"`
+		Action *string `json:"action,omitempty"`
+		Id     *string `json:"id,omitempty"`
+		Item   *string `json:"item,omitempty"`
+		League *string `json:"league,omitempty"`
+		Stash  *string `json:"stash,omitempty"`
+		Time   *int    `json:"time,omitempty"`
+		X      *int    `json:"x,omitempty"`
+		Y      *int    `json:"y,omitempty"`
+	} `json:"entries,omitempty"`
+	Truncated *bool `json:"truncated,omitempty"`
+}
+
+// GuildStashChangelog defines model for GuildStashChangelog.
+type GuildStashChangelog struct {
+	AccountName string  `json:"account_name"`
+	Action      Action  `json:"action"`
+	ItemName    string  `json:"item_name"`
+	Number      int     `json:"number"`
+	StashName   *string `json:"stash_name,omitempty"`
+	Timestamp   int     `json:"timestamp"`
+}
+
+// GuildStashLogTimestampResponse defines model for GuildStashLogTimestampResponse.
+type GuildStashLogTimestampResponse struct {
+	Earliest    *int `json:"earliest,omitempty"`
+	Latest      *int `json:"latest,omitempty"`
+	LeagueEnd   int  `json:"league_end"`
+	LeagueStart int  `json:"league_start"`
+}
 
 // GuildStashTab defines model for GuildStashTab.
 type GuildStashTab struct {
@@ -474,7 +567,9 @@ type Item struct {
 	// GrantedSkills PoE2 only
 	GrantedSkills     *[]ItemProperty    `json:"grantedSkills,omitempty"`
 	Hybrid            *ItemHybrid        `json:"hybrid,omitempty"`
+	Icon              *string            `json:"icon,omitempty"`
 	Id                *string            `json:"id,omitempty"`
+	Identified        *bool              `json:"identified,omitempty"`
 	Ilvl              *int               `json:"ilvl,omitempty"`
 	ImplicitMods      *[]string          `json:"implicitMods,omitempty"`
 	IncubatedItem     *ItemIncubatedItem `json:"incubatedItem,omitempty"`
@@ -484,6 +579,8 @@ type Item struct {
 	ItemLevel         *int               `json:"itemLevel,omitempty"`
 	LogbookMods       *[]ItemLogbookMod  `json:"logbookMods,omitempty"`
 	MemoryItem        *bool              `json:"memoryItem,omitempty"`
+	Mutated           *bool              `json:"mutated,omitempty"`
+	MutatedMods       *[]string          `json:"mutatedMods,omitempty"`
 	Name              *string            `json:"name,omitempty"`
 	NotableProperties *[]ItemProperty    `json:"notableProperties,omitempty"`
 	Properties        *[]ItemProperty    `json:"properties,omitempty"`
@@ -617,22 +714,27 @@ type JobType string
 
 // LadderEntry defines model for LadderEntry.
 type LadderEntry struct {
-	AccountName    string     `json:"account_name"`
-	CharacterClass string     `json:"character_class"`
-	CharacterName  string     `json:"character_name"`
-	Delve          int        `json:"delve"`
-	Experience     int        `json:"experience"`
-	Extra          *Character `json:"extra,omitempty"`
-	Level          int        `json:"level"`
-	Rank           int        `json:"rank"`
-	TwitchAccount  *string    `json:"twitch_account,omitempty"`
-	UserId         *int       `json:"user_id,omitempty"`
+	AccountName    string         `json:"account_name"`
+	Character      *Character     `json:"character,omitempty"`
+	CharacterClass string         `json:"character_class"`
+	CharacterName  string         `json:"character_name"`
+	Delve          int            `json:"delve"`
+	Experience     int            `json:"experience"`
+	LastActive     *int           `json:"last_active,omitempty"`
+	Level          int            `json:"level"`
+	Rank           int            `json:"rank"`
+	Stats          *CharacterStat `json:"stats,omitempty"`
+	TwitchAccount  *string        `json:"twitch_account,omitempty"`
+	UserId         *int           `json:"user_id,omitempty"`
 }
 
 // MinimalUser defines model for MinimalUser.
 type MinimalUser struct {
-	DisplayName string `json:"display_name"`
-	Id          int    `json:"id"`
+	DiscordId      *string `json:"discord_id,omitempty"`
+	DiscordName    *string `json:"discord_name,omitempty"`
+	DisplayName    string  `json:"display_name"`
+	Id             int     `json:"id"`
+	PoeAccountName *string `json:"poe_account_name,omitempty"`
 }
 
 // NonSensitiveUser defines model for NonSensitiveUser.
@@ -651,54 +753,66 @@ type NumberField string
 
 // Objective defines model for Objective.
 type Objective struct {
-	Aggregation     AggregationType `json:"aggregation"`
-	Children        []Objective     `json:"children"`
-	Conditions      []Condition     `json:"conditions"`
-	Extra           string          `json:"extra"`
-	Id              int             `json:"id"`
-	Name            string          `json:"name"`
-	NumberField     NumberField     `json:"number_field"`
-	ObjectiveType   ObjectiveType   `json:"objective_type"`
-	ParentId        int             `json:"parent_id"`
-	RequiredNumber  int             `json:"required_number"`
-	ScoringPreset   *ScoringPreset  `json:"scoring_preset,omitempty"`
-	ScoringPresetId *int            `json:"scoring_preset_id,omitempty"`
-	ValidFrom       *string         `json:"valid_from,omitempty"`
-	ValidTo         *string         `json:"valid_to,omitempty"`
-}
-
-// ObjectiveConditionCreate defines model for ObjectiveConditionCreate.
-type ObjectiveConditionCreate struct {
-	Field    ItemField `json:"field"`
-	Id       *int      `json:"id,omitempty"`
-	Operator Operator  `json:"operator"`
-	Value    string    `json:"value"`
+	Aggregation            AggregationType `json:"aggregation"`
+	Children               []Objective     `json:"children"`
+	Conditions             []Condition     `json:"conditions"`
+	Extra                  string          `json:"extra"`
+	HideProgress           bool            `json:"hide_progress"`
+	Id                     int             `json:"id"`
+	Name                   string          `json:"name"`
+	NumberField            NumberField     `json:"number_field"`
+	NumberFieldExplanation *string         `json:"number_field_explanation,omitempty"`
+	ObjectiveType          ObjectiveType   `json:"objective_type"`
+	ParentId               int             `json:"parent_id"`
+	RequiredNumber         int             `json:"required_number"`
+	ScoringPreset          *ScoringPreset  `json:"scoring_preset,omitempty"`
+	ScoringPresetId        *int            `json:"scoring_preset_id,omitempty"`
+	ValidFrom              *string         `json:"valid_from,omitempty"`
+	ValidTo                *string         `json:"valid_to,omitempty"`
 }
 
 // ObjectiveCreate defines model for ObjectiveCreate.
 type ObjectiveCreate struct {
-	Aggregation     AggregationType            `json:"aggregation"`
-	Conditions      []ObjectiveConditionCreate `json:"conditions"`
-	Extra           *string                    `json:"extra,omitempty"`
-	Id              *int                       `json:"id,omitempty"`
-	Name            string                     `json:"name"`
-	NumberField     NumberField                `json:"number_field"`
-	ObjectiveType   ObjectiveType              `json:"objective_type"`
-	ParentId        int                        `json:"parent_id"`
-	RequiredNumber  int                        `json:"required_number"`
-	ScoringPresetId *int                       `json:"scoring_preset_id,omitempty"`
-	ValidFrom       *string                    `json:"valid_from,omitempty"`
-	ValidTo         *string                    `json:"valid_to,omitempty"`
+	Aggregation            AggregationType `json:"aggregation"`
+	Conditions             []Condition     `json:"conditions"`
+	Extra                  *string         `json:"extra,omitempty"`
+	HideProgress           *bool           `json:"hide_progress,omitempty"`
+	Id                     *int            `json:"id,omitempty"`
+	Name                   string          `json:"name"`
+	NumberField            NumberField     `json:"number_field"`
+	NumberFieldExplanation *string         `json:"number_field_explanation,omitempty"`
+	ObjectiveType          ObjectiveType   `json:"objective_type"`
+	ParentId               int             `json:"parent_id"`
+	RequiredNumber         int             `json:"required_number"`
+	ScoringPresetId        *int            `json:"scoring_preset_id,omitempty"`
+	ValidFrom              *string         `json:"valid_from,omitempty"`
+	ValidTo                *string         `json:"valid_to,omitempty"`
 }
 
 // ObjectiveType defines model for ObjectiveType.
 type ObjectiveType string
+
+// ObjectiveValidation defines model for ObjectiveValidation.
+type ObjectiveValidation struct {
+	Item        Item   `json:"item"`
+	ObjectiveId int    `json:"objective_id"`
+	Timestamp   string `json:"timestamp"`
+}
 
 // Operator defines model for Operator.
 type Operator string
 
 // Permission defines model for Permission.
 type Permission string
+
+// PoB defines model for PoB.
+type PoB struct {
+	Ascendancy   string `json:"ascendancy"`
+	ExportString string `json:"export_string"`
+	Level        int    `json:"level"`
+	MainSkill    string `json:"main_skill"`
+	Timestamp    string `json:"timestamp"`
+}
 
 // RecurringJob defines model for RecurringJob.
 type RecurringJob struct {
@@ -708,14 +822,19 @@ type RecurringJob struct {
 	SleepAfterEachRunSeconds int     `json:"sleep_after_each_run_seconds"`
 }
 
+// ReportPlaytimeRequest defines model for ReportPlaytimeRequest.
+type ReportPlaytimeRequest struct {
+	ActualPlaytime int `json:"actual_playtime"`
+}
+
 // Score defines model for Score.
 type Score struct {
-	Finished  bool   `json:"finished"`
-	Number    int    `json:"number"`
-	Points    int    `json:"points"`
-	Rank      int    `json:"rank"`
-	Timestamp string `json:"timestamp"`
-	UserId    int    `json:"user_id"`
+	Finished  bool `json:"finished"`
+	Number    int  `json:"number"`
+	Points    int  `json:"points"`
+	Rank      int  `json:"rank"`
+	Timestamp int  `json:"timestamp"`
+	UserId    *int `json:"user_id,omitempty"`
 }
 
 // ScoreDiff defines model for ScoreDiff.
@@ -757,9 +876,12 @@ type ScoringPresetType string
 
 // Signup defines model for Signup.
 type Signup struct {
+	ActualPlaytime   int               `json:"actual_playtime"`
 	ExpectedPlaytime int               `json:"expected_playtime"`
+	Extra            *string           `json:"extra,omitempty"`
 	NeedsHelp        *bool             `json:"needs_help,omitempty"`
 	Partner          *NonSensitiveUser `json:"partner,omitempty"`
+	PartnerWish      *string           `json:"partnerWish,omitempty"`
 	PartnerId        *int              `json:"partner_id,omitempty"`
 	TeamId           *int              `json:"team_id,omitempty"`
 	TeamLead         bool              `json:"team_lead"`
@@ -771,6 +893,7 @@ type Signup struct {
 // SignupCreate defines model for SignupCreate.
 type SignupCreate struct {
 	ExpectedPlaytime   int     `json:"expected_playtime"`
+	Extra              *string `json:"extra,omitempty"`
 	NeedsHelp          *bool   `json:"needs_help,omitempty"`
 	PartnerAccountName *string `json:"partner_account_name,omitempty"`
 	WantsToHelp        *bool   `json:"wants_to_help,omitempty"`
@@ -807,7 +930,7 @@ type Submission struct {
 	Proof          string         `json:"proof"`
 	ReviewComment  *string        `json:"review_comment,omitempty"`
 	ReviewerId     *int           `json:"reviewer_id,omitempty"`
-	TeamId         *int           `json:"team_id,omitempty"`
+	TeamId         int            `json:"team_id"`
 	Timestamp      string         `json:"timestamp"`
 	UserId         int            `json:"user_id"`
 }
@@ -830,8 +953,10 @@ type SubmissionReview struct {
 
 // Team defines model for Team.
 type Team struct {
+	Abbreviation   *string  `json:"abbreviation,omitempty"`
 	AllowedClasses []string `json:"allowed_classes"`
 	Color          *string  `json:"color,omitempty"`
+	DiscordRoleId  *string  `json:"discord_role_id,omitempty"`
 	EventId        int      `json:"event_id"`
 	Id             int      `json:"id"`
 	Name           string   `json:"name"`
@@ -839,8 +964,10 @@ type Team struct {
 
 // TeamCreate defines model for TeamCreate.
 type TeamCreate struct {
+	Abbreviation   *string  `json:"abbreviation,omitempty"`
 	AllowedClasses []string `json:"allowed_classes"`
 	Color          *string  `json:"color,omitempty"`
+	DiscordRoleId  *string  `json:"discord_role_id,omitempty"`
 	Id             *int     `json:"id,omitempty"`
 	Name           string   `json:"name"`
 }
@@ -851,12 +978,34 @@ type TeamSubmissionCreate struct {
 	TeamIds     []int `json:"team_ids"`
 }
 
+// TeamSuggestion defines model for TeamSuggestion.
+type TeamSuggestion struct {
+	Extra       *string `json:"extra,omitempty"`
+	ObjectiveId *int    `json:"objective_id,omitempty"`
+}
+
 // TeamUserCreate defines model for TeamUserCreate.
 type TeamUserCreate struct {
 	IsTeamLead *bool `json:"is_team_lead,omitempty"`
 	TeamId     *int  `json:"team_id,omitempty"`
 	UserId     int   `json:"user_id"`
 }
+
+// Timing defines model for Timing.
+type Timing struct {
+	Description     string    `json:"description"`
+	DurationSeconds int       `json:"duration_seconds"`
+	Key             TimingKey `json:"key"`
+}
+
+// TimingCreate defines model for TimingCreate.
+type TimingCreate struct {
+	DurationSeconds int       `json:"duration_seconds"`
+	Key             TimingKey `json:"key"`
+}
+
+// TimingKey defines model for TimingKey.
+type TimingKey string
 
 // TwitchStream defines model for TwitchStream.
 type TwitchStream struct {
@@ -896,6 +1045,23 @@ type UserUpdate struct {
 	DisplayName string `json:"display_name"`
 }
 
+// ValidationRequest defines model for ValidationRequest.
+type ValidationRequest struct {
+	TimeoutSeconds int `json:"timeout_seconds"`
+}
+
+// GetEventActivitiesParams defines parameters for GetEventActivities.
+type GetEventActivitiesParams struct {
+	// ThresholdSeconds Threshold in seconds to consider a user active before and after an activity (default: 300)
+	ThresholdSeconds *int `form:"threshold_seconds,omitempty" json:"threshold_seconds,omitempty"`
+}
+
+// GetEventActivitiesForUserParams defines parameters for GetEventActivitiesForUser.
+type GetEventActivitiesForUserParams struct {
+	// ThresholdSeconds Threshold in seconds to consider a user active before and after an activity (default: 300)
+	ThresholdSeconds *int `form:"threshold_seconds,omitempty" json:"threshold_seconds,omitempty"`
+}
+
 // AddUsersToTeamsJSONBody defines parameters for AddUsersToTeams.
 type AddUsersToTeamsJSONBody = []TeamUserCreate
 
@@ -904,15 +1070,15 @@ type OauthCallbackParamsProvider string
 
 // OauthRedirectParams defines parameters for OauthRedirect.
 type OauthRedirectParams struct {
-	// RedirectUrl Redirect URL for oauth provider
-	RedirectUrl *string `form:"redirect_url,omitempty" json:"redirect_url,omitempty"`
-
 	// LastUrl Last URL to redirect to after oauth is finished
 	LastUrl *string `form:"last_url,omitempty" json:"last_url,omitempty"`
 }
 
 // OauthRedirectParamsProvider defines parameters for OauthRedirect.
 type OauthRedirectParamsProvider string
+
+// SetTimingsJSONBody defines parameters for SetTimings.
+type SetTimingsJSONBody = []TimingCreate
 
 // RemoveAuthParams defines parameters for RemoveAuth.
 type RemoveAuthParams struct {
@@ -923,11 +1089,26 @@ type RemoveAuthParams struct {
 // ChangePermissionsJSONBody defines parameters for ChangePermissions.
 type ChangePermissionsJSONBody = []Permission
 
+// GetLogEntriesForGuildParams defines parameters for GetLogEntriesForGuild.
+type GetLogEntriesForGuildParams struct {
+	// Limit Limit
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Offset Offset
+	Offset *int `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Username Name of the user doing the action (Make sure to replace the pound sign with a minus)
+	Username *string `form:"username,omitempty" json:"username,omitempty"`
+
+	// Itemname Name of the item (Can be partial)
+	Itemname *string `form:"itemname,omitempty" json:"itemname,omitempty"`
+
+	// Stashname Name of the stash tab
+	Stashname *string `form:"stashname,omitempty" json:"stashname,omitempty"`
+}
+
 // CreateEventJSONRequestBody defines body for CreateEvent for application/json ContentType.
 type CreateEventJSONRequestBody = EventCreate
-
-// CreateConditionJSONRequestBody defines body for CreateCondition for application/json ContentType.
-type CreateConditionJSONRequestBody = ConditionCreate
 
 // DuplicateEventJSONRequestBody defines body for DuplicateEvent for application/json ContentType.
 type DuplicateEventJSONRequestBody = EventCreate
@@ -935,11 +1116,17 @@ type DuplicateEventJSONRequestBody = EventCreate
 // CreateObjectiveJSONRequestBody defines body for CreateObjective for application/json ContentType.
 type CreateObjectiveJSONRequestBody = ObjectiveCreate
 
+// ValidateObjectivesJSONRequestBody defines body for ValidateObjectives for application/json ContentType.
+type ValidateObjectivesJSONRequestBody = ValidationRequest
+
 // CreateScoringPresetJSONRequestBody defines body for CreateScoringPreset for application/json ContentType.
 type CreateScoringPresetJSONRequestBody = ScoringPresetCreate
 
 // CreateSignupJSONRequestBody defines body for CreateSignup for application/json ContentType.
 type CreateSignupJSONRequestBody = SignupCreate
+
+// ReportPlaytimeJSONRequestBody defines body for ReportPlaytime for application/json ContentType.
+type ReportPlaytimeJSONRequestBody = ReportPlaytimeRequest
 
 // SubmitBountyJSONRequestBody defines body for SubmitBounty for application/json ContentType.
 type SubmitBountyJSONRequestBody = SubmissionCreate
@@ -949,6 +1136,9 @@ type SetBulkSubmissionForAdminJSONRequestBody = TeamSubmissionCreate
 
 // ReviewSubmissionJSONRequestBody defines body for ReviewSubmission for application/json ContentType.
 type ReviewSubmissionJSONRequestBody = SubmissionReview
+
+// CreateObjectiveTeamSuggestionJSONRequestBody defines body for CreateObjectiveTeamSuggestion for application/json ContentType.
+type CreateObjectiveTeamSuggestionJSONRequestBody = TeamSuggestion
 
 // CreateTeamJSONRequestBody defines body for CreateTeam for application/json ContentType.
 type CreateTeamJSONRequestBody = TeamCreate
@@ -961,6 +1151,9 @@ type StartJobJSONRequestBody = JobCreate
 
 // OauthCallbackJSONRequestBody defines body for OauthCallback for application/json ContentType.
 type OauthCallbackJSONRequestBody = CallbackBody
+
+// SetTimingsJSONRequestBody defines body for SetTimings for application/json ContentType.
+type SetTimingsJSONRequestBody = SetTimingsJSONBody
 
 // UpdateUserJSONRequestBody defines body for UpdateUser for application/json ContentType.
 type UpdateUserJSONRequestBody = UserUpdate
@@ -1055,22 +1248,17 @@ type ClientInterface interface {
 	// GetEvent request
 	GetEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetEventActivities request
+	GetEventActivities(ctx context.Context, eventId int, params *GetEventActivitiesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetEventActivitiesForUser request
+	GetEventActivitiesForUser(ctx context.Context, eventId int, userId int, params *GetEventActivitiesForUserParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetTeamAtlasesForEvent request
 	GetTeamAtlasesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetCharactersForEvent request
 	GetCharactersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// CreateConditionWithBody request with any body
-	CreateConditionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	CreateCondition(ctx context.Context, eventId int, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetValidMappings request
-	GetValidMappings(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// DeleteCondition request
-	DeleteCondition(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DuplicateEventWithBody request with any body
 	DuplicateEventWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1087,6 +1275,17 @@ type ClientInterface interface {
 	CreateObjectiveWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	CreateObjective(ctx context.Context, eventId int, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetValidMappings request
+	GetValidMappings(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetObjectiveValidations request
+	GetObjectiveValidations(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ValidateObjectivesWithBody request with any body
+	ValidateObjectivesWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ValidateObjectives(ctx context.Context, eventId int, body ValidateObjectivesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteObjective request
 	DeleteObjective(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1117,9 +1316,6 @@ type ClientInterface interface {
 	// GetEventSignups request
 	GetEventSignups(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// DeleteSignup request
-	DeleteSignup(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// GetPersonalSignup request
 	GetPersonalSignup(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1128,8 +1324,19 @@ type ClientInterface interface {
 
 	CreateSignup(ctx context.Context, eventId int, body CreateSignupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ReportPlaytimeWithBody request with any body
+	ReportPlaytimeWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	ReportPlaytime(ctx context.Context, eventId int, body ReportPlaytimeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteSignup request
+	DeleteSignup(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetEventStatus request
 	GetEventStatus(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetStreams request
+	GetStreams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetSubmissions request
 	GetSubmissions(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1158,8 +1365,10 @@ type ClientInterface interface {
 	// DeleteObjectiveTeamSuggestion request
 	DeleteObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateObjectiveTeamSuggestion request
-	CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateObjectiveTeamSuggestionWithBody request with any body
+	CreateObjectiveTeamSuggestionWithBody(ctx context.Context, eventId int, objectiveId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetTeams request
 	GetTeams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1183,6 +1392,9 @@ type ClientInterface interface {
 	// GetUsersForEvent request
 	GetUsersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetAtlasProgression request
+	GetAtlasProgression(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetJobs request
 	GetJobs(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1202,8 +1414,13 @@ type ClientInterface interface {
 	// OauthRedirect request
 	OauthRedirect(ctx context.Context, provider OauthRedirectParamsProvider, params *OauthRedirectParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetStreams request
-	GetStreams(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetTimings request
+	GetTimings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SetTimingsWithBody request with any body
+	SetTimingsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	SetTimings(ctx context.Context, body SetTimingsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetAllUsers request
 	GetAllUsers(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1231,13 +1448,16 @@ type ClientInterface interface {
 	GetUserCharacters(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetCharacterHistory request
-	GetCharacterHistory(ctx context.Context, userId int, characterId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetCharacterHistory(ctx context.Context, userId int, characterId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetPoBs request
+	GetPoBs(ctx context.Context, userId int, characterId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetGuildStashForUser request
 	GetGuildStashForUser(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// UpdateGuildStash request
-	UpdateGuildStash(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// UpdateAccess request
+	UpdateAccess(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetGuildStashTab request
 	GetGuildStashTab(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1247,6 +1467,21 @@ type ClientInterface interface {
 
 	// UpdateStashTab request
 	UpdateStashTab(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGuilds request
+	GetGuilds(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SaveGuildWithBody request with any body
+	SaveGuildWithBody(ctx context.Context, eventId int, guildId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetLogEntriesForGuild request
+	GetLogEntriesForGuild(ctx context.Context, eventId int, guildId int, params *GetLogEntriesForGuildParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// AddGuildstashHistoryWithBody request with any body
+	AddGuildstashHistoryWithBody(ctx context.Context, eventId int, guildId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetLatestTimestampForUser request
+	GetLatestTimestampForUser(ctx context.Context, eventId int, guildId int, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetEvents(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -1309,6 +1544,30 @@ func (c *Client) GetEvent(ctx context.Context, eventId int, reqEditors ...Reques
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetEventActivities(ctx context.Context, eventId int, params *GetEventActivitiesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetEventActivitiesRequest(c.Server, eventId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetEventActivitiesForUser(ctx context.Context, eventId int, userId int, params *GetEventActivitiesForUserParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetEventActivitiesForUserRequest(c.Server, eventId, userId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetTeamAtlasesForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTeamAtlasesForEventRequest(c.Server, eventId)
 	if err != nil {
@@ -1323,54 +1582,6 @@ func (c *Client) GetTeamAtlasesForEvent(ctx context.Context, eventId int, reqEdi
 
 func (c *Client) GetCharactersForEvent(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetCharactersForEventRequest(c.Server, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateConditionWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateConditionRequestWithBody(c.Server, eventId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) CreateCondition(ctx context.Context, eventId int, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateConditionRequest(c.Server, eventId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetValidMappings(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetValidMappingsRequest(c.Server, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) DeleteCondition(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteConditionRequest(c.Server, eventId, id)
 	if err != nil {
 		return nil, err
 	}
@@ -1443,6 +1654,54 @@ func (c *Client) CreateObjectiveWithBody(ctx context.Context, eventId int, conte
 
 func (c *Client) CreateObjective(ctx context.Context, eventId int, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateObjectiveRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetValidMappings(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetValidMappingsRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetObjectiveValidations(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetObjectiveValidationsRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ValidateObjectivesWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewValidateObjectivesRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ValidateObjectives(ctx context.Context, eventId int, body ValidateObjectivesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewValidateObjectivesRequest(c.Server, eventId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1573,18 +1832,6 @@ func (c *Client) GetEventSignups(ctx context.Context, eventId int, reqEditors ..
 	return c.Client.Do(req)
 }
 
-func (c *Client) DeleteSignup(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewDeleteSignupRequest(c.Server, eventId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
 func (c *Client) GetPersonalSignup(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetPersonalSignupRequest(c.Server, eventId)
 	if err != nil {
@@ -1621,8 +1868,56 @@ func (c *Client) CreateSignup(ctx context.Context, eventId int, body CreateSignu
 	return c.Client.Do(req)
 }
 
+func (c *Client) ReportPlaytimeWithBody(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReportPlaytimeRequestWithBody(c.Server, eventId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ReportPlaytime(ctx context.Context, eventId int, body ReportPlaytimeJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReportPlaytimeRequest(c.Server, eventId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteSignup(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteSignupRequest(c.Server, eventId, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetEventStatus(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetEventStatusRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetStreams(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetStreamsRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -1753,8 +2048,20 @@ func (c *Client) DeleteObjectiveTeamSuggestion(ctx context.Context, eventId int,
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateObjectiveTeamSuggestionRequest(c.Server, eventId, objectiveId)
+func (c *Client) CreateObjectiveTeamSuggestionWithBody(ctx context.Context, eventId int, objectiveId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateObjectiveTeamSuggestionRequestWithBody(c.Server, eventId, objectiveId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateObjectiveTeamSuggestion(ctx context.Context, eventId int, objectiveId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateObjectiveTeamSuggestionRequest(c.Server, eventId, objectiveId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1861,6 +2168,18 @@ func (c *Client) GetUsersForEvent(ctx context.Context, eventId int, reqEditors .
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetAtlasProgression(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAtlasProgressionRequest(c.Server, eventId, userId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetJobs(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetJobsRequest(c.Server)
 	if err != nil {
@@ -1945,8 +2264,32 @@ func (c *Client) OauthRedirect(ctx context.Context, provider OauthRedirectParams
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetStreams(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetStreamsRequest(c.Server)
+func (c *Client) GetTimings(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTimingsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SetTimingsWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetTimingsRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SetTimings(ctx context.Context, body SetTimingsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetTimingsRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -2065,8 +2408,20 @@ func (c *Client) GetUserCharacters(ctx context.Context, userId int, reqEditors .
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetCharacterHistory(ctx context.Context, userId int, characterId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetCharacterHistory(ctx context.Context, userId int, characterId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetCharacterHistoryRequest(c.Server, userId, characterId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetPoBs(ctx context.Context, userId int, characterId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetPoBsRequest(c.Server, userId, characterId)
 	if err != nil {
 		return nil, err
 	}
@@ -2089,8 +2444,8 @@ func (c *Client) GetGuildStashForUser(ctx context.Context, eventId int, reqEdito
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateGuildStash(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewUpdateGuildStashRequest(c.Server, eventId)
+func (c *Client) UpdateAccess(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAccessRequest(c.Server, eventId)
 	if err != nil {
 		return nil, err
 	}
@@ -2127,6 +2482,66 @@ func (c *Client) SwitchStashFetching(ctx context.Context, eventId int, stashId s
 
 func (c *Client) UpdateStashTab(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateStashTabRequest(c.Server, eventId, stashId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGuilds(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGuildsRequest(c.Server, eventId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) SaveGuildWithBody(ctx context.Context, eventId int, guildId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSaveGuildRequestWithBody(c.Server, eventId, guildId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLogEntriesForGuild(ctx context.Context, eventId int, guildId int, params *GetLogEntriesForGuildParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLogEntriesForGuildRequest(c.Server, eventId, guildId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) AddGuildstashHistoryWithBody(ctx context.Context, eventId int, guildId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAddGuildstashHistoryRequestWithBody(c.Server, eventId, guildId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLatestTimestampForUser(ctx context.Context, eventId int, guildId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLatestTimestampForUserRequest(c.Server, eventId, guildId)
 	if err != nil {
 		return nil, err
 	}
@@ -2272,6 +2687,125 @@ func NewGetEventRequest(server string, eventId int) (*http.Request, error) {
 	return req, nil
 }
 
+// NewGetEventActivitiesRequest generates requests for GetEventActivities
+func NewGetEventActivitiesRequest(server string, eventId int, params *GetEventActivitiesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/activity", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.ThresholdSeconds != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "threshold_seconds", runtime.ParamLocationQuery, *params.ThresholdSeconds); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetEventActivitiesForUserRequest generates requests for GetEventActivitiesForUser
+func NewGetEventActivitiesForUserRequest(server string, eventId int, userId int, params *GetEventActivitiesForUserParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/activity/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.ThresholdSeconds != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "threshold_seconds", runtime.ParamLocationQuery, *params.ThresholdSeconds); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTeamAtlasesForEventRequest generates requests for GetTeamAtlasesForEvent
 func NewGetTeamAtlasesForEventRequest(server string, eventId int) (*http.Request, error) {
 	var err error
@@ -2333,128 +2867,6 @@ func NewGetCharactersForEventRequest(server string, eventId int) (*http.Request,
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewCreateConditionRequest calls the generic CreateCondition builder with application/json body
-func NewCreateConditionRequest(server string, eventId int, body CreateConditionJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewCreateConditionRequestWithBody(server, eventId, "application/json", bodyReader)
-}
-
-// NewCreateConditionRequestWithBody generates requests for CreateCondition with any type of body
-func NewCreateConditionRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/conditions", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PUT", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetValidMappingsRequest generates requests for GetValidMappings
-func NewGetValidMappingsRequest(server string, eventId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/conditions/valid-mappings", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewDeleteConditionRequest generates requests for DeleteCondition
-func NewDeleteConditionRequest(server string, eventId int, id int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/conditions/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -2615,6 +3027,121 @@ func NewCreateObjectiveRequestWithBody(server string, eventId int, contentType s
 	}
 
 	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetValidMappingsRequest generates requests for GetValidMappings
+func NewGetValidMappingsRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/objectives/valid-mappings", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetObjectiveValidationsRequest generates requests for GetObjectiveValidations
+func NewGetObjectiveValidationsRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/objectives/validations", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewValidateObjectivesRequest calls the generic ValidateObjectives builder with application/json body
+func NewValidateObjectivesRequest(server string, eventId int, body ValidateObjectivesJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewValidateObjectivesRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewValidateObjectivesRequestWithBody generates requests for ValidateObjectives with any type of body
+func NewValidateObjectivesRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/objectives/validations", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
@@ -2964,40 +3491,6 @@ func NewGetEventSignupsRequest(server string, eventId int) (*http.Request, error
 	return req, nil
 }
 
-// NewDeleteSignupRequest generates requests for DeleteSignup
-func NewDeleteSignupRequest(server string, eventId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/events/%s/signups/self", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewGetPersonalSignupRequest generates requests for GetPersonalSignup
 func NewGetPersonalSignupRequest(server string, eventId int) (*http.Request, error) {
 	var err error
@@ -3079,6 +3572,94 @@ func NewCreateSignupRequestWithBody(server string, eventId int, contentType stri
 	return req, nil
 }
 
+// NewReportPlaytimeRequest calls the generic ReportPlaytime builder with application/json body
+func NewReportPlaytimeRequest(server string, eventId int, body ReportPlaytimeJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewReportPlaytimeRequestWithBody(server, eventId, "application/json", bodyReader)
+}
+
+// NewReportPlaytimeRequestWithBody generates requests for ReportPlaytime with any type of body
+func NewReportPlaytimeRequestWithBody(server string, eventId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/signups/self/actual-playtime", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteSignupRequest generates requests for DeleteSignup
+func NewDeleteSignupRequest(server string, eventId int, userId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/signups/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetEventStatusRequest generates requests for GetEventStatus
 func NewGetEventStatusRequest(server string, eventId int) (*http.Request, error) {
 	var err error
@@ -3096,6 +3677,40 @@ func NewGetEventStatusRequest(server string, eventId int) (*http.Request, error)
 	}
 
 	operationPath := fmt.Sprintf("/events/%s/status", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetStreamsRequest generates requests for GetStreams
+func NewGetStreamsRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/streams", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3411,8 +4026,19 @@ func NewDeleteObjectiveTeamSuggestionRequest(server string, eventId int, objecti
 	return req, nil
 }
 
-// NewCreateObjectiveTeamSuggestionRequest generates requests for CreateObjectiveTeamSuggestion
-func NewCreateObjectiveTeamSuggestionRequest(server string, eventId int, objectiveId int) (*http.Request, error) {
+// NewCreateObjectiveTeamSuggestionRequest calls the generic CreateObjectiveTeamSuggestion builder with application/json body
+func NewCreateObjectiveTeamSuggestionRequest(server string, eventId int, objectiveId int, body CreateObjectiveTeamSuggestionJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateObjectiveTeamSuggestionRequestWithBody(server, eventId, objectiveId, "application/json", bodyReader)
+}
+
+// NewCreateObjectiveTeamSuggestionRequestWithBody generates requests for CreateObjectiveTeamSuggestion with any type of body
+func NewCreateObjectiveTeamSuggestionRequestWithBody(server string, eventId int, objectiveId int, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3444,10 +4070,12 @@ func NewCreateObjectiveTeamSuggestionRequest(server string, eventId int, objecti
 		return nil, err
 	}
 
-	req, err := http.NewRequest("POST", queryURL.String(), nil)
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -3696,6 +4324,47 @@ func NewGetUsersForEventRequest(server string, eventId int) (*http.Request, erro
 	return req, nil
 }
 
+// NewGetAtlasProgressionRequest generates requests for GetAtlasProgression
+func NewGetAtlasProgressionRequest(server string, eventId int, userId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "event_id", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/events/%s/users/%s/atlas", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetJobsRequest generates requests for GetJobs
 func NewGetJobsRequest(server string) (*http.Request, error) {
 	var err error
@@ -3866,22 +4535,6 @@ func NewOauthRedirectRequest(server string, provider OauthRedirectParamsProvider
 	if params != nil {
 		queryValues := queryURL.Query()
 
-		if params.RedirectUrl != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "redirect_url", runtime.ParamLocationQuery, *params.RedirectUrl); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
 		if params.LastUrl != nil {
 
 			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "last_url", runtime.ParamLocationQuery, *params.LastUrl); err != nil {
@@ -3909,8 +4562,8 @@ func NewOauthRedirectRequest(server string, provider OauthRedirectParamsProvider
 	return req, nil
 }
 
-// NewGetStreamsRequest generates requests for GetStreams
-func NewGetStreamsRequest(server string) (*http.Request, error) {
+// NewGetTimingsRequest generates requests for GetTimings
+func NewGetTimingsRequest(server string) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -3918,7 +4571,7 @@ func NewGetStreamsRequest(server string) (*http.Request, error) {
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/streams")
+	operationPath := fmt.Sprintf("/timings")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3932,6 +4585,46 @@ func NewGetStreamsRequest(server string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewSetTimingsRequest calls the generic SetTimings builder with application/json body
+func NewSetTimingsRequest(server string, body SetTimingsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSetTimingsRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewSetTimingsRequestWithBody generates requests for SetTimings with any type of body
+func NewSetTimingsRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/timings")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -4191,7 +4884,7 @@ func NewGetUserCharactersRequest(server string, userId int) (*http.Request, erro
 }
 
 // NewGetCharacterHistoryRequest generates requests for GetCharacterHistory
-func NewGetCharacterHistoryRequest(server string, userId int, characterId int) (*http.Request, error) {
+func NewGetCharacterHistoryRequest(server string, userId int, characterId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -4214,6 +4907,47 @@ func NewGetCharacterHistoryRequest(server string, userId int, characterId int) (
 	}
 
 	operationPath := fmt.Sprintf("/users/%s/characters/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetPoBsRequest generates requests for GetPoBs
+func NewGetPoBsRequest(server string, userId int, characterId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "user_id", runtime.ParamLocationPath, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "character_id", runtime.ParamLocationPath, characterId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/users/%s/characters/%s/pobs", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -4265,8 +4999,8 @@ func NewGetGuildStashForUserRequest(server string, eventId int) (*http.Request, 
 	return req, nil
 }
 
-// NewUpdateGuildStashRequest generates requests for UpdateGuildStash
-func NewUpdateGuildStashRequest(server string, eventId int) (*http.Request, error) {
+// NewUpdateAccessRequest generates requests for UpdateAccess
+func NewUpdateAccessRequest(server string, eventId int) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -4281,7 +5015,7 @@ func NewUpdateGuildStashRequest(server string, eventId int) (*http.Request, erro
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/%s/guild-stash", pathParam0)
+	operationPath := fmt.Sprintf("/%s/guild-stash/update-access", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -4422,6 +5156,294 @@ func NewUpdateStashTabRequest(server string, eventId int, stashId string) (*http
 	return req, nil
 }
 
+// NewGetGuildsRequest generates requests for GetGuilds
+func NewGetGuildsRequest(server string, eventId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guilds", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewSaveGuildRequestWithBody generates requests for SaveGuild with any type of body
+func NewSaveGuildRequestWithBody(server string, eventId int, guildId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "guildId", runtime.ParamLocationPath, guildId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guilds/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetLogEntriesForGuildRequest generates requests for GetLogEntriesForGuild
+func NewGetLogEntriesForGuildRequest(server string, eventId int, guildId int, params *GetLogEntriesForGuildParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "guildId", runtime.ParamLocationPath, guildId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guilds/%s/stash-history", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Username != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "username", runtime.ParamLocationQuery, *params.Username); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Itemname != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "itemname", runtime.ParamLocationQuery, *params.Itemname); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Stashname != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "stashname", runtime.ParamLocationQuery, *params.Stashname); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewAddGuildstashHistoryRequestWithBody generates requests for AddGuildstashHistory with any type of body
+func NewAddGuildstashHistoryRequestWithBody(server string, eventId int, guildId int, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "guildId", runtime.ParamLocationPath, guildId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guilds/%s/stash-history", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewGetLatestTimestampForUserRequest generates requests for GetLatestTimestampForUser
+func NewGetLatestTimestampForUserRequest(server string, eventId int, guildId int) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "eventId", runtime.ParamLocationPath, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "guildId", runtime.ParamLocationPath, guildId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/%s/guilds/%s/stash-history/latest_timestamp", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -4479,22 +5501,17 @@ type ClientWithResponsesInterface interface {
 	// GetEventWithResponse request
 	GetEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventResponse, error)
 
+	// GetEventActivitiesWithResponse request
+	GetEventActivitiesWithResponse(ctx context.Context, eventId int, params *GetEventActivitiesParams, reqEditors ...RequestEditorFn) (*GetEventActivitiesResponse, error)
+
+	// GetEventActivitiesForUserWithResponse request
+	GetEventActivitiesForUserWithResponse(ctx context.Context, eventId int, userId int, params *GetEventActivitiesForUserParams, reqEditors ...RequestEditorFn) (*GetEventActivitiesForUserResponse, error)
+
 	// GetTeamAtlasesForEventWithResponse request
 	GetTeamAtlasesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamAtlasesForEventResponse, error)
 
 	// GetCharactersForEventWithResponse request
 	GetCharactersForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetCharactersForEventResponse, error)
-
-	// CreateConditionWithBodyWithResponse request with any body
-	CreateConditionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
-
-	CreateConditionWithResponse(ctx context.Context, eventId int, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error)
-
-	// GetValidMappingsWithResponse request
-	GetValidMappingsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error)
-
-	// DeleteConditionWithResponse request
-	DeleteConditionWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteConditionResponse, error)
 
 	// DuplicateEventWithBodyWithResponse request with any body
 	DuplicateEventWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*DuplicateEventResponse, error)
@@ -4511,6 +5528,17 @@ type ClientWithResponsesInterface interface {
 	CreateObjectiveWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error)
 
 	CreateObjectiveWithResponse(ctx context.Context, eventId int, body CreateObjectiveJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveResponse, error)
+
+	// GetValidMappingsWithResponse request
+	GetValidMappingsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error)
+
+	// GetObjectiveValidationsWithResponse request
+	GetObjectiveValidationsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetObjectiveValidationsResponse, error)
+
+	// ValidateObjectivesWithBodyWithResponse request with any body
+	ValidateObjectivesWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateObjectivesResponse, error)
+
+	ValidateObjectivesWithResponse(ctx context.Context, eventId int, body ValidateObjectivesJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateObjectivesResponse, error)
 
 	// DeleteObjectiveWithResponse request
 	DeleteObjectiveWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteObjectiveResponse, error)
@@ -4541,9 +5569,6 @@ type ClientWithResponsesInterface interface {
 	// GetEventSignupsWithResponse request
 	GetEventSignupsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventSignupsResponse, error)
 
-	// DeleteSignupWithResponse request
-	DeleteSignupWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*DeleteSignupResponse, error)
-
 	// GetPersonalSignupWithResponse request
 	GetPersonalSignupWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetPersonalSignupResponse, error)
 
@@ -4552,8 +5577,19 @@ type ClientWithResponsesInterface interface {
 
 	CreateSignupWithResponse(ctx context.Context, eventId int, body CreateSignupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSignupResponse, error)
 
+	// ReportPlaytimeWithBodyWithResponse request with any body
+	ReportPlaytimeWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReportPlaytimeResponse, error)
+
+	ReportPlaytimeWithResponse(ctx context.Context, eventId int, body ReportPlaytimeJSONRequestBody, reqEditors ...RequestEditorFn) (*ReportPlaytimeResponse, error)
+
+	// DeleteSignupWithResponse request
+	DeleteSignupWithResponse(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*DeleteSignupResponse, error)
+
 	// GetEventStatusWithResponse request
 	GetEventStatusWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventStatusResponse, error)
+
+	// GetStreamsWithResponse request
+	GetStreamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetStreamsResponse, error)
 
 	// GetSubmissionsWithResponse request
 	GetSubmissionsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetSubmissionsResponse, error)
@@ -4582,8 +5618,10 @@ type ClientWithResponsesInterface interface {
 	// DeleteObjectiveTeamSuggestionWithResponse request
 	DeleteObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*DeleteObjectiveTeamSuggestionResponse, error)
 
-	// CreateObjectiveTeamSuggestionWithResponse request
-	CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error)
+	// CreateObjectiveTeamSuggestionWithBodyWithResponse request with any body
+	CreateObjectiveTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, objectiveId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error)
+
+	CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error)
 
 	// GetTeamsWithResponse request
 	GetTeamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamsResponse, error)
@@ -4607,6 +5645,9 @@ type ClientWithResponsesInterface interface {
 	// GetUsersForEventWithResponse request
 	GetUsersForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetUsersForEventResponse, error)
 
+	// GetAtlasProgressionWithResponse request
+	GetAtlasProgressionWithResponse(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*GetAtlasProgressionResponse, error)
+
 	// GetJobsWithResponse request
 	GetJobsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetJobsResponse, error)
 
@@ -4626,8 +5667,13 @@ type ClientWithResponsesInterface interface {
 	// OauthRedirectWithResponse request
 	OauthRedirectWithResponse(ctx context.Context, provider OauthRedirectParamsProvider, params *OauthRedirectParams, reqEditors ...RequestEditorFn) (*OauthRedirectResponse, error)
 
-	// GetStreamsWithResponse request
-	GetStreamsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetStreamsResponse, error)
+	// GetTimingsWithResponse request
+	GetTimingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTimingsResponse, error)
+
+	// SetTimingsWithBodyWithResponse request with any body
+	SetTimingsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetTimingsResponse, error)
+
+	SetTimingsWithResponse(ctx context.Context, body SetTimingsJSONRequestBody, reqEditors ...RequestEditorFn) (*SetTimingsResponse, error)
 
 	// GetAllUsersWithResponse request
 	GetAllUsersWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetAllUsersResponse, error)
@@ -4655,13 +5701,16 @@ type ClientWithResponsesInterface interface {
 	GetUserCharactersWithResponse(ctx context.Context, userId int, reqEditors ...RequestEditorFn) (*GetUserCharactersResponse, error)
 
 	// GetCharacterHistoryWithResponse request
-	GetCharacterHistoryWithResponse(ctx context.Context, userId int, characterId int, reqEditors ...RequestEditorFn) (*GetCharacterHistoryResponse, error)
+	GetCharacterHistoryWithResponse(ctx context.Context, userId int, characterId string, reqEditors ...RequestEditorFn) (*GetCharacterHistoryResponse, error)
+
+	// GetPoBsWithResponse request
+	GetPoBsWithResponse(ctx context.Context, userId int, characterId string, reqEditors ...RequestEditorFn) (*GetPoBsResponse, error)
 
 	// GetGuildStashForUserWithResponse request
 	GetGuildStashForUserWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetGuildStashForUserResponse, error)
 
-	// UpdateGuildStashWithResponse request
-	UpdateGuildStashWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*UpdateGuildStashResponse, error)
+	// UpdateAccessWithResponse request
+	UpdateAccessWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*UpdateAccessResponse, error)
 
 	// GetGuildStashTabWithResponse request
 	GetGuildStashTabWithResponse(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*GetGuildStashTabResponse, error)
@@ -4671,6 +5720,21 @@ type ClientWithResponsesInterface interface {
 
 	// UpdateStashTabWithResponse request
 	UpdateStashTabWithResponse(ctx context.Context, eventId int, stashId string, reqEditors ...RequestEditorFn) (*UpdateStashTabResponse, error)
+
+	// GetGuildsWithResponse request
+	GetGuildsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetGuildsResponse, error)
+
+	// SaveGuildWithBodyWithResponse request with any body
+	SaveGuildWithBodyWithResponse(ctx context.Context, eventId int, guildId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SaveGuildResponse, error)
+
+	// GetLogEntriesForGuildWithResponse request
+	GetLogEntriesForGuildWithResponse(ctx context.Context, eventId int, guildId int, params *GetLogEntriesForGuildParams, reqEditors ...RequestEditorFn) (*GetLogEntriesForGuildResponse, error)
+
+	// AddGuildstashHistoryWithBodyWithResponse request with any body
+	AddGuildstashHistoryWithBodyWithResponse(ctx context.Context, eventId int, guildId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddGuildstashHistoryResponse, error)
+
+	// GetLatestTimestampForUserWithResponse request
+	GetLatestTimestampForUserWithResponse(ctx context.Context, eventId int, guildId int, reqEditors ...RequestEditorFn) (*GetLatestTimestampForUserResponse, error)
 }
 
 type GetEventsResponse struct {
@@ -4760,6 +5824,50 @@ func (r GetEventResponse) StatusCode() int {
 	return 0
 }
 
+type GetEventActivitiesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *map[string]int
+}
+
+// Status returns HTTPResponse.Status
+func (r GetEventActivitiesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetEventActivitiesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetEventActivitiesForUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *int
+}
+
+// Status returns HTTPResponse.Status
+func (r GetEventActivitiesForUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetEventActivitiesForUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetTeamAtlasesForEventResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -4798,71 +5906,6 @@ func (r GetCharactersForEventResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetCharactersForEventResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type CreateConditionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON201      *Condition
-}
-
-// Status returns HTTPResponse.Status
-func (r CreateConditionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r CreateConditionResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetValidMappingsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ConditionMappings
-}
-
-// Status returns HTTPResponse.Status
-func (r GetValidMappingsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetValidMappingsResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type DeleteConditionResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteConditionResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteConditionResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4951,6 +5994,71 @@ func (r CreateObjectiveResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateObjectiveResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetValidMappingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ConditionMappings
+}
+
+// Status returns HTTPResponse.Status
+func (r GetValidMappingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetValidMappingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetObjectiveValidationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]ObjectiveValidation
+}
+
+// Status returns HTTPResponse.Status
+func (r GetObjectiveValidationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetObjectiveValidationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ValidateObjectivesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r ValidateObjectivesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ValidateObjectivesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5151,27 +6259,6 @@ func (r GetEventSignupsResponse) StatusCode() int {
 	return 0
 }
 
-type DeleteSignupResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r DeleteSignupResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r DeleteSignupResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type GetPersonalSignupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5216,6 +6303,49 @@ func (r CreateSignupResponse) StatusCode() int {
 	return 0
 }
 
+type ReportPlaytimeResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Signup
+}
+
+// Status returns HTTPResponse.Status
+func (r ReportPlaytimeResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReportPlaytimeResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteSignupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteSignupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteSignupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetEventStatusResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5232,6 +6362,28 @@ func (r GetEventStatusResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetEventStatusResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetStreamsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]TwitchStream
+}
+
+// Status returns HTTPResponse.Status
+func (r GetStreamsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetStreamsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5350,7 +6502,7 @@ func (r ReviewSubmissionResponse) StatusCode() int {
 type GetTeamSuggestionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]int
+	JSON200      *[]TeamSuggestion
 }
 
 // Status returns HTTPResponse.Status
@@ -5541,6 +6693,28 @@ func (r GetUsersForEventResponse) StatusCode() int {
 	return 0
 }
 
+type GetAtlasProgressionResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]AtlasProgression
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAtlasProgressionResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAtlasProgressionResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetJobsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5649,14 +6823,14 @@ func (r OauthRedirectResponse) StatusCode() int {
 	return 0
 }
 
-type GetStreamsResponse struct {
+type GetTimingsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]TwitchStream
+	JSON200      *[]Timing
 }
 
 // Status returns HTTPResponse.Status
-func (r GetStreamsResponse) Status() string {
+func (r GetTimingsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5664,7 +6838,28 @@ func (r GetStreamsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetStreamsResponse) StatusCode() int {
+func (r GetTimingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type SetTimingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r SetTimingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SetTimingsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5847,6 +7042,28 @@ func (r GetCharacterHistoryResponse) StatusCode() int {
 	return 0
 }
 
+type GetPoBsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]PoB
+}
+
+// Status returns HTTPResponse.Status
+func (r GetPoBsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetPoBsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetGuildStashForUserResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -5869,14 +7086,13 @@ func (r GetGuildStashForUserResponse) StatusCode() int {
 	return 0
 }
 
-type UpdateGuildStashResponse struct {
+type UpdateAccessResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]GuildStashTab
 }
 
 // Status returns HTTPResponse.Status
-func (r UpdateGuildStashResponse) Status() string {
+func (r UpdateAccessResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -5884,7 +7100,7 @@ func (r UpdateGuildStashResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r UpdateGuildStashResponse) StatusCode() int {
+func (r UpdateAccessResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5956,6 +7172,116 @@ func (r UpdateStashTabResponse) StatusCode() int {
 	return 0
 }
 
+type GetGuildsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Guild
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGuildsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGuildsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type SaveGuildResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Guild
+}
+
+// Status returns HTTPResponse.Status
+func (r SaveGuildResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SaveGuildResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetLogEntriesForGuildResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]GuildStashChangelog
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLogEntriesForGuildResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLogEntriesForGuildResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type AddGuildstashHistoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *AddGuildStashHistoryResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r AddGuildstashHistoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r AddGuildstashHistoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetLatestTimestampForUserResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *GuildStashLogTimestampResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLatestTimestampForUserResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLatestTimestampForUserResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // GetEventsWithResponse request returning *GetEventsResponse
 func (c *ClientWithResponses) GetEventsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetEventsResponse, error) {
 	rsp, err := c.GetEvents(ctx, reqEditors...)
@@ -6000,6 +7326,24 @@ func (c *ClientWithResponses) GetEventWithResponse(ctx context.Context, eventId 
 	return ParseGetEventResponse(rsp)
 }
 
+// GetEventActivitiesWithResponse request returning *GetEventActivitiesResponse
+func (c *ClientWithResponses) GetEventActivitiesWithResponse(ctx context.Context, eventId int, params *GetEventActivitiesParams, reqEditors ...RequestEditorFn) (*GetEventActivitiesResponse, error) {
+	rsp, err := c.GetEventActivities(ctx, eventId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetEventActivitiesResponse(rsp)
+}
+
+// GetEventActivitiesForUserWithResponse request returning *GetEventActivitiesForUserResponse
+func (c *ClientWithResponses) GetEventActivitiesForUserWithResponse(ctx context.Context, eventId int, userId int, params *GetEventActivitiesForUserParams, reqEditors ...RequestEditorFn) (*GetEventActivitiesForUserResponse, error) {
+	rsp, err := c.GetEventActivitiesForUser(ctx, eventId, userId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetEventActivitiesForUserResponse(rsp)
+}
+
 // GetTeamAtlasesForEventWithResponse request returning *GetTeamAtlasesForEventResponse
 func (c *ClientWithResponses) GetTeamAtlasesForEventWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetTeamAtlasesForEventResponse, error) {
 	rsp, err := c.GetTeamAtlasesForEvent(ctx, eventId, reqEditors...)
@@ -6016,41 +7360,6 @@ func (c *ClientWithResponses) GetCharactersForEventWithResponse(ctx context.Cont
 		return nil, err
 	}
 	return ParseGetCharactersForEventResponse(rsp)
-}
-
-// CreateConditionWithBodyWithResponse request with arbitrary body returning *CreateConditionResponse
-func (c *ClientWithResponses) CreateConditionWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error) {
-	rsp, err := c.CreateConditionWithBody(ctx, eventId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateConditionResponse(rsp)
-}
-
-func (c *ClientWithResponses) CreateConditionWithResponse(ctx context.Context, eventId int, body CreateConditionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateConditionResponse, error) {
-	rsp, err := c.CreateCondition(ctx, eventId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseCreateConditionResponse(rsp)
-}
-
-// GetValidMappingsWithResponse request returning *GetValidMappingsResponse
-func (c *ClientWithResponses) GetValidMappingsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error) {
-	rsp, err := c.GetValidMappings(ctx, eventId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetValidMappingsResponse(rsp)
-}
-
-// DeleteConditionWithResponse request returning *DeleteConditionResponse
-func (c *ClientWithResponses) DeleteConditionWithResponse(ctx context.Context, eventId int, id int, reqEditors ...RequestEditorFn) (*DeleteConditionResponse, error) {
-	rsp, err := c.DeleteCondition(ctx, eventId, id, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteConditionResponse(rsp)
 }
 
 // DuplicateEventWithBodyWithResponse request with arbitrary body returning *DuplicateEventResponse
@@ -6103,6 +7412,41 @@ func (c *ClientWithResponses) CreateObjectiveWithResponse(ctx context.Context, e
 		return nil, err
 	}
 	return ParseCreateObjectiveResponse(rsp)
+}
+
+// GetValidMappingsWithResponse request returning *GetValidMappingsResponse
+func (c *ClientWithResponses) GetValidMappingsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetValidMappingsResponse, error) {
+	rsp, err := c.GetValidMappings(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetValidMappingsResponse(rsp)
+}
+
+// GetObjectiveValidationsWithResponse request returning *GetObjectiveValidationsResponse
+func (c *ClientWithResponses) GetObjectiveValidationsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetObjectiveValidationsResponse, error) {
+	rsp, err := c.GetObjectiveValidations(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetObjectiveValidationsResponse(rsp)
+}
+
+// ValidateObjectivesWithBodyWithResponse request with arbitrary body returning *ValidateObjectivesResponse
+func (c *ClientWithResponses) ValidateObjectivesWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ValidateObjectivesResponse, error) {
+	rsp, err := c.ValidateObjectivesWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseValidateObjectivesResponse(rsp)
+}
+
+func (c *ClientWithResponses) ValidateObjectivesWithResponse(ctx context.Context, eventId int, body ValidateObjectivesJSONRequestBody, reqEditors ...RequestEditorFn) (*ValidateObjectivesResponse, error) {
+	rsp, err := c.ValidateObjectives(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseValidateObjectivesResponse(rsp)
 }
 
 // DeleteObjectiveWithResponse request returning *DeleteObjectiveResponse
@@ -6194,15 +7538,6 @@ func (c *ClientWithResponses) GetEventSignupsWithResponse(ctx context.Context, e
 	return ParseGetEventSignupsResponse(rsp)
 }
 
-// DeleteSignupWithResponse request returning *DeleteSignupResponse
-func (c *ClientWithResponses) DeleteSignupWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*DeleteSignupResponse, error) {
-	rsp, err := c.DeleteSignup(ctx, eventId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseDeleteSignupResponse(rsp)
-}
-
 // GetPersonalSignupWithResponse request returning *GetPersonalSignupResponse
 func (c *ClientWithResponses) GetPersonalSignupWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetPersonalSignupResponse, error) {
 	rsp, err := c.GetPersonalSignup(ctx, eventId, reqEditors...)
@@ -6229,6 +7564,32 @@ func (c *ClientWithResponses) CreateSignupWithResponse(ctx context.Context, even
 	return ParseCreateSignupResponse(rsp)
 }
 
+// ReportPlaytimeWithBodyWithResponse request with arbitrary body returning *ReportPlaytimeResponse
+func (c *ClientWithResponses) ReportPlaytimeWithBodyWithResponse(ctx context.Context, eventId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*ReportPlaytimeResponse, error) {
+	rsp, err := c.ReportPlaytimeWithBody(ctx, eventId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReportPlaytimeResponse(rsp)
+}
+
+func (c *ClientWithResponses) ReportPlaytimeWithResponse(ctx context.Context, eventId int, body ReportPlaytimeJSONRequestBody, reqEditors ...RequestEditorFn) (*ReportPlaytimeResponse, error) {
+	rsp, err := c.ReportPlaytime(ctx, eventId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReportPlaytimeResponse(rsp)
+}
+
+// DeleteSignupWithResponse request returning *DeleteSignupResponse
+func (c *ClientWithResponses) DeleteSignupWithResponse(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*DeleteSignupResponse, error) {
+	rsp, err := c.DeleteSignup(ctx, eventId, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteSignupResponse(rsp)
+}
+
 // GetEventStatusWithResponse request returning *GetEventStatusResponse
 func (c *ClientWithResponses) GetEventStatusWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetEventStatusResponse, error) {
 	rsp, err := c.GetEventStatus(ctx, eventId, reqEditors...)
@@ -6236,6 +7597,15 @@ func (c *ClientWithResponses) GetEventStatusWithResponse(ctx context.Context, ev
 		return nil, err
 	}
 	return ParseGetEventStatusResponse(rsp)
+}
+
+// GetStreamsWithResponse request returning *GetStreamsResponse
+func (c *ClientWithResponses) GetStreamsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetStreamsResponse, error) {
+	rsp, err := c.GetStreams(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetStreamsResponse(rsp)
 }
 
 // GetSubmissionsWithResponse request returning *GetSubmissionsResponse
@@ -6325,9 +7695,17 @@ func (c *ClientWithResponses) DeleteObjectiveTeamSuggestionWithResponse(ctx cont
 	return ParseDeleteObjectiveTeamSuggestionResponse(rsp)
 }
 
-// CreateObjectiveTeamSuggestionWithResponse request returning *CreateObjectiveTeamSuggestionResponse
-func (c *ClientWithResponses) CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error) {
-	rsp, err := c.CreateObjectiveTeamSuggestion(ctx, eventId, objectiveId, reqEditors...)
+// CreateObjectiveTeamSuggestionWithBodyWithResponse request with arbitrary body returning *CreateObjectiveTeamSuggestionResponse
+func (c *ClientWithResponses) CreateObjectiveTeamSuggestionWithBodyWithResponse(ctx context.Context, eventId int, objectiveId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error) {
+	rsp, err := c.CreateObjectiveTeamSuggestionWithBody(ctx, eventId, objectiveId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateObjectiveTeamSuggestionResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateObjectiveTeamSuggestionWithResponse(ctx context.Context, eventId int, objectiveId int, body CreateObjectiveTeamSuggestionJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateObjectiveTeamSuggestionResponse, error) {
+	rsp, err := c.CreateObjectiveTeamSuggestion(ctx, eventId, objectiveId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -6404,6 +7782,15 @@ func (c *ClientWithResponses) GetUsersForEventWithResponse(ctx context.Context, 
 	return ParseGetUsersForEventResponse(rsp)
 }
 
+// GetAtlasProgressionWithResponse request returning *GetAtlasProgressionResponse
+func (c *ClientWithResponses) GetAtlasProgressionWithResponse(ctx context.Context, eventId int, userId int, reqEditors ...RequestEditorFn) (*GetAtlasProgressionResponse, error) {
+	rsp, err := c.GetAtlasProgression(ctx, eventId, userId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAtlasProgressionResponse(rsp)
+}
+
 // GetJobsWithResponse request returning *GetJobsResponse
 func (c *ClientWithResponses) GetJobsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetJobsResponse, error) {
 	rsp, err := c.GetJobs(ctx, reqEditors...)
@@ -6465,13 +7852,30 @@ func (c *ClientWithResponses) OauthRedirectWithResponse(ctx context.Context, pro
 	return ParseOauthRedirectResponse(rsp)
 }
 
-// GetStreamsWithResponse request returning *GetStreamsResponse
-func (c *ClientWithResponses) GetStreamsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetStreamsResponse, error) {
-	rsp, err := c.GetStreams(ctx, reqEditors...)
+// GetTimingsWithResponse request returning *GetTimingsResponse
+func (c *ClientWithResponses) GetTimingsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetTimingsResponse, error) {
+	rsp, err := c.GetTimings(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetStreamsResponse(rsp)
+	return ParseGetTimingsResponse(rsp)
+}
+
+// SetTimingsWithBodyWithResponse request with arbitrary body returning *SetTimingsResponse
+func (c *ClientWithResponses) SetTimingsWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetTimingsResponse, error) {
+	rsp, err := c.SetTimingsWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetTimingsResponse(rsp)
+}
+
+func (c *ClientWithResponses) SetTimingsWithResponse(ctx context.Context, body SetTimingsJSONRequestBody, reqEditors ...RequestEditorFn) (*SetTimingsResponse, error) {
+	rsp, err := c.SetTimings(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetTimingsResponse(rsp)
 }
 
 // GetAllUsersWithResponse request returning *GetAllUsersResponse
@@ -6554,12 +7958,21 @@ func (c *ClientWithResponses) GetUserCharactersWithResponse(ctx context.Context,
 }
 
 // GetCharacterHistoryWithResponse request returning *GetCharacterHistoryResponse
-func (c *ClientWithResponses) GetCharacterHistoryWithResponse(ctx context.Context, userId int, characterId int, reqEditors ...RequestEditorFn) (*GetCharacterHistoryResponse, error) {
+func (c *ClientWithResponses) GetCharacterHistoryWithResponse(ctx context.Context, userId int, characterId string, reqEditors ...RequestEditorFn) (*GetCharacterHistoryResponse, error) {
 	rsp, err := c.GetCharacterHistory(ctx, userId, characterId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
 	return ParseGetCharacterHistoryResponse(rsp)
+}
+
+// GetPoBsWithResponse request returning *GetPoBsResponse
+func (c *ClientWithResponses) GetPoBsWithResponse(ctx context.Context, userId int, characterId string, reqEditors ...RequestEditorFn) (*GetPoBsResponse, error) {
+	rsp, err := c.GetPoBs(ctx, userId, characterId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetPoBsResponse(rsp)
 }
 
 // GetGuildStashForUserWithResponse request returning *GetGuildStashForUserResponse
@@ -6571,13 +7984,13 @@ func (c *ClientWithResponses) GetGuildStashForUserWithResponse(ctx context.Conte
 	return ParseGetGuildStashForUserResponse(rsp)
 }
 
-// UpdateGuildStashWithResponse request returning *UpdateGuildStashResponse
-func (c *ClientWithResponses) UpdateGuildStashWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*UpdateGuildStashResponse, error) {
-	rsp, err := c.UpdateGuildStash(ctx, eventId, reqEditors...)
+// UpdateAccessWithResponse request returning *UpdateAccessResponse
+func (c *ClientWithResponses) UpdateAccessWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*UpdateAccessResponse, error) {
+	rsp, err := c.UpdateAccess(ctx, eventId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseUpdateGuildStashResponse(rsp)
+	return ParseUpdateAccessResponse(rsp)
 }
 
 // GetGuildStashTabWithResponse request returning *GetGuildStashTabResponse
@@ -6605,6 +8018,51 @@ func (c *ClientWithResponses) UpdateStashTabWithResponse(ctx context.Context, ev
 		return nil, err
 	}
 	return ParseUpdateStashTabResponse(rsp)
+}
+
+// GetGuildsWithResponse request returning *GetGuildsResponse
+func (c *ClientWithResponses) GetGuildsWithResponse(ctx context.Context, eventId int, reqEditors ...RequestEditorFn) (*GetGuildsResponse, error) {
+	rsp, err := c.GetGuilds(ctx, eventId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGuildsResponse(rsp)
+}
+
+// SaveGuildWithBodyWithResponse request with arbitrary body returning *SaveGuildResponse
+func (c *ClientWithResponses) SaveGuildWithBodyWithResponse(ctx context.Context, eventId int, guildId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SaveGuildResponse, error) {
+	rsp, err := c.SaveGuildWithBody(ctx, eventId, guildId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSaveGuildResponse(rsp)
+}
+
+// GetLogEntriesForGuildWithResponse request returning *GetLogEntriesForGuildResponse
+func (c *ClientWithResponses) GetLogEntriesForGuildWithResponse(ctx context.Context, eventId int, guildId int, params *GetLogEntriesForGuildParams, reqEditors ...RequestEditorFn) (*GetLogEntriesForGuildResponse, error) {
+	rsp, err := c.GetLogEntriesForGuild(ctx, eventId, guildId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLogEntriesForGuildResponse(rsp)
+}
+
+// AddGuildstashHistoryWithBodyWithResponse request with arbitrary body returning *AddGuildstashHistoryResponse
+func (c *ClientWithResponses) AddGuildstashHistoryWithBodyWithResponse(ctx context.Context, eventId int, guildId int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*AddGuildstashHistoryResponse, error) {
+	rsp, err := c.AddGuildstashHistoryWithBody(ctx, eventId, guildId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAddGuildstashHistoryResponse(rsp)
+}
+
+// GetLatestTimestampForUserWithResponse request returning *GetLatestTimestampForUserResponse
+func (c *ClientWithResponses) GetLatestTimestampForUserWithResponse(ctx context.Context, eventId int, guildId int, reqEditors ...RequestEditorFn) (*GetLatestTimestampForUserResponse, error) {
+	rsp, err := c.GetLatestTimestampForUser(ctx, eventId, guildId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLatestTimestampForUserResponse(rsp)
 }
 
 // ParseGetEventsResponse parses an HTTP response from a GetEventsWithResponse call
@@ -6701,6 +8159,58 @@ func ParseGetEventResponse(rsp *http.Response) (*GetEventResponse, error) {
 	return response, nil
 }
 
+// ParseGetEventActivitiesResponse parses an HTTP response from a GetEventActivitiesWithResponse call
+func ParseGetEventActivitiesResponse(rsp *http.Response) (*GetEventActivitiesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetEventActivitiesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest map[string]int
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetEventActivitiesForUserResponse parses an HTTP response from a GetEventActivitiesForUserWithResponse call
+func ParseGetEventActivitiesForUserResponse(rsp *http.Response) (*GetEventActivitiesForUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetEventActivitiesForUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest int
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetTeamAtlasesForEventResponse parses an HTTP response from a GetTeamAtlasesForEventWithResponse call
 func ParseGetTeamAtlasesForEventResponse(rsp *http.Response) (*GetTeamAtlasesForEventResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -6748,74 +8258,6 @@ func ParseGetCharactersForEventResponse(rsp *http.Response) (*GetCharactersForEv
 		}
 		response.JSON200 = &dest
 
-	}
-
-	return response, nil
-}
-
-// ParseCreateConditionResponse parses an HTTP response from a CreateConditionWithResponse call
-func ParseCreateConditionResponse(rsp *http.Response) (*CreateConditionResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &CreateConditionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Condition
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON201 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetValidMappingsResponse parses an HTTP response from a GetValidMappingsWithResponse call
-func ParseGetValidMappingsResponse(rsp *http.Response) (*GetValidMappingsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetValidMappingsResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ConditionMappings
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseDeleteConditionResponse parses an HTTP response from a DeleteConditionWithResponse call
-func ParseDeleteConditionResponse(rsp *http.Response) (*DeleteConditionResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteConditionResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -6920,6 +8362,74 @@ func ParseCreateObjectiveResponse(rsp *http.Response) (*CreateObjectiveResponse,
 		}
 		response.JSON201 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseGetValidMappingsResponse parses an HTTP response from a GetValidMappingsWithResponse call
+func ParseGetValidMappingsResponse(rsp *http.Response) (*GetValidMappingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetValidMappingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ConditionMappings
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetObjectiveValidationsResponse parses an HTTP response from a GetObjectiveValidationsWithResponse call
+func ParseGetObjectiveValidationsResponse(rsp *http.Response) (*GetObjectiveValidationsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetObjectiveValidationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []ObjectiveValidation
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseValidateObjectivesResponse parses an HTTP response from a ValidateObjectivesWithResponse call
+func ParseValidateObjectivesResponse(rsp *http.Response) (*ValidateObjectivesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ValidateObjectivesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -7119,22 +8629,6 @@ func ParseGetEventSignupsResponse(rsp *http.Response) (*GetEventSignupsResponse,
 	return response, nil
 }
 
-// ParseDeleteSignupResponse parses an HTTP response from a DeleteSignupWithResponse call
-func ParseDeleteSignupResponse(rsp *http.Response) (*DeleteSignupResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &DeleteSignupResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	return response, nil
-}
-
 // ParseGetPersonalSignupResponse parses an HTTP response from a GetPersonalSignupWithResponse call
 func ParseGetPersonalSignupResponse(rsp *http.Response) (*GetPersonalSignupResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -7187,6 +8681,48 @@ func ParseCreateSignupResponse(rsp *http.Response) (*CreateSignupResponse, error
 	return response, nil
 }
 
+// ParseReportPlaytimeResponse parses an HTTP response from a ReportPlaytimeWithResponse call
+func ParseReportPlaytimeResponse(rsp *http.Response) (*ReportPlaytimeResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ReportPlaytimeResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Signup
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteSignupResponse parses an HTTP response from a DeleteSignupWithResponse call
+func ParseDeleteSignupResponse(rsp *http.Response) (*DeleteSignupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteSignupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
 // ParseGetEventStatusResponse parses an HTTP response from a GetEventStatusWithResponse call
 func ParseGetEventStatusResponse(rsp *http.Response) (*GetEventStatusResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -7203,6 +8739,32 @@ func ParseGetEventStatusResponse(rsp *http.Response) (*GetEventStatusResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest EventStatus
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetStreamsResponse parses an HTTP response from a GetStreamsWithResponse call
+func ParseGetStreamsResponse(rsp *http.Response) (*GetStreamsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetStreamsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []TwitchStream
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -7348,7 +8910,7 @@ func ParseGetTeamSuggestionsResponse(rsp *http.Response) (*GetTeamSuggestionsRes
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []int
+		var dest []TeamSuggestion
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -7527,6 +9089,32 @@ func ParseGetUsersForEventResponse(rsp *http.Response) (*GetUsersForEventRespons
 	return response, nil
 }
 
+// ParseGetAtlasProgressionResponse parses an HTTP response from a GetAtlasProgressionWithResponse call
+func ParseGetAtlasProgressionResponse(rsp *http.Response) (*GetAtlasProgressionResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAtlasProgressionResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []AtlasProgression
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetJobsResponse parses an HTTP response from a GetJobsWithResponse call
 func ParseGetJobsResponse(rsp *http.Response) (*GetJobsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -7637,27 +9225,43 @@ func ParseOauthRedirectResponse(rsp *http.Response) (*OauthRedirectResponse, err
 	return response, nil
 }
 
-// ParseGetStreamsResponse parses an HTTP response from a GetStreamsWithResponse call
-func ParseGetStreamsResponse(rsp *http.Response) (*GetStreamsResponse, error) {
+// ParseGetTimingsResponse parses an HTTP response from a GetTimingsWithResponse call
+func ParseGetTimingsResponse(rsp *http.Response) (*GetTimingsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetStreamsResponse{
+	response := &GetTimingsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []TwitchStream
+		var dest []Timing
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON200 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseSetTimingsResponse parses an HTTP response from a SetTimingsWithResponse call
+func ParseSetTimingsResponse(rsp *http.Response) (*SetTimingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SetTimingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
 	}
 
 	return response, nil
@@ -7871,6 +9475,32 @@ func ParseGetCharacterHistoryResponse(rsp *http.Response) (*GetCharacterHistoryR
 	return response, nil
 }
 
+// ParseGetPoBsResponse parses an HTTP response from a GetPoBsWithResponse call
+func ParseGetPoBsResponse(rsp *http.Response) (*GetPoBsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetPoBsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []PoB
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetGuildStashForUserResponse parses an HTTP response from a GetGuildStashForUserWithResponse call
 func ParseGetGuildStashForUserResponse(rsp *http.Response) (*GetGuildStashForUserResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -7897,27 +9527,17 @@ func ParseGetGuildStashForUserResponse(rsp *http.Response) (*GetGuildStashForUse
 	return response, nil
 }
 
-// ParseUpdateGuildStashResponse parses an HTTP response from a UpdateGuildStashWithResponse call
-func ParseUpdateGuildStashResponse(rsp *http.Response) (*UpdateGuildStashResponse, error) {
+// ParseUpdateAccessResponse parses an HTTP response from a UpdateAccessWithResponse call
+func ParseUpdateAccessResponse(rsp *http.Response) (*UpdateAccessResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &UpdateGuildStashResponse{
+	response := &UpdateAccessResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []GuildStashTab
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
 	}
 
 	return response, nil
@@ -7986,6 +9606,136 @@ func ParseUpdateStashTabResponse(rsp *http.Response) (*UpdateStashTabResponse, e
 	response := &UpdateStashTabResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
+	}
+
+	return response, nil
+}
+
+// ParseGetGuildsResponse parses an HTTP response from a GetGuildsWithResponse call
+func ParseGetGuildsResponse(rsp *http.Response) (*GetGuildsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGuildsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Guild
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseSaveGuildResponse parses an HTTP response from a SaveGuildWithResponse call
+func ParseSaveGuildResponse(rsp *http.Response) (*SaveGuildResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SaveGuildResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Guild
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLogEntriesForGuildResponse parses an HTTP response from a GetLogEntriesForGuildWithResponse call
+func ParseGetLogEntriesForGuildResponse(rsp *http.Response) (*GetLogEntriesForGuildResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLogEntriesForGuildResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []GuildStashChangelog
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseAddGuildstashHistoryResponse parses an HTTP response from a AddGuildstashHistoryWithResponse call
+func ParseAddGuildstashHistoryResponse(rsp *http.Response) (*AddGuildstashHistoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &AddGuildstashHistoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest AddGuildStashHistoryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLatestTimestampForUserResponse parses an HTTP response from a GetLatestTimestampForUserWithResponse call
+func ParseGetLatestTimestampForUserResponse(rsp *http.Response) (*GetLatestTimestampForUserResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLatestTimestampForUserResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest GuildStashLogTimestampResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
 	}
 
 	return response, nil

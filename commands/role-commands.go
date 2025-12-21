@@ -34,7 +34,7 @@ var RoleCreateCommand = DiscordCommand{
 		Description:              "creates roles for teams",
 		DefaultMemberPermissions: &PermissionManageRoles,
 	},
-	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, client *client.ClientWithResponses) {
+	Handler: func(s *discordgo.Session, i *discordgo.InteractionCreate, options optionMap, bplClient *client.ClientWithResponses) {
 		log.Println("RoleCreateCommand called")
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -44,7 +44,7 @@ var RoleCreateCommand = DiscordCommand{
 			},
 		},
 		)
-		event, err := client.GetCurrentEvent()
+		event, err := bplClient.GetCurrentEvent()
 		if err != nil {
 			EditResponse(s, i, "could not get current event")
 			return
@@ -55,19 +55,30 @@ var RoleCreateCommand = DiscordCommand{
 			return
 		}
 		for _, team := range event.Teams {
-			found := false
+			if team.DiscordRoleId != nil {
+				continue
+			}
+			teamCreate := client.CreateTeamJSONRequestBody{
+				Id:             &team.Id,
+				Name:           team.Name,
+				Abbreviation:   team.Abbreviation,
+				AllowedClasses: team.AllowedClasses,
+				Color:          team.Color,
+			}
 			for _, role := range allRoles {
 				if role.Name == team.Name {
-					found = true
+					teamCreate.DiscordRoleId = &role.ID
 				}
 			}
-			if !found {
-				_, err := s.GuildRoleCreate(i.GuildID, &discordgo.RoleParams{Name: team.Name})
+			if teamCreate.DiscordRoleId == nil {
+				role, err := s.GuildRoleCreate(i.GuildID, &discordgo.RoleParams{Name: team.Name})
 				if err != nil {
 					EditResponse(s, i, "could not create role for team "+team.Name)
 					return
 				}
+				teamCreate.DiscordRoleId = &role.ID
 			}
+			bplClient.CreateTeam(context.TODO(), event.Id, teamCreate)
 		}
 		EditResponse(s, i, "role creation complete")
 	},
@@ -103,7 +114,7 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 	teamRoles := make(map[int]string)
 	for _, team := range event.Teams {
 		for _, role := range allRoles {
-			if role.Name == team.Name || role.Name == ("Team "+team.Name) {
+			if role.ID == *team.DiscordRoleId {
 				teamRoles[team.Id] = role.ID
 			}
 		}
