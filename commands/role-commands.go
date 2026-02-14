@@ -113,6 +113,10 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 
 	teamRoles := make(map[int]string)
 	for _, team := range event.Teams {
+		if team.DiscordRoleId == nil {
+			fmt.Println("team", team.Name, "does not have a discord role id set")
+			return 0, fmt.Errorf("team %s does not have a discord role id set", team.Name)
+		}
 		for _, role := range allRoles {
 			if role.ID == *team.DiscordRoleId {
 				teamRoles[team.Id] = role.ID
