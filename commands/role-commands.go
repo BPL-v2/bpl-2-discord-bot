@@ -6,10 +6,22 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/bwmarrin/discordgo"
 )
+
+// hexToColor converts a "#RRGGBB" or "RRGGBB" hex string into the decimal
+// color value Discord's API expects for roles.
+func hexToColor(hex string) (int, error) {
+	color, err := strconv.ParseInt(strings.TrimPrefix(hex, "#"), 16, 32)
+	if err != nil {
+		return 0, err
+	}
+	return int(color), nil
+}
 
 func GetAllGuildMembers(s *discordgo.Session, guildID string) ([]*discordgo.Member, error) {
 	lastUserId := ""
@@ -72,7 +84,15 @@ var RoleCreateCommand = DiscordCommand{
 				}
 			}
 			if teamCreate.DiscordRoleId == nil {
-				role, err := s.GuildRoleCreate(i.GuildID, &discordgo.RoleParams{Name: team.Name})
+				roleParams := &discordgo.RoleParams{Name: team.Name}
+				if team.Color != nil {
+					if colorInt, err := hexToColor(*team.Color); err == nil {
+						roleParams.Color = &colorInt
+					} else {
+						fmt.Println("could not parse color for team", team.Name, err)
+					}
+				}
+				role, err := s.GuildRoleCreate(i.GuildID, roleParams)
 				if err != nil {
 					EditResponse(s, i, "could not create role for team "+team.Name)
 					return
