@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -83,17 +84,24 @@ func (c *ClientWithResponses) GetAllEvents() ([]Event, error) {
 }
 
 func (c *ClientWithResponses) GetCurrentEvent() (*Event, error) {
-
 	events, err := c.GetAllEvents()
-	if err != nil {
+	if err != nil || len(events) == 0 {
 		return nil, err
 	}
-	for _, event := range events {
-		if event.IsCurrent {
-			return &event, nil
+	sort.Slice(events, func(i, j int) bool {
+		startTimeI, err := time.Parse(time.RFC3339, events[i].EventStartTime)
+		if err != nil {
+			log.Printf("could not parse event start time: %s", err)
+			return false
 		}
-	}
-	return nil, nil
+		startTimeJ, err := time.Parse(time.RFC3339, events[j].EventStartTime)
+		if err != nil {
+			log.Printf("could not parse event start time: %s", err)
+			return false
+		}
+		return startTimeI.Before(startTimeJ)
+	})
+	return &events[len(events)-1], nil
 }
 func (c *ClientWithResponses) GetLatestEvent() (*Event, error) {
 	events, err := c.GetAllEvents()
