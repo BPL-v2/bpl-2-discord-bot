@@ -68,6 +68,7 @@ var RoleCreateCommand = DiscordCommand{
 			for _, role := range allRoles {
 				if role.Name == team.Name {
 					teamCreate.DiscordRoleId = &role.ID
+					fmt.Println("found existing role for team", team.Name, "with id", role.ID)
 				}
 			}
 			if teamCreate.DiscordRoleId == nil {
@@ -76,9 +77,13 @@ var RoleCreateCommand = DiscordCommand{
 					EditResponse(s, i, "could not create role for team "+team.Name)
 					return
 				}
+				fmt.Println("created role for team", team.Name, "with id", role.ID)
 				teamCreate.DiscordRoleId = &role.ID
 			}
-			bplClient.CreateTeam(context.TODO(), event.Id, teamCreate)
+			_, err := bplClient.CreateTeam(context.TODO(), event.Id, teamCreate)
+			if err != nil {
+				EditResponse(s, i, "could not update team "+team.Name)
+			}
 		}
 		EditResponse(s, i, "role creation complete")
 	},
