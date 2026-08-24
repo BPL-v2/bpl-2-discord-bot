@@ -167,6 +167,8 @@ func AssignRoles(s *discordgo.Session, client *client.ClientWithResponses, guild
 		}
 		if !utils.HaveSameEntries(member.Roles, newRoles) {
 			fmt.Println("assigning role to", member.User.Username)
+			fmt.Println("old roles:", member.Roles)
+			fmt.Println("new roles:", newRoles)
 			counter++
 			wg.Add(1)
 			go func(member *discordgo.Member) {
